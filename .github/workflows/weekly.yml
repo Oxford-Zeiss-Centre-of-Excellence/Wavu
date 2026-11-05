@@ -1,0 +1,79 @@
+name: weekly
+
+# Catch upstream drift without anyone watching: the newest Fiji, the heavy
+# cellpose example, and refreshed lock files (merged automatically only after
+# the full test suite passed on the refreshed locks in this same workflow).
+
+on:
+  schedule:
+    - cron: "17 4 * * 1"  # Mondays 04:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  latest-fiji:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: prefix-dev/setup-pixi@v0.11.3
+        with:
+          pixi-version: v0.78.0
+          cache: true
+      - name: Fresh Fiji (no cache)
+        run: bash tools/get_fiji.sh .fiji
+      - name: Smoke test
+        run: WAVU_FIJI="$(cat .fiji/FIJI_DIR)" WAVU_FIJI_LAUNCHER="$(cat .fiji/FIJI_LAUNCHER)" pixi run test-fiji
+
+  cellpose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: prefix-dev/setup-pixi@v0.11.3
+        with:
+          pixi-version: v0.78.0
+          cache: true
+      - name: CTC test frame (sha256-verified, never committed)
+        run: pixi run fetch-test-data
+      - name: Cellpose example in its own environment
+        run: pixi run --manifest-path examples/cellpose_nuclei/pixi.toml test
+
+  pixi-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: prefix-dev/setup-pixi@v0.11.3
+        with:
+          pixi-version: v0.78.0
+          run-install: false
+      - name: Update lock files
+        run: |
+          pixi update
+          pixi update --manifest-path templates/wavu-script/pixi.toml
+          pixi update --manifest-path packaging/bundle/pixi.toml
+      - name: Test on the updated locks
+        run: |
+          pixi run test
+          pixi run test-integration
+      - name: Open and merge the PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet; then echo "Locks already current"; exit 0; fi
+          branch="chore/pixi-update-$(date +%Y%m%d)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git commit -am "chore(deps): weekly pixi update"
+          git push -u origin "$branch"
+          gh pr create --fill --base main --head "$branch"
+          # Already tested above; PRs opened with GITHUB_TOKEN do not trigger CI.
+          gh pr merge "$branch" --squash --delete-branch

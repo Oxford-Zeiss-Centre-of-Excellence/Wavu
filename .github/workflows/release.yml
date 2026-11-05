@@ -1,0 +1,190 @@
+name: release
+
+# Builds and publishes everything for one tag. Normally called by
+# release-please.yml; a v* tag pushed by a person, or a manual dispatch, runs it too.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to (re)release, e.g. v0.1.0"
+        required: true
+  workflow_call:
+    inputs:
+      tag:
+        type: string
+        required: true
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+env:
+  TAG: ${{ inputs.tag || github.ref_name }}
+  IMAGE: ghcr.io/oxford-zeiss-centre-of-excellence/wavu-worker
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+          fetch-depth: 0
+      - id: v
+        run: echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+      - uses: prefix-dev/setup-pixi@v0.11.3
+        with:
+          pixi-version: v0.78.0
+          environments: default build
+          cache: true
+      - name: Wheel + sdist (version from the tag via hatch-vcs)
+        run: pixi run -e build build
+      - name: Fiji client zip
+        run: pixi run fiji-zip ${{ steps.v.outputs.version }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/*
+
+  github-release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: Create the release if release-please did not, then attach files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --verify-tag --generate-notes
+          gh release upload "$TAG" dist/* --clobber
+
+  container:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          build-args: WAVU_VERSION=${{ needs.build.outputs.version }}
+          tags: |
+            ${{ env.IMAGE }}:${{ needs.build.outputs.version }}
+            ${{ env.IMAGE }}:latest
+          labels: |
+            org.opencontainers.image.source=https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu
+            org.opencontainers.image.licenses=GPL-3.0-or-later
+            org.opencontainers.image.version=${{ needs.build.outputs.version }}
+
+  offline-bundles:
+    needs: [build, github-release]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { platform: linux-64, ext: sh }
+          - { platform: osx-64, ext: sh }
+          - { platform: osx-arm64, ext: sh }
+          - { platform: win-64, ext: ps1 }
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - uses: prefix-dev/setup-pixi@v0.11.3
+        with:
+          pixi-version: v0.78.0
+          run-install: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: pixi-pack the template environment + the wavu wheel
+        env:
+          GH_TOKEN: ${{ github.token }}
+          V: ${{ needs.build.outputs.version }}
+          PLATFORM: ${{ matrix.platform }}
+          EXT: ${{ matrix.ext }}
+        run: |
+          out="wavu-offline-${V}-${PLATFORM}"
+          mkdir -p "$out/wavu-script"
+          pixi exec pixi-pack --platform "$PLATFORM" --create-executable -o "$out/environment.$EXT" packaging/bundle
+          cp dist/wavu-*-py3-none-any.whl packaging/bundle/README-offline.txt "$out/"
+          cp templates/wavu-script/script.py templates/wavu-script/README.md "$out/wavu-script/"
+          zip -r "$out.zip" "$out"
+          gh release upload "$TAG" "$out.zip" --clobber
+
+  fiji-update-site:
+    # Off until the owner has an ImageJ update-site account: set the repository
+    # variable FIJI_UPDATE_SITE=true and the secrets UPDATE_SITE_USER / UPDATE_SITE_PASS.
+    needs: build
+    if: vars.FIJI_UPDATE_SITE == 'true'
+    runs-on: ubuntu-latest
+    env:
+      UPDATE_SITE: Wavu
+      UPDATE_SITE_USER: ${{ secrets.UPDATE_SITE_USER }}
+      UPDATE_SITE_PASS: ${{ secrets.UPDATE_SITE_PASS }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - name: Skip without credentials
+        id: creds
+        run: |
+          if [ -z "$UPDATE_SITE_USER" ] || [ -z "$UPDATE_SITE_PASS" ]; then
+            echo "::warning::UPDATE_SITE_USER/UPDATE_SITE_PASS not set -- skipping the update-site upload"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: prefix-dev/setup-pixi@v0.11.3
+        if: steps.creds.outputs.ok == 'true'
+        with:
+          pixi-version: v0.78.0
+          cache: true
+      - name: Download Fiji, stage the scripts, upload
+        if: steps.creds.outputs.ok == 'true'
+        run: |
+          bash tools/get_fiji.sh .fiji
+          FIJI="$(cat .fiji/FIJI_DIR)"
+          LAUNCHER="$(cat .fiji/FIJI_LAUNCHER)"
+          pixi run python tools/make_fiji_zip.py "${TAG#v}" --stage-dir "$FIJI"
+          cd "$FIJI"
+          "./$LAUNCHER" --update edit-update-site "$UPDATE_SITE" "https://sites.imagej.net/$UPDATE_SITE/" \
+            "webdav:$UPDATE_SITE_USER:$UPDATE_SITE_PASS" .
+          "./$LAUNCHER" --update upload-complete-site --force "$UPDATE_SITE"
+
+  pypi:
+    # Off until the PyPI organisation + trusted publisher exist: set the
+    # repository variable PYPI_PUBLISH=true. Trusted publishing, no secrets.
+    needs: build
+    if: vars.PYPI_PUBLISH == 'true'
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - run: rm -f dist/*.zip
+      - uses: pypa/gh-action-pypi-publish@release/v1

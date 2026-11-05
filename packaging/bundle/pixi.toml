@@ -1,0 +1,16 @@
+# The offline bundle attached to each release (pixi-pack): the template
+# script's environment, conda packages only. The wavu wheel ships next to it in
+# the same zip and is installed with pip after unpacking -- pixi-pack cannot
+# pack a local/editable PyPI package. See packaging/bundle/README-offline.txt.
+[workspace]
+name = "wavu-offline"
+channels = ["conda-forge"]
+platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+
+[dependencies]
+python = "3.12.*"
+numpy = ">=1.24"
+scipy = ">=1.10"
+tifffile = ">=2023.1"
+debugpy = ">=1.8"
+pip = "*"

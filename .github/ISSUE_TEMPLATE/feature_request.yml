@@ -1,0 +1,13 @@
+name: Feature request
+description: Suggest an improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What do you want to do that Wavu does not support?
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: Wavu is deliberately small and for small, interactive data (see README scope and docs/decisions.md).

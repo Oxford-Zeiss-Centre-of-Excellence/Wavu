@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-15]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # hatch-vcs reads the version from git tags
+      - uses: prefix-dev/setup-pixi@v0.11.3
+        with:
+          pixi-version: v0.78.0
+          cache: true
+      - name: Unit + protocol tests
+        run: pixi run test
+      - name: Worker in the template's own pixi env (launch mode 1 minus Fiji)
+        run: pixi run test-integration
+      - name: Fiji client zip builds
+        run: pixi run fiji-zip
+
+  fiji-smoke:
+    # Headless Fiji (latest, bundled Java) drives the real Groovy client against
+    # a pixi-launched worker. Non-blocking until it has been seen green on
+    # GitHub's runners: locally it was verified with the legacy ImageJ-win64
+    # launcher on Java 8 only (docs/development.md).
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: prefix-dev/setup-pixi@v0.11.3
+        with:
+          pixi-version: v0.78.0
+          cache: true
+      - name: Week number (Fiji cache key)
+        id: week
+        run: echo "week=$(date +%G-%V)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: .fiji
+          key: fiji-latest-linux64-${{ steps.week.outputs.week }}
+      - name: Download Fiji
+        run: bash tools/get_fiji.sh .fiji
+      - name: Smoke test
+        run: WAVU_FIJI="$(cat .fiji/FIJI_DIR)" WAVU_FIJI_LAUNCHER="$(cat .fiji/FIJI_LAUNCHER)" pixi run test-fiji
+
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the worker image
+        run: docker build -t wavu-worker:ci --build-arg WAVU_VERSION=0.0.0 .
+      - name: Run it and call /health
+        run: |
+          mkdir -p ci-data && chmod 777 ci-data
+          docker run -d --name wavu -p 127.0.0.1:8765:8765 -e WAVU_TOKEN=ci-token -v "$PWD/ci-data:/data" wavu-worker:ci
+          for i in $(seq 1 30); do
+            curl -fsS -H "Authorization: Bearer ci-token" http://127.0.0.1:8765/health && break
+            sleep 2
+          done
+          curl -fsS -H "Authorization: Bearer ci-token" http://127.0.0.1:8765/scripts | grep -q '"script"'
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8765/health)" = 401
+          sudo test -f ci-data/.wavu/worker.json
+      - name: Container logs
+        if: always()
+        run: docker logs wavu || true
