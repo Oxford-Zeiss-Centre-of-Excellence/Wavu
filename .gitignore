@@ -14,3 +14,6 @@ wavu-out/
 .fiji/
 # MkDocs output (pixi run -e docs docs-build)
 site/
+
+# Built by tools/make_agent_files.py at docs-build time
+guide/assets/agent/

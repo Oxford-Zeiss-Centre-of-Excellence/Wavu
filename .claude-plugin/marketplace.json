@@ -1,0 +1,14 @@
+{
+  "name": "wavu",
+  "owner": { "name": "Oxford-Zeiss Centre of Excellence" },
+  "metadata": { "description": "Wavu: run Python image-analysis scripts from Fiji, each in its own pixi environment." },
+  "plugins": [
+    {
+      "name": "wavu",
+      "source": "./agent",
+      "description": "Teaches your agent the Wavu way: tests first, PARAMS + run(), conda-forge packages, packaging for Fiji.",
+      "homepage": "https://oxford-zeiss-centre-of-excellence.github.io/Wavu/agents/",
+      "license": "GPL-3.0-or-later"
+    }
+  ]
+}

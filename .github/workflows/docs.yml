@@ -10,6 +10,8 @@ on:
     paths:
       - "guide/**"
       - "mkdocs.yml"
+      - "agent/**"
+      - "tools/make_agent_files.py"
       - ".github/workflows/docs.yml"
   workflow_dispatch:
 

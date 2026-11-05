@@ -68,6 +68,7 @@ plugins:
             Start here: Pour commencer
             Write a script: Écrire un script
             Share: Partager
+            AI agents: Agents IA
             Help: Aide
         - locale: de
           name: Deutsch
@@ -77,6 +78,7 @@ plugins:
             Start here: Erste Schritte
             Write a script: Skript schreiben
             Share: Teilen
+            AI agents: KI-Agenten
             Help: Hilfe
         - locale: es
           name: Español
@@ -86,6 +88,7 @@ plugins:
             Start here: Para empezar
             Write a script: Escribir un script
             Share: Compartir
+            AI agents: Agentes de IA
             Help: Ayuda
         - locale: ru
           name: Русский
@@ -95,6 +98,7 @@ plugins:
             Start here: С чего начать
             Write a script: Написать скрипт
             Share: Поделиться
+            AI agents: ИИ-агенты
             Help: Помощь
         - locale: ja
           name: 日本語
@@ -104,6 +108,7 @@ plugins:
             Start here: はじめに
             Write a script: スクリプトを書く
             Share: 共有する
+            AI agents: AI エージェント
             Help: ヘルプ
         - locale: ko
           name: 한국어
@@ -113,6 +118,7 @@ plugins:
             Start here: 시작하기
             Write a script: 스크립트 작성
             Share: 공유하기
+            AI agents: AI 에이전트
             Help: 도움말
         - locale: zh-Hant
           name: 繁體中文
@@ -122,6 +128,7 @@ plugins:
             Start here: 從這裡開始
             Write a script: 撰寫腳本
             Share: 分享
+            AI agents: AI 代理
             Help: 說明
         - locale: zh-Hans
           name: 简体中文
@@ -131,6 +138,7 @@ plugins:
             Start here: 从这里开始
             Write a script: 编写脚本
             Share: 分享
+            AI agents: AI 智能体
             Help: 帮助
           theme:
             language: zh  # Material calls Simplified Chinese "zh"
@@ -175,6 +183,7 @@ nav:
   - Share:
       - share/with-your-lab.md
       - share/with-the-world.md
+  - AI agents: agents.md
   - Help:
       - help/troubleshooting.md
       - help/debug-in-vscode.md

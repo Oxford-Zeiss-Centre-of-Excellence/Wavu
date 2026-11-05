@@ -1,0 +1,151 @@
+---
+name: wavu
+description: Write, test and package Python image-analysis scripts that Fiji runs through Wavu, each in its own pixi environment. Use when creating or editing a Wavu script folder (script.py with PARAMS and run(ctx, inputs, params), test_script.py, pixi.toml), turning notebook code into a Fiji tool, adding packages, debugging a script, or packaging it for other Fiji users.
+license: GPL-3.0-or-later
+---
+
+# The Wavu way
+
+Wavu (https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu) runs a plain Python file from Fiji. Fiji builds a
+dialog from the script's `PARAMS`, a local worker runs `run(ctx, inputs, params)` inside the **script folder's own
+pixi environment**, and the returned values open in Fiji as images, tables or ROIs. The user may be an image analyst
+who knows notebooks better than software engineering: keep scripts short, plain and well commented.
+
+A script folder (start from https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template):
+
+| File | Role |
+|---|---|
+| `script.py` | `PARAMS` (the dialog) and `run(ctx, inputs, params)` (the work). Any top-level `*.py` with `def run` is a script. |
+| `test_script.py` | Tests that run without Fiji: `pixi run test` |
+| `pixi.toml` / `pixi.lock` | This script's own environment. Commit both. |
+| `.vscode/launch.json` | "Attach to Wavu worker" for breakpoints |
+
+## The steps, in order
+
+| Step | What | Where |
+|---|---|---|
+| 0 | **Write the test first**: a made-up image with a known answer | `test_script.py` |
+| 1 | Describe the dialog | `PARAMS` |
+| 2 | Do the work, reporting progress | `run(ctx, inputs, params)` |
+| 3 | Return what Fiji should show | the returned `dict` |
+| 4 | Add packages (conda-forge first) | `pixi.toml` |
+| 5 | Run the tests until green, then try it in Fiji | `pixi run test` |
+| 6 | Share it as a Fiji menu item | `pixi run wavu package` |
+
+## Step 0: tests first
+
+Before changing `script.py`, write or extend a test that states what a correct result must be. Build a small
+synthetic image whose answer you know (two separate squares → 2 labels; one bright pixel → blur lowers its peak;
+a stack → same shape back). Run it and see it **fail** first, then make it pass.
+
+```python
+from pathlib import Path
+import numpy as np
+from wavu.testing import FakeCtx, run_script
+
+SCRIPT = Path(__file__).with_name("script.py")
+
+
+def test_two_blobs_give_two_labels():
+    img = np.zeros((40, 40), np.uint16)
+    img[5:12, 5:12] = 1000
+    img[25:33, 20:30] = 1000                    # two separate bright squares
+    ctx = FakeCtx()
+    out = run_script(SCRIPT, {"image": img}, {"threshold": 500}, ctx=ctx)
+    assert out["labels"].max() == 2              # two objects found
+    assert out["labels"].shape == img.shape      # same size as the input
+    assert ctx.progress_values[-1] == 1.0        # progress reached 100 %
+```
+
+- `run_script` calls `run` exactly as the worker does: `PARAMS` defaults filled in, values converted to the declared
+  types.
+- `FakeCtx` records `ctx.messages` and `ctx.progress_values`; `FakeCtx(cancel_after=2)` simulates the user pressing
+  Esc; `FakeCtx(meta={"image": {"pixel_um": 0.5}})` supplies input metadata.
+- **Never weaken or delete a test to make it pass.** A red test means the script, or the test's assumption, is wrong:
+  say which, and fix that.
+
+## Step 1: `PARAMS` is the dialog
+
+```python
+"""Nuclei count -- threshold, label, measure."""   # first docstring line = dialog description
+
+PARAMS = {
+    "image":     {"type": "image", "label": "Nuclei image"},
+    "threshold": {"type": "float", "default": 500.0, "label": "Threshold (intensity)"},
+    "min_area":  {"type": "int",   "default": 20},
+    "name":      {"type": "str",   "default": "cells"},
+    "fill":      {"type": "bool",  "default": True},
+    "method":    {"type": "choice", "choices": ["otsu", "li"], "default": "otsu"},
+}
+```
+
+- Types: `float`, `int`, `str`, `bool`, `choice` (needs `choices`), `image` (an open Fiji image; arrives in
+  `inputs`, not `params`).
+- Every non-image entry needs a `default`. `label` is optional (defaults to the capitalised name).
+
+## Step 2: `run(ctx, inputs, params)`
+
+- `inputs["image"]` is a `numpy.ndarray` in ImageJ axis order with singleton axes dropped: `T, Z, C, Y, X`
+  (+ `S` for RGB). Check `ndim` and raise `ValueError("...")` with a plain sentence if the shape is wrong; Fiji shows
+  the message as is.
+- `ctx.meta["image"]` holds `pixel_um`, `axes`, `title` when Fiji knows them.
+- `ctx.log(msg)` writes to Fiji's Log; `ctx.progress(0..1)` drives the progress bar; check `ctx.cancelled()` in
+  loops and return early (cancelling is cooperative); `ctx.tmpdir` is a scratch folder for files you return.
+- **Import heavy packages inside `run`** (cellpose, torch, skimage), so Fiji lists the script and shows its dialog
+  instantly. Log a line before slow first-time work such as model downloads.
+- Prefer vectorised NumPy/scikit-image over Python loops over pixels.
+
+## Step 3: what to return
+
+| Return value | Fiji shows |
+|---|---|
+| `numpy` array (≥ 2-D) | a new image (bool → 8-bit, ints ≤ 65535 → 16-bit, else 32-bit float) |
+| an integer array named like `labels` | a label image with the glasbey colours |
+| `wavu.Image(arr, pixel_um=0.65, axes="ZYX", channel_names=[...])` | an image with calibration and axes |
+| pandas `DataFrame` or a list of dicts | a Results table |
+| `wavu.RoiSet(path_to_zip)` | the ROI Manager (write the zip with `roifile` into `ctx.tmpdir`) |
+| number, string, bool | a `name = value` line in the Log |
+| `pathlib.Path` | the path, printed in the Log |
+
+## Step 4: packages
+
+- Add packages to `pixi.toml`. **conda-forge first** under `[dependencies]` (`pixi add scikit-image`); only if a
+  package is not on conda-forge, use `[pypi-dependencies]` (`pixi add --pypi name`). Names can differ:
+  `pytorch` on conda-forge, `torch` on PyPI.
+- Keep the line marked `# wavu-dependency` as it is. Commit `pixi.lock` with `pixi.toml`.
+
+## Step 5: run and try
+
+```bash
+pixi run test                                                   # red first, then green
+pixi run wavu run script.py --in image=cells.tif --param threshold=400 --out results   # whole script on a file
+```
+
+Then in Fiji: **Plugins › Wavu › Stop Worker** (the worker reads scripts only when it starts), then
+**Plugins › Wavu › Run Python Script** and pick the folder. For breakpoints: `pixi run debug`, attach VS Code with
+"Attach to Wavu worker", then **Plugins › Wavu › Connect to Running Worker**.
+
+## Step 6: share
+
+```bash
+pixi install                                                    # makes sure pixi.lock exists
+pixi run wavu package . --name my-tool --menu "My Lab>My Tool"  # -> dist/my-tool-fiji.zip
+```
+
+Colleagues unzip the zip into `Fiji.app` (Wavu must be installed) and get **Plugins › My Lab › My Tool**.
+
+## Scope and limits
+
+- Small, interactive data: one image that fits in memory (about 1–2 GB at most). For larger data suggest a batch
+  or HPC workflow instead of Wavu.
+- Do not write Java, Groovy or Fiji plugins; Wavu's Fiji side already exists. Everything happens in Python.
+- The environment isolates dependencies; it is not a security sandbox.
+
+## Checklist before you finish
+
+- [ ] `test_script.py` states the expected result, ran red first, and `pixi run test` is now green.
+- [ ] `PARAMS` has a default for every non-image field and readable labels; the docstring's first line says what
+      the script does.
+- [ ] Heavy imports are inside `run`; long loops check `ctx.cancelled()`; progress reaches 1.0.
+- [ ] New packages are in `pixi.toml` (conda-forge first) and `pixi.lock` is updated.
+- [ ] You told the user how to try it: **Stop Worker**, then **Run Python Script**.

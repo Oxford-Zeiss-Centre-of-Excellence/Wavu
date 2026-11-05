@@ -1,0 +1,11 @@
+{
+  "name": "wavu",
+  "version": "0.1.0",
+  "description": "Write, test and package Python scripts that Fiji runs through Wavu, each in its own pixi environment.",
+  "author": {
+    "name": "Oxford-Zeiss Centre of Excellence"
+  },
+  "homepage": "https://oxford-zeiss-centre-of-excellence.github.io/Wavu/agents/",
+  "repository": "https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu",
+  "license": "GPL-3.0-or-later"
+}

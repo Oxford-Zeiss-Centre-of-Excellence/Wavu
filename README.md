@@ -1,7 +1,6 @@
 # Wavu
 
 **📖 Step-by-step guide: <https://oxford-zeiss-centre-of-excellence.github.io/Wavu/>**
-(short pages, in English, Français, Deutsch, Español, Русский, 日本語, 한국어, 繁體中文 and 简体中文)
 
 *Wavu* is Fijian for "bridge". It is a bridge from [Fiji](https://fiji.sc) to
 Python. You write a short Python script, Fiji shows a dialog for its
@@ -107,6 +106,7 @@ def run(ctx, inputs, params):
 | go from an idea to a released Fiji menu item | [Cellpose plugin tutorial](docs/tutorial-cellpose-plugin.md) |
 | run a worker by hand, in Docker, offline, or debug in VS Code | [Running and debugging](docs/running-and-debugging.md) |
 | share my script with other Fiji users | [Sharing](docs/sharing.md) |
+| let my AI coding agent write Wavu scripts | [AI agents](https://oxford-zeiss-centre-of-excellence.github.io/Wavu/agents/) (skill: [`agent/skills/wavu/SKILL.md`](agent/skills/wavu/SKILL.md)) |
 | understand the HTTP API | [Protocol](docs/protocol.md) |
 | know why it is built this way | [Decisions](docs/decisions.md) |
 | run the tests or make a release | [Development](docs/development.md), [CONTRIBUTING](CONTRIBUTING.md) |
