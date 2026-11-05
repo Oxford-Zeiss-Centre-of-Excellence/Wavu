@@ -108,14 +108,20 @@ switched on with repository *variables*:
   `UPDATE_SITE_USER` and `UPDATE_SITE_PASS`.
 - PyPI trusted publishing: `PYPI_PUBLISH=true`.
 
-## D10: Script dependency on wavu
+## D10: How a script environment gets wavu
 
-Inside this repo, the template and examples depend on wavu through an
-editable path (`../..`), so they test the current code. `wavu new-script`
-rewrites that line. In a checkout it becomes a path to the checkout.
-Otherwise it becomes the release wheel's URL on GitHub, so it works before
-PyPI exists and without git. With `--wavu-source pypi` it becomes the PyPI
-package.
+- **Inside this repo** (the template and the examples): an editable path
+  (`../..`), so they test the current code.
+- **`wavu new-script` anywhere else** (the default): a git dependency,
+  `wavu = { git = "https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu.git", tag = "vX.Y.Z" }`.
+  Before the first release it uses `branch = "main"` instead of a tag. The
+  owner chose this so scripts work before PyPI exists. **Trade-off:** pixi
+  resolves git dependencies with the `git` command, so the developer's
+  machine and CI need git. End users do not, as long as the shipped
+  `pixi.lock` is used. `--wavu-source release`, which points at the release
+  wheel URL and needs no git, or `--wavu-source pypi` avoid that.
+- **`wavu package` refuses a path dependency**, because the path would not
+  exist on users' machines.
 
 ## D11: GPL-3.0-or-later
 
@@ -127,3 +133,17 @@ derivatives open.
 The Cell Tracking Challenge terms forbid redistributing ("cloning") its
 datasets, so `pixi run fetch-test-data` downloads one frame from the official
 server and verifies it by sha256. See [test-data.md](test-data.md).
+
+## D13: Distributing a script: `wavu package` and installed folders
+
+A third-party script installs into `<Fiji.app>/wavu/scripts/<name>/`
+(`script.py`, `pixi.toml`, `pixi.lock`, `README.md`). A menu stub of about 8
+lines goes in `<Fiji.app>/scripts/Plugins/<Menu>/<Title>.groovy`. The stub
+loads the Wavu library and calls `runScriptFolder(<that folder>)`. There is no
+folder chooser. On first use, the environment is installed with
+`pixi run --frozen`, which follows the shipped lock exactly. `wavu package`
+builds this tree and a zip, and requires a `pixi.lock`. **Open question:** the
+Fiji updater may not upload files outside its known top-level folders (`jars/`,
+`plugins/`, `scripts/`, `macros/`, ...), and `wavu/` is not one of them. This
+has not been verified against a real update site. If it fails, the fallback is
+to move the folder under `scripts/` and give it extensions Fiji does not run.

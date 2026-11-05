@@ -112,3 +112,22 @@ worker does.
 ```
 pixi run wavu run script.py --in image=cells.tif --param sigma=3 --out results
 ```
+
+## Packaging for other Fiji users
+
+```
+pixi run wavu package <script-dir> --name my-cellpose --menu "My Lab>Cellpose Plus" [--out dist/fiji]
+```
+
+This writes:
+
+```
+dist/fiji/wavu/scripts/my-cellpose/              script.py, pixi.toml, pixi.lock, README.md, helpers
+dist/fiji/scripts/Plugins/My Lab/Cellpose Plus.groovy   menu stub -> runScriptFolder(<Fiji>/wavu/scripts/my-cellpose)
+dist/my-cellpose-fiji.zip                        the same tree, ready to unzip into Fiji.app
+```
+
+The command needs `pixi.lock`. Tests (`test_*.py`), `.pixi`, `.vscode` and
+`.github` are left out. A `wavu` dependency given as a local path is
+rejected. **Run Python Script** also lists every installed
+`<Fiji>/wavu/scripts/*` folder.
