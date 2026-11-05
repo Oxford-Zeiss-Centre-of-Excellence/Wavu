@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use Wavu, please cite it as below."
+title: "Wavu: run Python scripts in isolated pixi environments from Fiji"
+type: software
+authors:
+  - name: "Oxford-Zeiss Centre of Excellence"
+repository-code: "https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu"
+url: "https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu"
+license: GPL-3.0-or-later
+keywords:
+  - Fiji
+  - ImageJ
+  - Python
+  - pixi
+  - bioimage analysis
+  - microscopy

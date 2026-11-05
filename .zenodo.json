@@ -1,0 +1,17 @@
+{
+  "title": "Wavu: run Python scripts in isolated pixi environments from Fiji",
+  "description": "Wavu (Fijian for 'bridge') lets Fiji run Python scripts, each in its own pixi environment, with logs and progress streaming back and VS Code debugging. For small, interactive data.",
+  "upload_type": "software",
+  "license": "GPL-3.0-or-later",
+  "creators": [
+    { "name": "Oxford-Zeiss Centre of Excellence" }
+  ],
+  "keywords": ["Fiji", "ImageJ", "Python", "pixi", "bioimage analysis", "microscopy"],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

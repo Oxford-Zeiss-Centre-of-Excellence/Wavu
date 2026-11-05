@@ -1,0 +1,37 @@
+# Development
+
+All you need is pixi. Everything else comes from `pixi.toml`.
+
+| command | what it does |
+|---|---|
+| `pixi run test` | Unit and protocol tests. They start real `wavu-worker` subprocesses against `tests/scripts/` and run the template's own tests. |
+| `pixi run test-integration` | Starts a worker through `pixi run` in `templates/wavu-script`'s own environment and runs the blur. |
+| `WAVU_FIJI=<Fiji.app> pixi run test-fiji` | Headless Fiji smoke test. Fiji runs `tests/fiji/smoke_test.groovy`, which loads the real client library, starts a worker for the template through pixi, and blurs a synthetic 16-bit image. It does this once with inline transfer and once through TIFF files, and checks size, type, blur and calibration. Set `WAVU_FIJI_LAUNCHER` to choose the launcher. |
+| `pixi run fetch-test-data` | Downloads the CTC frame (see [test-data.md](test-data.md)). `tests/test_ctc_frame.py` then runs too. |
+| `pixi run worker` | Launch mode 2 for the template. |
+| `pixi run new-script NAME` | Copies the template to `./NAME`. |
+| `pixi run fiji-zip [VERSION]` | Builds `dist/wavu-fiji-<version>.zip`. |
+| `pixi run -e build build` | Builds the wheel and sdist. |
+| `pixi run --manifest-path examples/cellpose_nuclei/pixi.toml test` | The heavy cellpose test (weekly CI). |
+
+## Verified locally (Windows 11, first version)
+
+- `pixi run test`: all tests pass.
+- `pixi run test-integration`: passes.
+- The Fiji smoke test passes against a Fiji with **Java 1.8.0_452
+  (Zulu 8), ImageJ 1.54p, Groovy 4.0.23**, using the legacy launcher:
+  `WAVU_FIJI=D:/Downloads/Fiji.app WAVU_FIJI_LAUNCHER=ImageJ-win64.exe pixi run test-fiji`
+- The newer Jaunch launcher (`fiji-windows-x64.exe`) in that same old
+  installation exited with code 1 and printed nothing, even for a hello-world
+  script. This is probably because it is paired with Java 8 there. CI uses
+  the latest Fiji, with Java 21 and Jaunch on Linux. The `fiji-smoke` job is
+  `continue-on-error` until it has been seen green there.
+- Not run locally: the Docker image (Docker Desktop was not running), the
+  cellpose example, and the screenshot capture.
+  `pixi exec pixi-pack ... packaging/bundle` was run for linux-64 and
+  produced a 137 MiB self-extracting bundle.
+
+## Releases
+
+Releases are fully automated. See [CONTRIBUTING.md](../CONTRIBUTING.md) and
+[decisions.md](decisions.md) D9.
