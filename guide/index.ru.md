@@ -1,5 +1,5 @@
 ---
-title: Wavu
+title: Главная
 hide:
   - navigation
   - toc

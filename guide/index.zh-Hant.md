@@ -1,5 +1,5 @@
 ---
-title: Wavu
+title: 首頁
 hide:
   - navigation
   - toc

@@ -1,5 +1,5 @@
 ---
-title: Wavu
+title: ホーム
 hide:
   - navigation
   - toc

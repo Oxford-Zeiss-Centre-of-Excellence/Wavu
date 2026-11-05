@@ -1,5 +1,5 @@
 ---
-title: Wavu
+title: Startseite
 hide:
   - navigation
   - toc
