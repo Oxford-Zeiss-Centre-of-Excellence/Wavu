@@ -1,5 +1,8 @@
 # Wavu
 
+**📖 Step-by-step guide: <https://oxford-zeiss-centre-of-excellence.github.io/Wavu/>**
+(short pages, in English, Français, Deutsch, Español, Русский, 日本語, 한국어, 繁體中文 and 简体中文)
+
 *Wavu* is Fijian for "bridge". It is a bridge from [Fiji](https://fiji.sc) to
 Python. You write a short Python script, Fiji shows a dialog for its
 parameters, and the script runs in **its own isolated [pixi](https://pixi.sh)
