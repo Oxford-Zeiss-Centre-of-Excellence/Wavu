@@ -87,4 +87,4 @@ ctx.log("Model ready")
 `ctx.meta` 确认），大小最好在 1–2 GB 以内，并且在任何慢步骤（比如首次下载模型）
 之前都要先 `ctx.log`。
 
-[下一步：不用 Fiji 也能测试 :material-arrow-right:](test-without-fiji.md){ .md-button }
+[下一步：分享给实验室 :material-arrow-right:](../share/with-your-lab.md){ .md-button }

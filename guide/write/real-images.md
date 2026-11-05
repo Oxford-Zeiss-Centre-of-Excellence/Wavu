@@ -92,4 +92,4 @@ Your script gets the whole image as one array in **T Z C Y X** order (read
 `ctx.meta` to be sure), it should stay below about 1–2 GB, and you should
 `ctx.log` before anything slow, such as a first model download.
 
-[Next: test without Fiji :material-arrow-right:](test-without-fiji.md){ .md-button }
+[Next: share with your lab :material-arrow-right:](../share/with-your-lab.md){ .md-button }

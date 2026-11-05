@@ -104,4 +104,4 @@ Votre script reçoit l'image entière en un seul tableau, dans l'ordre
 environ 1–2 Go, et vous devriez appeler `ctx.log` avant toute étape lente,
 comme le premier téléchargement d'un modèle.
 
-[Suite : tester sans Fiji :material-arrow-right:](test-without-fiji.md){ .md-button }
+[Suite : partager avec votre labo :material-arrow-right:](../share/with-your-lab.md){ .md-button }

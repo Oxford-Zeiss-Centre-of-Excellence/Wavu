@@ -1,27 +1,30 @@
-# Probar sin Fiji
+# Primero el test
 
-!!! note "Opcional"
-    Puedes escribir scripts útiles sin hacer nunca esto. Merece la pena cuando
-    tu script crece, o antes de compartirlo.
+!!! success "Muy recomendable: empieza aquí cada cambio"
+    *Puedes* saltarte los tests e ir directamente a Fiji. Pero escribir la
+    comprobación **antes** que el código es el hábito que más tiempo ahorra, y
+    importa sobre todo cuando un **asistente de IA** escribe el código por ti
+    (ver más abajo).
 
 ## La idea en palabras sencillas
 
-Un cocinero prueba la salsa antes de que salga; nadie quiere descubrir el
-error en la mesa del cliente. Un **test** es una pequeña comprobación que
-ejecuta tu función `run` sobre una imagen inventada y confirma que la
-respuesta tiene buena pinta, **sin abrir Fiji**. Wavu te da un sustituto de
-Fiji, `FakeCtx`, que guarda los mensajes del Log y el progreso en lugar de
-mostrarlos.
+Un cocinero decide cómo debe saber el plato **antes** de cocinar, y luego va
+probando sobre la marcha. Un **test** es esa decisión por escrito: una pequeña
+comprobación que ejecuta tu función `run` sobre una imagen inventada y dice
+*pasa* o *falla*, **sin abrir Fiji**. Escribirlo primero se llama
+*desarrollo guiado por tests* (TDD, del inglés *test-driven development*).
+
+Wavu te da un sustituto de Fiji, `FakeCtx`, que guarda los mensajes del Log y
+el progreso en lugar de mostrarlos.
 
 ```mermaid
 flowchart LR
-    I["imagen inventada<br/>(NumPy)"]:::env
-    F["FakeCtx<br/>(Fiji de mentira)"]:::fiji
-    S["tu run()"]:::script
-    C["comprobaciones:<br/>¿forma correcta? ¿el progreso llegó a 1.0?"]:::worker
-    I --> S
-    F --> S
-    S --> C
+    T["1 · Escribe la comprobación<br/>(test_script.py)"]:::worker
+    R["2 · pixi run test<br/>falla (rojo)"]:::fiji
+    S["3 · Cambia script.py<br/>hasta que pase (verde)"]:::script
+    F["4 · Pruébalo en Fiji"]:::env
+    T --> R --> S --> F
+    S -- "siguiente idea" --> T
 
     classDef fiji   fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
     classDef worker fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
@@ -29,9 +32,14 @@ flowchart LR
     classDef env    fill:#f3e5f5,stroke:#6a1b9a,color:#4a148c
 ```
 
+¿Por qué primero? Una comprobación escrita *después* del código tiende a
+probar lo que el código hace, no lo que tú querías. Escrita primero, es tu
+plan; un resultado rojo antes de empezar demuestra que la comprobación de
+verdad mira algo.
+
 ## Cómo es un test
 
-La plantilla ya trae uno, en `test_script.py`:
+La plantilla ya trae algunos, en `test_script.py`:
 
 ```python
 from pathlib import Path
@@ -58,6 +66,10 @@ def test_blur_smooths_a_single_bright_pixel():
   cada valor de progreso.
 - `FakeCtx(cancel_after=2)` simula que el usuario pulsó Esc después de dos
   comprobaciones, para que puedas probar que cancelar funciona.
+
+**Tu primer test** para una idea nueva puede ser así de pequeño: crea una
+imagen cuya respuesta conoces (un cuadrado brillante, dos manchas separadas)
+y comprueba esa respuesta (`labels.max() == 2`).
 
 ## Ejecutar los tests { #run-the-tests }
 
@@ -92,19 +104,25 @@ no se cumplió; el texto de encima te dice qué línea y por qué.
 
     Después, `pixi --version` muestra un número de versión.
 
-## Probar con una imagen real
+## Trabajar con un asistente de IA
 
-También puedes probar el script completo con un archivo TIFF, sin Fiji, y
-guardar los resultados en una carpeta:
+Los asistentes de programación (Claude, Copilot, ChatGPT…) escriben código
+rápido y suenan muy seguros, incluso cuando el código está mal. Un test es una
+promesa que no pueden esquivar con palabras:
 
-```sh
-pixi run wavu run script.py --in image=cells.tif --param sigma=3 --out results
-```
+1. **Tú** escribes o apruebas el test: la imagen de entrada y la respuesta
+   que esperas.
+2. Pide al asistente: *"haz que `pixi run test` pase sin cambiar los
+   tests."*
+3. **Ejecuta tú los tests** antes de fiarte del resultado, y luego pruébalo
+   en Fiji.
+
+Lee los tests que escribe el asistente con el mismo cuidado que su código:
+una comprobación que nunca puede fallar no protege nada.
 
 ## En una frase
 
-`FakeCtx` y `run_script` te permiten comprobar `run` con una pequeña imagen
-inventada usando `pixi run test`, para que los errores aparezcan antes de que
-los vea Fiji o un colega.
+Escribe primero la comprobación, mira cómo falla, cambia `script.py` hasta
+que `pixi run test` pase, y solo entonces pruébalo en Fiji.
 
-[Siguiente: compartir con tu laboratorio :material-arrow-right:](../share/with-your-lab.md){ .md-button }
+[Siguiente: del notebook a Wavu :material-arrow-right:](from-notebook.md){ .md-button }

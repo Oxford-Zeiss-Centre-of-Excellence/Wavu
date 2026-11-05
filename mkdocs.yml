@@ -22,31 +22,45 @@ theme:
   icon:
     logo: material/bridge
   favicon: assets/img/favicon.svg
+  font:
+    text: Inter
+    code: JetBrains Mono
   features:
+    - navigation.tracking
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
     - navigation.top
     - navigation.footer
     - navigation.indexes
+    - toc.follow
     - search.suggest
     - search.highlight
+    - search.share
     - content.code.copy
+    - content.code.annotate
     - content.tabs.link
+    - content.tooltips
+  # Three-way toggle: follow the system, light, dark. Colours: stylesheets/extra.css
   palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: blue
-      accent: orange
+      primary: custom
+      accent: custom
       toggle:
-        icon: material/weather-night
+        icon: material/weather-sunny
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: blue
-      accent: orange
+      primary: custom
+      accent: custom
       toggle:
-        icon: material/weather-sunny
-        name: Switch to light mode
+        icon: material/weather-night
+        name: Follow the system setting
 
 extra_css:
   - stylesheets/extra.css
@@ -121,12 +135,12 @@ nav:
       - start/first-run.md
   - Write a script:
       - write/get-the-template.md
+      - write/test-without-fiji.md
       - write/from-notebook.md
       - write/params.md
       - write/outputs.md
       - write/logs-progress-cancel.md
       - write/real-images.md
-      - write/test-without-fiji.md
   - Share:
       - share/with-your-lab.md
       - share/with-the-world.md

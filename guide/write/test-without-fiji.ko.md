@@ -1,26 +1,28 @@
-# Fiji 없이 테스트하기
+# 테스트 먼저
 
-!!! note "선택 사항"
-    이걸 하지 않아도 쓸모 있는 스크립트를 만들 수 있어요. 스크립트가
-    커지거나 공유하기 전이라면 해 둘 만해요.
+!!! success "강력 추천: 모든 변경을 여기서 시작하세요"
+    테스트를 건너뛰고 바로 Fiji로 가도 *돼요*. 하지만 코드보다 **먼저**
+    검사를 쓰는 습관이 시간을 가장 많이 아껴 줘요. **AI 어시스턴트**가
+    코드를 써 줄 때 특히 중요해요(아래 참고).
 
 ## 쉬운 말로 설명하면
 
-요리사는 소스를 내보내기 전에 맛을 봐요. 손님 테이블에서 실수를 발견하고
-싶은 사람은 없으니까요. **테스트**는 지어낸 이미지로 `run` 함수를 돌려서
-답이 맞아 보이는지 확인하는 작은 검사예요. **Fiji를 열지 않고요.** Wavu는
-Fiji를 대신하는 `FakeCtx`를 줘요. 로그 메시지와 진행 상황을 보여 주는
-대신 기록해 둬요.
+요리사는 요리하기 **전에** 어떤 맛이어야 하는지 정하고, 요리하면서 맛을
+봐요. **테스트**는 그 결정을 적어 둔 거예요. 지어낸 이미지로 `run` 함수를
+돌려서 *통과*인지 *실패*인지 알려 주는 작은 검사예요. **Fiji를 열지
+않고요.** 이걸 먼저 쓰는 방식을 *테스트 주도 개발*(TDD)이라고 해요.
+
+Wavu는 Fiji를 대신하는 `FakeCtx`를 줘요. 로그 메시지와 진행 상황을 보여
+주는 대신 기록해 둬요.
 
 ```mermaid
 flowchart LR
-    I["지어낸 이미지<br/>(NumPy)"]:::env
-    F["FakeCtx<br/>(가짜 Fiji)"]:::fiji
-    S["나의 run()"]:::script
-    C["검사:<br/>모양이 맞나? 진행이 1.0에 닿았나?"]:::worker
-    I --> S
-    F --> S
-    S --> C
+    T["1 · 검사 쓰기<br/>(test_script.py)"]:::worker
+    R["2 · pixi run test<br/>실패해요(빨강)"]:::fiji
+    S["3 · script.py 고치기<br/>통과할 때까지(초록)"]:::script
+    F["4 · Fiji에서 해 보기"]:::env
+    T --> R --> S --> F
+    S -- "다음 아이디어" --> T
 
     classDef fiji   fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
     classDef worker fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
@@ -28,9 +30,13 @@ flowchart LR
     classDef env    fill:#f3e5f5,stroke:#6a1b9a,color:#4a148c
 ```
 
+왜 먼저일까요? 코드 *다음에* 쓴 검사는 내가 원한 것이 아니라 코드가 하는
+일을 확인하기 쉬워요. 먼저 쓰면 그게 계획이 돼요. 시작하기 전에 빨간
+결과가 나오면 검사가 정말 무언가를 보고 있다는 증거예요.
+
 ## 테스트는 이렇게 생겼어요
 
-템플릿의 `test_script.py`에 이미 하나 있어요.
+템플릿의 `test_script.py`에 이미 몇 개 있어요.
 
 ```python
 from pathlib import Path
@@ -57,6 +63,10 @@ def test_blur_smooths_a_single_bright_pixel():
   진행 값이 들어 있어요.
 - `FakeCtx(cancel_after=2)`는 확인 두 번 뒤에 사용자가 Esc를 누른 척해요.
   취소가 잘 되는지 테스트할 수 있어요.
+
+새 아이디어의 **첫 테스트**는 이 정도로 작아도 돼요. 답을 아는 이미지(밝은
+네모 하나, 떨어진 덩어리 두 개)를 만들고, 그 답(`labels.max() == 2`)을
+assert로 확인하세요.
 
 ## 테스트 실행하기 { #run-the-tests }
 
@@ -91,17 +101,22 @@ pixi run test
 
     그다음 `pixi --version`을 치면 버전 번호가 나와요.
 
-## 실제 이미지로 테스트하기
+## AI 어시스턴트와 함께 작업하기
 
-Fiji 없이 TIFF 파일로 스크립트 전체를 돌리고, 결과를 폴더에 저장할 수도 있어요.
+코딩 어시스턴트(Claude, Copilot, ChatGPT…)는 코드를 빨리 쓰고, 코드가
+틀려도 자신 있게 말해요. 테스트는 말로 빠져나갈 수 없는 약속이에요.
 
-```sh
-pixi run wavu run script.py --in image=cells.tif --param sigma=3 --out results
-```
+1. **내가** 테스트를 쓰거나 승인해요. 입력 이미지와 기대하는 답이에요.
+2. 어시스턴트에게 *"테스트는 바꾸지 말고 `pixi run test`가 통과하게
+   해 줘."*라고 부탁해요.
+3. 결과를 믿기 전에 **직접 테스트를 실행**하고, 그다음 Fiji에서 해 봐요.
+
+어시스턴트가 쓴 테스트도 코드만큼 꼼꼼히 읽으세요. 절대 실패하지 않는
+검사는 아무것도 지켜 주지 못해요.
 
 ## 한 문장으로
 
-`FakeCtx`와 `run_script`로 작은 지어낸 이미지에서 `run`을 `pixi run test`로
-확인하면, Fiji나 동료가 보기 전에 실수가 드러나요.
+검사를 먼저 쓰고, 실패하는 걸 확인하고, `pixi run test`가 통과할 때까지
+`script.py`를 고친 다음에야 Fiji에서 해 보세요.
 
-[다음: 연구실과 공유하기 :material-arrow-right:](../share/with-your-lab.md){ .md-button }
+[다음: 노트북에서 Wavu로 :material-arrow-right:](from-notebook.md){ .md-button }

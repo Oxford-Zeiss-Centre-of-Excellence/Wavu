@@ -1,24 +1,27 @@
-# 不用 Fiji 也能测试
+# 先写测试
 
-!!! note "可选"
-    就算从来不做这一步，你也能写出好用的脚本。等脚本变大，或者在分享之前，它就很有价值了。
+!!! success "强烈推荐：每次修改都从这里开始"
+    你*可以*跳过测试，直接去 Fiji 里试。但在写代码**之前**先写好检查，
+    是最省时间的习惯；当代码由 **AI 助手**替你来写时，这一点尤其重要（见下文）。
 
 ## 用大白话说
 
-厨师上菜前会先尝一口酱汁；谁都不想在客人的餐桌上才发现问题。
-**测试**就是一个小检查：用一张自己造的图像跑一下你的 `run` 函数，确认结果看起来没错，
-而且**根本不用打开 Fiji**。Wavu 提供了一个 Fiji 的替身 `FakeCtx`，
-它把日志消息和进度记录下来，而不是显示出来。
+厨师在下锅**之前**就想好这道菜该是什么味道，然后边做边尝。
+**测试**就是把这个决定写下来：一个小检查，用一张自己造的图像跑一下你的
+`run` 函数，告诉你*通过*还是*失败*，而且**根本不用打开 Fiji**。
+先写测试再写代码，叫作*测试驱动开发*（test-driven development，TDD）。
+
+Wavu 提供了一个 Fiji 的替身 `FakeCtx`，它把日志消息和进度记录下来，
+而不是显示出来。
 
 ```mermaid
 flowchart LR
-    I["造出来的图像<br/>(NumPy)"]:::env
-    F["FakeCtx<br/>（假装的 Fiji）"]:::fiji
-    S["你的 run()"]:::script
-    C["检查：<br/>形状对吗？进度到 1.0 了吗？"]:::worker
-    I --> S
-    F --> S
-    S --> C
+    T["1 · 写下检查<br/>(test_script.py)"]:::worker
+    R["2 · pixi run test<br/>失败（红）"]:::fiji
+    S["3 · 修改 script.py<br/>直到通过（绿）"]:::script
+    F["4 · 在 Fiji 里试试"]:::env
+    T --> R --> S --> F
+    S -- "下一个想法" --> T
 
     classDef fiji   fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
     classDef worker fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
@@ -26,9 +29,13 @@ flowchart LR
     classDef env    fill:#f3e5f5,stroke:#6a1b9a,color:#4a148c
 ```
 
+为什么要先写？代码写完*之后*才写的检查，往往只是在测代码做了什么，
+而不是你想让它做什么。先写的话，它就是你的计划；动手之前先看到红色，
+也证明这个检查确实在检查东西。
+
 ## 测试长什么样
 
-模板里已经有一个，在 `test_script.py` 中：
+模板里已经有几个，在 `test_script.py` 中：
 
 ```python
 from pathlib import Path
@@ -54,6 +61,10 @@ def test_blur_smooths_a_single_bright_pixel():
 - `ctx.messages` 存着你写过的所有日志；`ctx.progress_values` 存着每个进度值。
 - `FakeCtx(cancel_after=2)` 会假装用户在两次检查之后按了 Esc，
   方便你测试取消是否正常。
+
+为新想法写的**第一个测试**可以就这么小：造一张你已经知道答案的图像
+（一个亮方块、两个分开的斑点），然后断言（assert）这个答案
+（`labels.max() == 2`）。
 
 ## 运行测试 { #run-the-tests }
 
@@ -85,17 +96,19 @@ pixi run test
 
     之后运行 `pixi --version` 会打印出版本号。
 
-## 用真实图像测试
+## 和 AI 助手一起工作
 
-你也可以不开 Fiji，直接拿一个 TIFF 文件试跑整个脚本，并把结果保存到一个文件夹：
+编程助手（Claude、Copilot、ChatGPT……）写代码很快，口气也总是很笃定，
+哪怕代码是错的。测试是一个它们没法靠说辞绕过去的约定：
 
-```sh
-pixi run wavu run script.py --in image=cells.tif --param sigma=3 --out results
-```
+1. 由**你**来写或确认测试：输入的图像，以及你期望的答案。
+2. 对助手说：*“在不修改测试的前提下，让 `pixi run test` 通过。”*
+3. 在相信结果之前，**自己运行测试**，然后再去 Fiji 里试。
+
+助手写的测试，要像它写的代码一样仔细读：一个永远不会失败的检查，什么也保护不了。
 
 ## 一句话总结
 
-`FakeCtx` 和 `run_script` 让你用 `pixi run test` 在一张小小的假图像上检查
-`run`，问题就会在 Fiji 或同事看到之前暴露出来。
+先写检查，看它失败，修改 `script.py` 直到 `pixi run test` 通过，然后才去 Fiji 里试。
 
-[下一步：分享给实验室 :material-arrow-right:](../share/with-your-lab.md){ .md-button }
+[下一步：从笔记本到 Wavu :material-arrow-right:](from-notebook.md){ .md-button }

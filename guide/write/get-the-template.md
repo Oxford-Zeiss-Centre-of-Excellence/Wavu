@@ -50,15 +50,20 @@ handy later, when you want to [share with the world](../share/with-the-world.md)
 |---|---|
 | `script.py` | **Your recipe.** `PARAMS` (the dialog) and `run` (the work). |
 | `pixi.toml` | The shopping list for this script's pantry. |
-| `test_script.py` | Checks that run without Fiji ([optional](test-without-fiji.md)). |
+| `test_script.py` | Checks that run without Fiji. **Start here** ([test first](test-without-fiji.md)). |
 | `.vscode/` | Makes [debugging in VS Code](../help/debug-in-vscode.md) one click. |
 | `README.md`, `.github/` | Notes, and automatic releases ([advanced](../share/with-the-world.md)). |
 
 ## The everyday loop
 
-1. **Edit** `script.py` in VS Code and **save** (++ctrl+s++, or ++cmd+s++ on a Mac).
-2. In Fiji, choose **Plugins › Wavu › Stop Worker**.
-3. Choose **Plugins › Wavu › Run Python Script** and pick your folder.
+1. **Write the check first** in `test_script.py`: what should come out for a
+   small made-up image? Run `pixi run test` and watch it fail.
+   ([Test first](test-without-fiji.md) shows how. You can skip this, but it
+   is strongly recommended, above all when an AI assistant writes the code.)
+2. **Edit** `script.py` in VS Code and **save** (++ctrl+s++, or ++cmd+s++ on
+   a Mac) until `pixi run test` passes.
+3. In Fiji, choose **Plugins › Wavu › Stop Worker**.
+4. Choose **Plugins › Wavu › Run Python Script** and pick your folder.
 
 !!! warning "Why Stop Worker?"
     The kitchen reads the recipe when it opens. If it is still open from the
@@ -83,6 +88,11 @@ Save, **Stop Worker**, and run again. Wavu notices the new line and pixi
 fetches the package (the Log shows it). Packages that only exist on PyPI
 (the `pip` world) go under `[pypi-dependencies]` instead.
 
+!!! info "Where do packages come from? conda-forge and PyPI"
+    Think of two shops. **conda-forge** is the shop pixi visits first: a free, community-run store of ready-built packages, including ones with compiled parts such as numpy, scikit-image or PyTorch, and even tools that are not Python at all. Everything under `[dependencies]` comes from there. **PyPI** is the shop `pip` uses; a few packages are only sold there, and those go under `[pypi-dependencies]`.
+
+    Rule of thumb: search [conda-forge](https://prefix.dev/channels/conda-forge) first; if the package is not there, use PyPI. Names can differ between the two shops: PyTorch is `pytorch` on conda-forge but `torch` on PyPI.
+
 ??? note "Prefer the terminal?"
     These do the same as the buttons, in a terminal:
 
@@ -101,4 +111,4 @@ fetches the package (the Log shows it). Packages that only exist on PyPI
 Click once to get a working script folder, edit `script.py` in VS Code, then
 **Stop Worker** and **Run Python Script** in Fiji to try each change.
 
-[Next: from notebook to Wavu :material-arrow-right:](from-notebook.md){ .md-button }
+[Next: test first :material-arrow-right:](test-without-fiji.md){ .md-button }

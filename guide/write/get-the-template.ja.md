@@ -53,16 +53,20 @@ flowchart LR
 |---|---|
 | `script.py` | **あなたのレシピ。** `PARAMS`（ダイアログ）と `run`（処理）。 |
 | `pixi.toml` | このスクリプトの食材庫の買い物リスト。 |
-| `test_script.py` | Fiji なしで動くチェック（[任意](test-without-fiji.md)）。 |
+| `test_script.py` | Fiji なしで動くチェック。**ここから始めます**（[まずテストから](test-without-fiji.md)）。 |
 | `.vscode/` | [VS Code でのデバッグ](../help/debug-in-vscode.md) をワンクリックにします。 |
 | `README.md`, `.github/` | メモと、自動リリース（[上級](../share/with-the-world.md)）。 |
 
 ## いつもの流れ
 
-1. VS Code で `script.py` を **編集** して **保存** します
-   （++ctrl+s++、Mac なら ++cmd+s++）。
-2. Fiji で **Plugins › Wavu › Stop Worker** を選びます。
-3. **Plugins › Wavu › Run Python Script** を選び、フォルダーを選びます。
+1. `test_script.py` に **まずチェックを書きます**。小さな作り物の画像から
+   何が出てくるべきでしょう？ `pixi run test` を実行し、失敗するのを確かめます。
+   （やり方は [まずテストから](test-without-fiji.md) にあります。飛ばしても
+   構いませんが、特に AI アシスタントがコードを書くときは強くおすすめします。）
+2. VS Code で `script.py` を **編集** して **保存** します
+   （++ctrl+s++、Mac なら ++cmd+s++）。`pixi run test` が通るまで続けます。
+3. Fiji で **Plugins › Wavu › Stop Worker** を選びます。
+4. **Plugins › Wavu › Run Python Script** を選び、フォルダーを選びます。
 
 !!! warning "なぜ Stop Worker？"
     厨房は開店するときにレシピを読みます。前回の実行から開いたままだと、
@@ -87,6 +91,11 @@ scikit-image = "*"     # <- 新しい行："*" はどのバージョンでもよ
 pixi がパッケージを取ってきます（Log に表示されます）。PyPI（`pip` の世界）
 にしかないパッケージは、代わりに `[pypi-dependencies]` の下に書きます。
 
+!!! info "パッケージはどこから来るの？ conda-forge と PyPI"
+    お店が 2 つあると考えてください。**conda-forge** は pixi が最初に買いに行くお店です。コミュニティが運営する無料のお店で、numpy、scikit-image、PyTorch のようにコンパイル済みの部分を含むパッケージや、Python 以外のツールまで、すぐ使える形でそろっています。`[dependencies]` に書いたものはすべてここから来ます。**PyPI** は `pip` のお店です。ここにしかないパッケージもあり、それは `[pypi-dependencies]` に書きます。
+
+    目安：まず [conda-forge](https://prefix.dev/channels/conda-forge) で探し、なければ PyPI を使います。お店によって名前が違うこともあります。PyTorch は conda-forge では `pytorch`、PyPI では `torch` です。
+
 ??? note "ターミナルのほうが好きですか？"
     次のコマンドは、ボタンと同じことをターミナルで行います。
 
@@ -106,4 +115,4 @@ pixi がパッケージを取ってきます（Log に表示されます）。Py
 を編集し、変更を試すたびに Fiji で **Stop Worker** と
 **Run Python Script** を実行します。
 
-[次へ：ノートブックから Wavu へ :material-arrow-right:](from-notebook.md){ .md-button }
+[次へ：まずテストから :material-arrow-right:](test-without-fiji.md){ .md-button }

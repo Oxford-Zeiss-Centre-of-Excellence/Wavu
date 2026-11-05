@@ -55,16 +55,21 @@ c'est pratique plus tard, quand vous voudrez
 |---|---|
 | `script.py` | **Votre recette.** `PARAMS` (la boîte de dialogue) et `run` (le travail). |
 | `pixi.toml` | La liste de courses pour le garde-manger de ce script. |
-| `test_script.py` | Des vérifications qui tournent sans Fiji ([facultatif](test-without-fiji.md)). |
+| `test_script.py` | Des vérifications qui tournent sans Fiji. **Commencez ici** ([d'abord le test](test-without-fiji.md)). |
 | `.vscode/` | Permet de [déboguer dans VS Code](../help/debug-in-vscode.md) en un clic. |
 | `README.md`, `.github/` | Des notes, et les publications automatiques ([avancé](../share/with-the-world.md)). |
 
 ## La boucle de tous les jours
 
-1. **Modifiez** `script.py` dans VS Code et **enregistrez** (++ctrl+s++, ou
-   ++cmd+s++ sur Mac).
-2. Dans Fiji, choisissez **Plugins › Wavu › Stop Worker**.
-3. Choisissez **Plugins › Wavu › Run Python Script** et sélectionnez votre
+1. **Écrivez d'abord la vérification** dans `test_script.py` : que doit-on
+   obtenir pour une petite image inventée ? Lancez `pixi run test` et
+   regardez-la échouer. ([D'abord le test](test-without-fiji.md) montre
+   comment. Vous pouvez sauter cette étape, mais elle est vivement
+   recommandée, surtout quand un assistant IA écrit le code.)
+2. **Modifiez** `script.py` dans VS Code et **enregistrez** (++ctrl+s++, ou
+   ++cmd+s++ sur Mac) jusqu'à ce que `pixi run test` réussisse.
+3. Dans Fiji, choisissez **Plugins › Wavu › Stop Worker**.
+4. Choisissez **Plugins › Wavu › Run Python Script** et sélectionnez votre
    dossier.
 
 !!! warning "Pourquoi Stop Worker ?"
@@ -92,6 +97,11 @@ ligne et pixi récupère le paquet (le Log l'affiche). Les paquets qui
 n'existent que sur PyPI (le monde de `pip`) vont plutôt sous
 `[pypi-dependencies]`.
 
+!!! info "D'où viennent les paquets ? conda-forge et PyPI"
+    Imaginez deux magasins. **conda-forge** est celui où pixi va d'abord : un magasin gratuit, tenu par la communauté, de paquets prêts à l'emploi, y compris ceux qui contiennent du code compilé comme numpy, scikit-image ou PyTorch, et même des outils qui ne sont pas en Python. Tout ce qui est sous `[dependencies]` vient de là. **PyPI** est le magasin de `pip` ; quelques paquets ne se trouvent que là, et ils vont sous `[pypi-dependencies]`.
+
+    En pratique : cherchez d'abord sur [conda-forge](https://prefix.dev/channels/conda-forge) ; si le paquet n'y est pas, utilisez PyPI. Les noms peuvent différer entre les deux magasins : PyTorch s'appelle `pytorch` sur conda-forge mais `torch` sur PyPI.
+
 ??? note "Vous préférez le terminal ?"
     Ces commandes font la même chose que les boutons, dans un terminal :
 
@@ -111,4 +121,4 @@ Un clic pour obtenir un dossier de script qui fonctionne, modifiez
 `script.py` dans VS Code, puis **Stop Worker** et **Run Python Script** dans
 Fiji pour essayer chaque changement.
 
-[Suite : du notebook à Wavu :material-arrow-right:](from-notebook.md){ .md-button }
+[Suite : d'abord le test :material-arrow-right:](test-without-fiji.md){ .md-button }

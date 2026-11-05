@@ -98,4 +98,4 @@ ctx.log("Model ready")
 には `ctx.meta` を読みます）。大きさは 1〜2 GB くらいまでにし、最初の
 モデルのダウンロードのような時間のかかる処理の前には `ctx.log` を書きましょう。
 
-[次へ：Fiji なしでテストする :material-arrow-right:](test-without-fiji.md){ .md-button }
+[次へ：研究室で共有する :material-arrow-right:](../share/with-your-lab.md){ .md-button }

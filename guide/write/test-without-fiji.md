@@ -1,26 +1,28 @@
-# Test without Fiji
+# Test first
 
-!!! note "Optional"
-    You can write useful scripts without ever doing this. It pays off once
-    your script grows, or before you share it.
+!!! success "Strongly recommended: start every change here"
+    You *can* skip tests and go straight to Fiji. But writing the check
+    **before** the code is the habit that saves the most time, and it matters
+    most when an **AI assistant** writes the code for you (see below).
 
 ## The idea in plain words
 
-A chef tastes the sauce before it goes out; nobody wants to find the
-mistake at the customer's table. A **test** is a tiny check that runs your
-`run` function on a made-up image and confirms the answer looks right,
-**without opening Fiji**. Wavu gives you a stand-in for Fiji, `FakeCtx`,
-that records the log messages and progress instead of showing them.
+A chef decides how the dish should taste **before** cooking, then tastes as
+they go. A **test** is that decision written down: a tiny check that runs your
+`run` function on a made-up image and says *pass* or *fail*, **without
+opening Fiji**. Writing it first is called *test-driven development* (TDD).
+
+Wavu gives you a stand-in for Fiji, `FakeCtx`, that records log messages and
+progress instead of showing them.
 
 ```mermaid
 flowchart LR
-    I["made-up image<br/>(NumPy)"]:::env
-    F["FakeCtx<br/>(pretend Fiji)"]:::fiji
-    S["your run()"]:::script
-    C["checks:<br/>right shape? progress reached 1.0?"]:::worker
-    I --> S
-    F --> S
-    S --> C
+    T["1 · Write the check<br/>(test_script.py)"]:::worker
+    R["2 · pixi run test<br/>it fails (red)"]:::fiji
+    S["3 · Change script.py<br/>until it passes (green)"]:::script
+    F["4 · Try it in Fiji"]:::env
+    T --> R --> S --> F
+    S -- "next idea" --> T
 
     classDef fiji   fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
     classDef worker fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
@@ -28,9 +30,13 @@ flowchart LR
     classDef env    fill:#f3e5f5,stroke:#6a1b9a,color:#4a148c
 ```
 
+Why first? A check written *after* the code tends to test what the code
+does, not what you wanted. Written first, it is your plan; a red result
+before you start proves the check really looks at something.
+
 ## What a test looks like
 
-The template already has one, in `test_script.py`:
+The template already has some, in `test_script.py`:
 
 ```python
 from pathlib import Path
@@ -58,7 +64,11 @@ def test_blur_smooths_a_single_bright_pixel():
 - `FakeCtx(cancel_after=2)` pretends the user pressed Esc after two checks,
   so you can test that cancel works.
 
-## Run the tests
+**Your first test** for a new idea can be this small: make an image where
+you know the answer (one bright square, two separate blobs), and assert the
+answer (`labels.max() == 2`).
+
+## Run the tests { #run-the-tests }
 
 This is the one place where a terminal is the simplest way. In VS Code
 choose **Terminal › New Terminal** (it opens in your script folder) and
@@ -91,18 +101,25 @@ text above it says which line and why.
 
     Afterwards `pixi --version` prints a version number.
 
-## Testing on a real image
+## Working with an AI assistant
 
-You can also try the whole script on a TIFF file, without Fiji, and save the
-results to a folder:
+Coding assistants (Claude, Copilot, ChatGPT…) write code fast and sound
+sure of themselves, even when the code is wrong. A test is a promise they
+cannot talk their way around:
 
-```sh
-pixi run wavu run script.py --in image=cells.tif --param sigma=3 --out results
-```
+1. **You** write or approve the test: the input image and the answer you
+   expect.
+2. Ask the assistant: *"make `pixi run test` pass without changing the
+   tests."*
+3. **Run the tests yourself** before you trust the result, then try it in
+   Fiji.
+
+Read the tests the assistant writes as carefully as its code: a check that
+can never fail protects nothing.
 
 ## In one sentence
 
-`FakeCtx` and `run_script` let you check `run` on a small made-up image with
-`pixi run test`, so mistakes show up before Fiji or a colleague sees them.
+Write the check first, watch it fail, change `script.py` until
+`pixi run test` passes, and only then try it in Fiji.
 
-[Next: share with your lab :material-arrow-right:](../share/with-your-lab.md){ .md-button }
+[Next: from notebook to Wavu :material-arrow-right:](from-notebook.md){ .md-button }

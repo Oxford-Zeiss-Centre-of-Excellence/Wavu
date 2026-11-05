@@ -48,15 +48,20 @@ flowchart LR
 |---|---|
 | `script.py` | **你的食譜。** `PARAMS`（對話框）和 `run`（實際工作）。 |
 | `pixi.toml` | 這個腳本食材櫃的購物清單。 |
-| `test_script.py` | 不用 Fiji 就能執行的檢查（[選用](test-without-fiji.md)）。 |
+| `test_script.py` | 不用 Fiji 就能執行的檢查。**從這裡開始**（[先寫測試](test-without-fiji.md)）。 |
 | `.vscode/` | 讓[在 VS Code 中除錯](../help/debug-in-vscode.md)只要按一下。 |
 | `README.md`、`.github/` | 說明文件，以及自動發布（[進階](../share/with-the-world.md)）。 |
 
 ## 日常循環
 
-1. 在 VS Code 中**編輯** `script.py` 並**儲存**（++ctrl+s++，Mac 上是 ++cmd+s++）。
-2. 在 Fiji 中選 **Plugins › Wavu › Stop Worker**。
-3. 選 **Plugins › Wavu › Run Python Script**，再挑你的資料夾。
+1. **先寫檢查**，寫在 `test_script.py` 裡：給一張自己造的小影像，應該得到什麼結果？
+   執行 `pixi run test`，看它失敗。
+   （[先寫測試](test-without-fiji.md)會教你怎麼做。你可以跳過這一步，但強烈建議這樣做，
+   尤其是當程式碼由 AI 助理來寫的時候。）
+2. 在 VS Code 中**編輯** `script.py` 並**儲存**（++ctrl+s++，Mac 上是 ++cmd+s++），
+   直到 `pixi run test` 通過。
+3. 在 Fiji 中選 **Plugins › Wavu › Stop Worker**。
+4. 選 **Plugins › Wavu › Run Python Script**，再挑你的資料夾。
 
 !!! warning "為什麼要 Stop Worker？"
     worker（廚房）在開門時讀一次食譜。如果它從上次執行後還開著，
@@ -79,6 +84,11 @@ scikit-image = "*"     # <- 新加的一行："*" 表示任何版本都可以
 就會去下載這個套件（Log 會顯示過程）。只在 PyPI（`pip` 的世界）才有的套件，
 則要放在 `[pypi-dependencies]` 底下。
 
+!!! info "套件從哪裡來？conda-forge 和 PyPI"
+    想像有兩家商店。**conda-forge** 是 pixi 優先去買的那家：由社群經營的免費商店，賣的都是已經組裝好的套件，包括 numpy、scikit-image、PyTorch 這類含有編譯部分的套件，甚至還有不是用 Python 寫的工具。寫在 `[dependencies]` 底下的都從這裡來。**PyPI** 是 `pip` 用的商店；有些套件只有那裡有，這些要寫在 `[pypi-dependencies]` 底下。
+
+    簡單原則：先到 [conda-forge](https://prefix.dev/channels/conda-forge) 搜尋；找不到再用 PyPI。兩家商店的名字可能不一樣：PyTorch 在 conda-forge 叫 `pytorch`，在 PyPI 叫 `torch`。
+
 ??? note "比較喜歡用終端機？"
     下面這幾行在終端機裡做的事和那些按鈕一樣：
 
@@ -96,4 +106,4 @@ scikit-image = "*"     # <- 新加的一行："*" 表示任何版本都可以
 按一下就得到一個能用的腳本資料夾，在 VS Code 裡編輯 `script.py`，然後在 Fiji 裡按
 **Stop Worker** 和 **Run Python Script** 來試每一次修改。
 
-[下一步：從筆記本到 Wavu :material-arrow-right:](from-notebook.md){ .md-button }
+[下一步：先寫測試 :material-arrow-right:](test-without-fiji.md){ .md-button }

@@ -96,4 +96,4 @@ ctx.log("Model ready")
 1–2 ГБ, а перед любым медленным шагом, например первой загрузкой модели,
 стоит вызвать `ctx.log`.
 
-[Далее: проверка без Fiji :material-arrow-right:](test-without-fiji.md){ .md-button }
+[Далее: поделиться с лабораторией :material-arrow-right:](../share/with-your-lab.md){ .md-button }

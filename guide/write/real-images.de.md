@@ -104,4 +104,4 @@ Ihr Skript bekommt das ganze Bild als ein Array in der Reihenfolge
 1–2 GB bleiben, und vor allem Langsamen, etwa dem ersten Download eines
 Modells, sollten Sie `ctx.log` aufrufen.
 
-[Weiter: ohne Fiji testen :material-arrow-right:](test-without-fiji.md){ .md-button }
+[Weiter: mit dem eigenen Labor teilen :material-arrow-right:](../share/with-your-lab.md){ .md-button }

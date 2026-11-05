@@ -1,27 +1,31 @@
-# Tester sans Fiji
+# D'abord le test
 
-!!! note "Facultatif"
-    Vous pouvez écrire des scripts utiles sans jamais faire cela. C'est
-    rentable quand votre script grandit, ou avant de le partager.
+!!! success "Vivement recommandé : commencez chaque modification ici"
+    Vous *pouvez* sauter les tests et aller directement dans Fiji. Mais écrire
+    la vérification **avant** le code est l'habitude qui fait gagner le plus de
+    temps, et elle compte surtout quand un **assistant IA** écrit le code pour
+    vous (voir plus bas).
 
 ## L'idée en mots simples
 
-Un chef goûte la sauce avant qu'elle parte en salle ; personne n'a envie de
-découvrir l'erreur à la table du client. Un **test** est une toute petite
-vérification qui lance votre fonction `run` sur une image inventée et
-confirme que la réponse a l'air juste, **sans ouvrir Fiji**. Wavu vous donne
-une doublure de Fiji, `FakeCtx`, qui enregistre les messages du Log et la
-progression au lieu de les afficher.
+Un chef décide du goût que doit avoir le plat **avant** de cuisiner, puis
+goûte au fur et à mesure. Un **test**, c'est cette décision mise par écrit :
+une toute petite vérification qui lance votre fonction `run` sur une image
+inventée et répond *réussi* ou *échoué*, **sans ouvrir Fiji**. L'écrire en
+premier s'appelle le *développement piloté par les tests* (en anglais
+*test-driven development*, TDD).
+
+Wavu vous donne une doublure de Fiji, `FakeCtx`, qui enregistre les messages
+du Log et la progression au lieu de les afficher.
 
 ```mermaid
 flowchart LR
-    I["image inventée<br/>(NumPy)"]:::env
-    F["FakeCtx<br/>(faux Fiji)"]:::fiji
-    S["votre run()"]:::script
-    C["vérifications :<br/>bonne forme ? progression à 1.0 ?"]:::worker
-    I --> S
-    F --> S
-    S --> C
+    T["1 · Écrire la vérification<br/>(test_script.py)"]:::worker
+    R["2 · pixi run test<br/>elle échoue (rouge)"]:::fiji
+    S["3 · Modifier script.py<br/>jusqu'à la réussite (vert)"]:::script
+    F["4 · Essayer dans Fiji"]:::env
+    T --> R --> S --> F
+    S -- "idée suivante" --> T
 
     classDef fiji   fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
     classDef worker fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
@@ -29,9 +33,14 @@ flowchart LR
     classDef env    fill:#f3e5f5,stroke:#6a1b9a,color:#4a148c
 ```
 
+Pourquoi d'abord ? Une vérification écrite *après* le code a tendance à
+tester ce que fait le code, pas ce que vous vouliez. Écrite en premier, elle
+est votre plan ; un résultat rouge avant de commencer prouve que la
+vérification regarde vraiment quelque chose.
+
 ## À quoi ressemble un test
 
-Le modèle en contient déjà un, dans `test_script.py` :
+Le modèle en contient déjà quelques-uns, dans `test_script.py` :
 
 ```python
 from pathlib import Path
@@ -59,6 +68,11 @@ def test_blur_smooths_a_single_bright_pixel():
 - `FakeCtx(cancel_after=2)` fait comme si l'utilisateur avait appuyé sur
   Échap après deux vérifications : vous pouvez ainsi tester que l'annulation
   fonctionne.
+
+**Votre premier test** pour une nouvelle idée peut être aussi petit que
+ceci : fabriquez une image dont vous connaissez la réponse (un carré
+brillant, deux taches séparées), et vérifiez cette réponse
+(`labels.max() == 2`).
 
 ## Lancer les tests { #run-the-tests }
 
@@ -94,19 +108,26 @@ pourquoi.
 
     Ensuite, `pixi --version` affiche un numéro de version.
 
-## Tester sur une vraie image { #testing-on-a-real-image }
+## Travailler avec un assistant IA
 
-Vous pouvez aussi essayer tout le script sur un fichier TIFF, sans Fiji, et
-enregistrer les résultats dans un dossier :
+Les assistants de code (Claude, Copilot, ChatGPT…) écrivent vite et ont
+l'air sûrs d'eux, même quand le code est faux. Un test est une promesse
+qu'ils ne peuvent pas contourner par de belles paroles :
 
-```sh
-pixi run wavu run script.py --in image=cells.tif --param sigma=3 --out results
-```
+1. **Vous** écrivez ou validez le test : l'image d'entrée et la réponse que
+   vous attendez.
+2. Demandez à l'assistant : *« fais passer `pixi run test` sans modifier les
+   tests. »*
+3. **Lancez les tests vous-même** avant de faire confiance au résultat, puis
+   essayez dans Fiji.
+
+Lisez les tests écrits par l'assistant aussi attentivement que son code :
+une vérification qui ne peut jamais échouer ne protège rien.
 
 ## En une phrase
 
-`FakeCtx` et `run_script` vous permettent de vérifier `run` sur une petite
-image inventée avec `pixi run test`, pour que les erreurs apparaissent avant
-que Fiji ou un collègue ne les voie.
+Écrivez d'abord la vérification, regardez-la échouer, modifiez `script.py`
+jusqu'à ce que `pixi run test` réussisse, et seulement ensuite essayez dans
+Fiji.
 
-[Suite : partager avec votre labo :material-arrow-right:](../share/with-your-lab.md){ .md-button }
+[Suite : du notebook à Wavu :material-arrow-right:](from-notebook.md){ .md-button }
