@@ -1,0 +1,30 @@
+{
+  // Wavu debugging: start the worker with debugpy, then attach.
+  //   Terminal:  pixi run debug        (or tick "Debug with VS Code" in Fiji's Run dialog)
+  //   VS Code:   Run and Debug > "Attach to Wavu worker", set breakpoints in script.py,
+  //              then run the script from Fiji as usual.
+  // Python interpreter for IntelliSense: .pixi/envs/default (Python: Select Interpreter).
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach to Wavu worker",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": { "host": "127.0.0.1", "port": 5678 },
+      "justMyCode": true,
+      "pathMappings": [{ "localRoot": "${workspaceFolder}", "remoteRoot": "${workspaceFolder}" }]
+    },
+    {
+      "name": "Run script on a TIFF (no Fiji)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "wavu.cli",
+      "args": ["run", "${workspaceFolder}/script.py", "--in", "image=${input:tiff}", "--out", "${workspaceFolder}/wavu-out"],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ],
+  "inputs": [
+    { "id": "tiff", "type": "promptString", "description": "Path to an input TIFF" }
+  ]
+}

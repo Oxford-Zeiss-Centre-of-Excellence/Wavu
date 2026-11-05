@@ -1,0 +1,27 @@
+# This script's own environment. Fiji starts the worker with
+#   pixi run --manifest-path <this folder>/pixi.toml wavu-worker --script-dir <this folder>
+# so whatever you add below is what your script can import -- and nothing
+# from any other script's environment leaks in.
+[workspace]
+name = "wavu-script"
+channels = ["conda-forge"]
+platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+
+[dependencies]
+python = ">=3.10,<3.14"
+numpy = ">=1.24"
+scipy = ">=1.10"      # the example's Gaussian blur -- replace with what you need
+tifffile = ">=2023.1"
+debugpy = ">=1.8"     # lets VS Code attach to the running worker
+pytest = ">=8"
+
+[pypi-dependencies]
+wavu = { path = "../..", editable = true }  # wavu-dependency (rewritten by `wavu new-script`)
+
+[tasks]
+# Start the worker by hand (launch mode 2) and leave it running; Fiji then uses
+# Plugins > Wavu > Connect to Running Worker. Port and token go to ~/.wavu/worker.json.
+worker = "wavu-worker --script-dir . --handshake-file --detached"
+# Same, with debugpy on port 5678 for VS Code's "Attach to Wavu worker".
+debug = "wavu-worker --script-dir . --handshake-file --detached --debugpy 5678"
+test = "pytest -q"
