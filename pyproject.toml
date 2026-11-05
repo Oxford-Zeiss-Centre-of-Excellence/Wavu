@@ -67,6 +67,5 @@ markers = [
     "fiji: headless Fiji smoke test (WAVU_FIJI=<Fiji.app>; pixi run test-fiji); excluded from the default run",
     "pixi_env: launches a worker through `pixi run` in a script's own environment (slow first time); excluded from the default run",
     "cellpose: runs the cellpose example in its own heavy environment (weekly CI only)",
-    "test_data: needs the fetched CTC frame (pixi run fetch-test-data)",
 ]
 addopts = "--import-mode=importlib -m 'not fiji and not pixi_env and not cellpose'"

@@ -1,102 +1,67 @@
-"""Fetch ONE Cell Tracking Challenge frame + its ground-truth segmentation into tests/data/.
+"""Verify (or re-create) the committed BBBC039 test image + ground-truth mask.
 
     pixi run fetch-test-data
 
-Downloads the Fluo-N2DH-GOWT1 training archive (~57 MB) from the official CTC
-server once into a cache folder, checks the sha256 of the two files we use,
-and writes them (uncompressed, so no imagecodecs is needed to read them) to
-tests/data/Fluo-N2DH-GOWT1/. Nothing here is ever committed: the CTC terms
-forbid redistributing ("cloning") the datasets -- see docs/test-data.md.
-
-Standard library + tifffile/imagecodecs (both in the dev environment).
+tests/data/BBBC039/ is committed (CC0, ~0.74 MB), so normally this only checks
+the sha256 of the two files. If they are missing, it downloads BBBC039's
+images.zip (~78 MB) and masks.zip (~2.8 MB) once into a cache folder, extracts
+the single pair and verifies it. See docs/test-data.md. Standard library only.
 """
 
 from __future__ import annotations
 
 import hashlib
-import io
 import os
 import sys
 import urllib.request
 import zipfile
 from pathlib import Path
 
-URL = "https://data.celltrackingchallenge.net/training-datasets/Fluo-N2DH-GOWT1.zip"
-# Archive hash as downloaded on 2026-11-05; informational only (CTC may re-pack the zip).
-ARCHIVE_SHA256 = "1a7bd9a7d1d10c4122c7782427b437246fb69cc3322a975485c04e206f64fc2c"
-# The members we use -- these must match exactly.
-MEMBERS = {
-    "Fluo-N2DH-GOWT1/01/t021.tif": ("t021.tif", "e238390fc4d1edf5e38e24638b4a9165a10b8e94252b14c8c85fe2c6f32d35e5"),
-    "Fluo-N2DH-GOWT1/01_GT/SEG/man_seg021.tif": (
-        "man_seg021.tif",
-        "abd1dee1d6ace107c908819100221774c57e13c150456e92e6d08bc59a83d94a",
-    ),
-}
+STEM = "IXMtest_A02_s1_w1051DAA7C-7042-435F-99F0-1E847D9B42CB"
+BASE = "https://data.broadinstitute.org/bbbc/BBBC039/"
+# (zip, member, local name, sha256 of the member exactly as published)
+FILES = [
+    ("images.zip", f"images/{STEM}.tif", "A02_s1.tif", "9eacee0e5a4c29af70307af4d310320632e31ed84b4d8b5fd4fce42930f780ec"),
+    ("masks.zip", f"masks/{STEM}.png", "A02_s1_mask.png", "c56c246edcd456f81fb0d61d318c2b7a378afba207bd0b409834db16d30cfb72"),
+]
 REPO = Path(__file__).resolve().parent.parent
-OUT = REPO / "tests" / "data" / "Fluo-N2DH-GOWT1"
+OUT = REPO / "tests" / "data" / "BBBC039"
 CACHE = Path(os.environ.get("WAVU_CACHE", Path.home() / ".cache" / "wavu"))
-
-ATTRIBUTION = """\
-Fluo-N2DH-GOWT1 (training sequence 01, frame 21 and its gold-standard segmentation)
-from the Cell Tracking Challenge, https://celltrackingchallenge.net/2d-datasets/
-Maska et al., "The Cell Tracking Challenge: 10 years of objective benchmarking",
-Nature Methods 20, 1010-1020 (2023), https://doi.org/10.1038/s41592-023-01879-y
-Used under the CTC terms of use (https://celltrackingchallenge.net/datasets/).
-Do not commit or redistribute these files.
-"""
 
 
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def download(dest: Path) -> None:
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    tmp = dest.with_suffix(".part")
-    print(f"Downloading {URL} (~57 MB) ...", flush=True)
-    with urllib.request.urlopen(URL, timeout=120) as r, open(tmp, "wb") as f:
-        total = int(r.headers.get("Content-Length") or 0)
-        done = 0
-        while chunk := r.read(1 << 20):
-            f.write(chunk)
-            done += len(chunk)
-            if total:
-                print(f"\r  {done / total:6.1%}", end="", flush=True)
-    print()
-    tmp.replace(dest)
+def fetch(zip_name: str) -> Path:
+    path = CACHE / "BBBC039" / zip_name
+    if not path.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        print(f"Downloading {BASE}{zip_name} ...", flush=True)
+        tmp = path.with_suffix(".part")
+        with urllib.request.urlopen(BASE + zip_name, timeout=300) as r, open(tmp, "wb") as f:
+            while chunk := r.read(1 << 20):
+                f.write(chunk)
+        tmp.replace(path)
+    return path
 
 
 def main() -> int:
-    if all((OUT / name).exists() for name, _ in MEMBERS.values()):
-        print(f"Test data already in {OUT}")
-        return 0
-    archive = CACHE / "Fluo-N2DH-GOWT1.zip"
-    if not archive.exists():
-        try:
-            download(archive)
-        except OSError as e:
-            print(f"Download failed: {e}\nCheck your network / proxy, or download {URL} by hand into {archive}.")
-            return 1
-    data = archive.read_bytes()
-    if sha256(data) != ARCHIVE_SHA256:
-        print("Note: the archive's sha256 differs from the one recorded (CTC may have re-packed it); "
-              "checking the individual files instead.")
-    import numpy as np
-    import tifffile
-
     OUT.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(io.BytesIO(data)) as z:
-        for member, (name, expected) in MEMBERS.items():
-            raw = z.read(member)
-            got = sha256(raw)
-            if got != expected:
-                print(f"sha256 mismatch for {member}: expected {expected}, got {got}. Delete {archive} and retry.")
+    for zip_name, member, name, expected in FILES:
+        target = OUT / name
+        if not target.exists():
+            try:
+                with zipfile.ZipFile(fetch(zip_name)) as z:
+                    target.write_bytes(z.read(member))
+            except OSError as e:
+                print(f"Download failed: {e}")
                 return 1
-            arr = tifffile.imread(io.BytesIO(raw))
-            tifffile.imwrite(OUT / name, np.ascontiguousarray(arr))  # uncompressed copy
-            print(f"  {name}: {arr.shape} {arr.dtype} (sha256 OK)")
-    (OUT / "SOURCE.txt").write_text(ATTRIBUTION, encoding="utf-8")
-    print(f"Wrote {OUT}")
+        got = sha256(target.read_bytes())
+        if got != expected:
+            print(f"sha256 mismatch for {target}: expected {expected}, got {got}")
+            return 1
+        print(f"  {name}: sha256 OK")
     return 0
 
 

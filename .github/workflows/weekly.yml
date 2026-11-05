@@ -39,7 +39,7 @@ jobs:
         with:
           pixi-version: v0.78.0
           cache: true
-      - name: CTC test frame (sha256-verified, never committed)
+      - name: Verify the committed BBBC039 test image (sha256)
         run: pixi run fetch-test-data
       - name: Cellpose example in its own environment
         run: pixi run --manifest-path examples/cellpose_nuclei/pixi.toml test

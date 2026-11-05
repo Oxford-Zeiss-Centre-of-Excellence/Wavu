@@ -1,7 +1,7 @@
 """Cellpose example tests. Heavy: marked `cellpose`, run weekly in CI.
 
-    pixi run test   (in this folder) -- uses the CTC frame from `pixi run fetch-test-data`
-                    at the repo root when present, plus a synthetic image always.
+    pixi run test   (in this folder) -- a synthetic image, plus the BBBC039 image and
+                    ground-truth mask committed in ../../tests/data (CC0).
 """
 
 from pathlib import Path
@@ -15,7 +15,7 @@ pytestmark = pytest.mark.cellpose
 
 HERE = Path(__file__).parent
 SCRIPT = HERE / "script.py"
-DATA = HERE.parent.parent / "tests" / "data" / "Fluo-N2DH-GOWT1"
+DATA = HERE.parent.parent / "tests" / "data" / "BBBC039"
 
 
 def synthetic_nuclei():
@@ -38,23 +38,36 @@ def test_segments_synthetic_nuclei():
     assert ctx.progress_values[-1] == 1.0
 
 
-@pytest.mark.skipif(not (DATA / "t021.tif").exists(), reason="run `pixi run fetch-test-data` at the repo root")
-def test_matches_ctc_ground_truth():
+def bbbc039_labels(path):
+    """Channel 0 of a BBBC039 mask is a 4-colouring; each nucleus is one connected component of one colour."""
+    import imagecodecs
+    from scipy import ndimage
+
+    colours = imagecodecs.png_decode(path.read_bytes())[..., 0]
+    labels = np.zeros(colours.shape, np.uint16)
+    n = 0
+    for c in np.unique(colours[colours > 0]):
+        lab, k = ndimage.label(colours == c)
+        labels[lab > 0] = lab[lab > 0] + n
+        n += k
+    return labels
+
+
+def test_f1_against_bbbc039_ground_truth():
     import tifffile
 
-    img = tifffile.imread(DATA / "t021.tif")
-    gt = tifffile.imread(DATA / "man_seg021.tif")
+    img = tifffile.imread(DATA / "A02_s1.tif")
+    gt = bbbc039_labels(DATA / "A02_s1_mask.png")
     labels = run_script(SCRIPT, {"image": img}, {"use_gpu": False})["labels"]
-    # Fraction of ground-truth nuclei matched by a predicted nucleus with IoU > 0.5.
+    # True positives: ground-truth nuclei whose best-overlapping prediction has IoU > 0.5.
     gt_ids = [i for i in np.unique(gt) if i]
-    matched = 0
+    tp = 0
     for i in gt_ids:
         m = gt == i
         ids, counts = np.unique(labels[m], return_counts=True)
         best = ids[np.argmax(counts)]
-        if best == 0:
-            continue
-        p = labels == best
-        if (m & p).sum() / (m | p).sum() > 0.5:
-            matched += 1
-    assert matched / len(gt_ids) > 0.7, f"{matched}/{len(gt_ids)} GT nuclei matched"
+        if best and (m & (labels == best)).sum() / (m | (labels == best)).sum() > 0.5:
+            tp += 1
+    n_pred = int(len(np.unique(labels)) - 1)
+    f1 = 2 * tp / (len(gt_ids) + n_pred)
+    assert f1 > 0.7, f"F1 {f1:.2f} (TP {tp}, GT {len(gt_ids)}, predicted {n_pred})"

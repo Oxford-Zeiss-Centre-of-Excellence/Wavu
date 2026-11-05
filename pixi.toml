@@ -12,7 +12,7 @@ platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
 python = "3.12.*"
 numpy = ">=1.24"
 tifffile = ">=2023.1"
-imagecodecs = ">=2024.1"  # CTC test frames are LZW-compressed
+imagecodecs = ">=2024.1"  # decodes the BBBC039 PNG ground-truth mask
 scipy = ">=1.10"
 pandas = ">=2.0"
 roifile = ">=2024.1"
@@ -33,7 +33,7 @@ test-fiji = "pytest -q -m fiji -rs -s"
 worker = "wavu-worker --script-dir templates/wavu-script --handshake-file --detached"
 # pixi run new-script my_analysis  -> ./my_analysis (copy of templates/wavu-script)
 new-script = "wavu new-script"
-# One CTC Fluo-N2DH-GOWT1 frame + GT segmentation into tests/data (docs/test-data.md).
+# Verify (or re-download) the committed BBBC039 image + mask in tests/data (docs/test-data.md).
 fetch-test-data = "python tools/fetch_test_data.py"
 # The Fiji client as a zip that unzips straight into Fiji.app (release asset).
 fiji-zip = "python tools/make_fiji_zip.py"
