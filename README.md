@@ -111,9 +111,9 @@ def run(ctx, inputs, params):
 **Examples:** [`templates/wavu-script`](templates/wavu-script) (Gaussian
 blur, the boilerplate for new scripts) and
 [`examples/cellpose_nuclei`](examples/cellpose_nuclei) (Cellpose nuclei
-segmentation returning labels and an ImageJ RoiSet, CPU/MPS or CUDA). Using
-napari? See
-[Napari-Pixi](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Napari-Pixi).
+segmentation returning labels and an ImageJ RoiSet, CPU/MPS or CUDA).
+From your own Python code (a notebook or another viewer), use `wavu.client`;
+see [Protocol](docs/protocol.md).
 
 <details>
 <summary>Limitations</summary>

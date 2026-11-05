@@ -47,3 +47,21 @@ def test_template_worker_in_its_own_pixi_env():
         proc.wait(30)
         proc.stdout.close()
     assert proc.returncode == 0
+
+
+def test_python_client_starts_the_template_through_pixi():
+    """wavu.client (napari-wavu's backend) does the same from inside a pixi env (host env vars scrubbed)."""
+    from wavu.client import Worker, find_pixi
+
+    if find_pixi() is None:
+        pytest.skip("pixi not found")
+    logs: list[str] = []
+    progress: list[float] = []
+    with Worker.start(REPO / "templates" / "wavu-script", on_log=logs.append) as w:
+        img = np.zeros((16, 16), np.uint8)
+        img[8, 8] = 200
+        res = w.run("script", {"sigma": 1.5}, {"image": img}, on_progress=progress.append)
+        out = res.outputs["blurred"].value
+        assert out.dtype == np.uint8 and 0 < out[8, 8] < 200
+        assert progress
+    assert w.process.returncode is not None

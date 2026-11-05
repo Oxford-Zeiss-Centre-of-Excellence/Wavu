@@ -58,3 +58,27 @@ one terminal event: `done` (`{"outputs": [names]}`), `error` (`{"message",
 Each output has a `kind`: `image` (inline `data`, or a `path` to an ImageJ
 TIFF), `table` (`path` to a CSV, plus `columns`), `rois` (`path`), `file`
 (`path`) or `value` (`value`).
+
+## Python client
+
+`wavu.client` speaks this protocol for Python hosts: a notebook, or another
+viewer. The archived
+[Napari-Wavu](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Napari-Wavu)
+prototype shows it driving a napari dock widget.
+
+```python
+from wavu.client import Worker
+
+with Worker.start("path/to/script-folder", on_log=print) as w:   # pixi run ... wavu-worker
+    res = w.run("script", {"sigma": 2.0}, {"image": arr}, on_progress=print)
+    blurred = res.outputs["blurred"].value
+```
+
+- `Worker.start` runs `pixi run --manifest-path <folder>/pixi.toml wavu-worker`
+  with the host's `PIXI_*`/`CONDA_*` variables removed, so it also works from
+  inside another pixi environment. The worker exits when the host process does.
+- `Worker.connect()` attaches through `~/.wavu/worker.json` (launch mode 2).
+- `run()` sends small arrays inline and larger or >3-D ones as a temporary
+  TIFF, streams logs and progress to callbacks, takes a `threading.Event` to
+  cancel, and returns every output already loaded (array, table, `RoiSet`,
+  `Path` or value). A failed script raises `WorkerError` with its traceback.
