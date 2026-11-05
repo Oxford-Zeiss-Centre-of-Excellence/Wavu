@@ -51,8 +51,6 @@ Fijis Fortschrittsbalken füllt sich, und die Statusleiste unten im
 Fiji-Hauptfenster zeigt den Skriptnamen und einen Prozentwert, etwa
 *Wavu: script 40%*.
 
-![Das Log-Fenster mit Meldungen des Skripts und der Fortschrittsbalken in Fijis Statusleiste](../assets/shots/12-log-progress.png)
-
 ## Abbrechen: warum Ihr Code mithelfen muss { #cancel-why-your-code-has-to-help }
 
 Klicken Sie auf ein Fiji-Fenster und drücken Sie **Esc**. Im Log steht

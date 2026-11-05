@@ -57,13 +57,9 @@ Users unzip it into Fiji.app (needs Wavu); menu: Plugins > My Lab > My Tool
 2. 重新啟動 Fiji。
 3. 開啟一張影像，選擇 **Plugins › My Lab › My Tool**。
 
-![同事的 Fiji 中的 Plugins › My Lab › My Tool](../assets/shots/15-lab-menu.png)
-
 第一次啟動時會依照你的 `pixi.lock` 下載套件（只有一次，Log 視窗會說明），然後對話框就會出現。不需要挑選任何資料夾。
 
 這個工具也會出現在 **Plugins › Wavu › Run Python Script** 裡，顯示為 *installed: my-tool*。
-
-![腳本資料夾清單中顯示一個已安裝的腳本](../assets/shots/14-script-folder-picker.png)
 
 ## 更新工具
 

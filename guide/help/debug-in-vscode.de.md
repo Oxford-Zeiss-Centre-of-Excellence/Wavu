@@ -47,8 +47,6 @@ und **Python Debugger**; VS Code bietet sie an, wenn Sie den Ordner öffnen.
    grünen ▶-Button.
 5. Das Skript läuft und hält an Ihrem roten Punkt an.
 
-![VS Code angehalten an einem Haltepunkt in script.py, mit den Variablen](../assets/shots/16-vscode-breakpoint.png)
-
 Während der Pause fahren Sie mit der Maus über eine Variable, um ihren Wert
 zu sehen, oder schauen in das Feld **Variables**. Mit der Werkzeugleiste
 gehen Sie einen Schritt weiter (++f10++) oder setzen fort (++f5++). Wenn

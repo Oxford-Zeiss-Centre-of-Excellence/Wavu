@@ -37,10 +37,6 @@ flowchart LR
 This needs **VS Code** and **Git** installed. If nothing happens, use
 **Download ZIP**, unzip it, and in VS Code choose **File › Open Folder…**.
 
-![The browser asking to open Visual Studio Code](../assets/shots/08-vscode-browser-prompt.png)
-
-![The template folder open in VS Code, script.py visible](../assets/shots/09-vscode-template-open.png)
-
 *Use this template on GitHub* makes your own online copy instead; that is
 handy later, when you want to [share with the world](../share/with-the-world.md).
 

@@ -53,8 +53,6 @@ En Fiji: **File › Open Samples › Blobs (25K)**.
    *Wavu: choose a script folder (contains pixi.toml)*. Selecciona la
    carpeta `Wavu-Script-Template-main` y confirma.
 
-![Elegir la carpeta de la plantilla en el selector de carpetas](../assets/shots/04-choose-folder.png)
-
 !!! info "El primer arranque tarda unos minutos, una sola vez"
     La ventana Log dice
     *First start of '…': downloading its Python packages. This happens once
@@ -62,15 +60,11 @@ En Fiji: **File › Open Samples › Blobs (25K)**.
     segundos. Es pixi llenando la despensa. Deja que termine; la próxima vez
     el script arranca en segundos.
 
-![La ventana Log durante el primer arranque](../assets/shots/05-first-start-log.png)
-
 3. Aparece el diálogo **Wavu: script**. Su primera línea es la descripción
    del script, *Gaussian blur -- the Wavu example script.*, seguida de los
    campos **Image**, **Sigma (pixels)**, **Edges** y
    **Keep the input's pixel type**, más una casilla **Debug in VS Code**
    (déjala desmarcada).
-
-![El diálogo Wavu: script de la plantilla](../assets/shots/06-run-dialog.png)
 
 4. Deja los valores por defecto, comprueba que **Image** muestra
    `blobs.gif` y pulsa **OK**.
@@ -85,8 +79,6 @@ suaves. El Log muestra lo que ha pasado:
 Blurring a (254, 256) uint8 image with sigma=2.0
 [Wavu] script finished
 ```
-
-![Blobs y blobs-blurred lado a lado, con el Log](../assets/shots/07-blur-result.png)
 
 Prueba otra vez con **Sigma (pixels)** en `8`. Esta vez arranca al instante,
 porque la cocina sigue abierta y la despensa está llena.

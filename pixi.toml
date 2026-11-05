@@ -52,7 +52,6 @@ build = "python -m build --outdir dist"
 python = "3.12.*"
 mkdocs = ">=1.6,<2"
 mkdocs-material = ">=9.5"
-pillow = ">=10"  # draws the screenshot placeholders (tools/make_shot_placeholders.py)
 
 [feature.docs.pypi-dependencies]
 mkdocs-static-i18n = ">=1.2"  # not on conda-forge

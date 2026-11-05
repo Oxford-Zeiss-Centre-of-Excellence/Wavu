@@ -60,8 +60,6 @@ def run(ctx, inputs, params):
     }
 ```
 
-![Изображение меток, таблица Results и контуры в ROI Manager](../assets/shots/11-outputs.png)
-
 ## Контуры для ROI Manager
 
 ROI Manager в Fiji читает zip-файлы ImageJ *RoiSet*. Запишите такой файл в

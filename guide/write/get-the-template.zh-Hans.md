@@ -35,10 +35,6 @@ flowchart LR
 这需要先装好 **VS Code** 和 **Git**。如果点了没反应，就用
 **下载 ZIP**，解压后在 VS Code 里选 **File › Open Folder…**。
 
-![浏览器询问是否打开 Visual Studio Code](../assets/shots/08-vscode-browser-prompt.png)
-
-![模板文件夹在 VS Code 中打开，可以看到 script.py](../assets/shots/09-vscode-template-open.png)
-
 *在 GitHub 上使用此模板*则是创建一份你自己的在线副本；以后想
 [分享给全世界](../share/with-the-world.md)时会很方便。
 

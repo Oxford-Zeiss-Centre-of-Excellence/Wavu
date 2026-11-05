@@ -57,8 +57,6 @@ def run(ctx, inputs, params):
     }
 ```
 
-![一张标签图像、一张 Results 表，以及 ROI Manager 里的轮廓](../assets/shots/11-outputs.png)
-
 ## 给 ROI Manager 的轮廓
 
 Fiji 的 ROI Manager 读取 ImageJ 的 *RoiSet* zip 文件。把它写到

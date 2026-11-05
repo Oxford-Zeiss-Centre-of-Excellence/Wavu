@@ -41,8 +41,6 @@ flowchart LR
 
 會跳出一個寫著 *script failed:* 和簡短訊息的視窗，而 Log 裡有完整的細節（也就是「traceback」，錯誤追蹤）。
 
-![Wavu 的錯誤視窗，以及 Log 中的 traceback](../assets/shots/13-error-dialog.png)
-
 traceback 要**從下往上讀**：最後一行是錯誤本身，上面幾行指出是 `script.py` 裡的哪一行造成的。常見的有：
 
 | 最後一行寫著 | 通常代表 |

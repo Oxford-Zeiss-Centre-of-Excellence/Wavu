@@ -49,8 +49,6 @@ for i, plane in enumerate(planes):
 Fiji의 진행 표시줄이 차오르고, Fiji 메인 창 아래쪽 상태 표시줄에 스크립트
 이름과 백분율이 *Wavu: script 40%*처럼 나와요.
 
-![스크립트 메시지가 있는 Log 창과 Fiji 상태 표시줄의 진행 표시줄](../assets/shots/12-log-progress.png)
-
 ## 취소: 왜 코드가 도와야 하나요 { #cancel-why-your-code-has-to-help }
 
 Fiji 창을 클릭하고 **Esc**를 누르세요. Log에 *Cancelling script…*가 나와요.

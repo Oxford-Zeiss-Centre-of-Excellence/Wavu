@@ -44,8 +44,6 @@ sequenceDiagram
    **Attach to Wavu worker** を選んで緑の ▶ ボタンを押します。
 5. スクリプトが動き、赤い点で止まります。
 
-![script.py のブレークポイントで一時停止し、変数を表示している VS Code](../assets/shots/16-vscode-breakpoint.png)
-
 一時停止中は、変数にマウスを乗せると値が見えます。**Variables** パネルでも
 見られます。ツールバーを使って、ステップオーバー（++f10++）や続行（++f5++）
 ができます。終わると、結果はいつもどおり Fiji で開きます。

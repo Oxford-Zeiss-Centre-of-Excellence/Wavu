@@ -43,8 +43,6 @@ VS Code가 추천해 줘요.
    **Attach to Wavu worker**를 고른 뒤 초록색 ▶ 버튼을 누르세요.
 5. 스크립트가 돌다가 빨간 점에서 멈춰요.
 
-![script.py의 중단점에서 멈추고 변수를 보여 주는 VS Code](../assets/shots/16-vscode-breakpoint.png)
-
 멈춘 동안 변수 위에 마우스를 올리면 값이 보이고, **Variables** 패널에서도 볼
 수 있어요. 도구 모음으로 한 줄씩 넘어가거나(++f10++) 계속할 수 있어요(++f5++).
 끝나면 평소처럼 결과가 Fiji에서 열려요.

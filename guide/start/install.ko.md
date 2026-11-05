@@ -69,8 +69,6 @@ Fiji 자체의 `scripts`, `plugins` 폴더 옆에 들어가야 해요. 그래야
     `inflating: …/Fiji.app/scripts/Plugins/Wavu/Run_Python_Script.groovy`
     같은 줄이 보이면 돼요.
 
-![압축을 푼 뒤의 Fiji.app 폴더: 안에 scripts/Plugins/Wavu가 있어요](../assets/shots/01-unzip-into-fiji.png)
-
 ## 3단계: Fiji를 다시 시작하고 메뉴 찾기
 
 Fiji를 종료했다가 다시 시작하세요. **Plugins** 메뉴를 열면 아래쪽에
@@ -81,8 +79,6 @@ Fiji를 종료했다가 다시 시작하세요. **Plugins** 메뉴를 열면 아
 - **Setup Python (pixi)**(Python 설정)
 - **Stop Worker**(워커 중지)
 
-![항목 네 개가 있는 Fiji의 Plugins › Wavu 메뉴](../assets/shots/02-plugins-wavu-menu.png)
-
 ## 4단계: Setup Python (pixi), 한 번만
 
 **Plugins › Wavu › Setup Python (pixi)**를 고르세요. Wavu가 공식 pixi
@@ -91,8 +87,6 @@ Fiji를 종료했다가 다시 시작하세요. **Plugins** 메뉴를 열면 아
 Log 창에 `Downloading pixi…`와 `Checksum OK`가 표시돼요.
 
 끝나면 작은 창에 **Ready:**와 pixi 버전이 나와요.
-
-![Setup Python (pixi) 뒤의 "Ready: pixi …" 메시지](../assets/shots/03-setup-python-ready.png)
 
 !!! tip "pixi가 이미 있나요?"
     컴퓨터에 pixi가 이미 설치되어 있으면 Wavu가

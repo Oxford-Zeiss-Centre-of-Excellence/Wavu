@@ -49,8 +49,6 @@ for i, plane in enumerate(planes):
 Fiji のプログレスバーが伸び、Fiji のメインウィンドウ下部のステータスバーに、
 *Wavu: script 40%* のようにスクリプト名とパーセントが表示されます。
 
-![スクリプトのメッセージが出た Log ウィンドウと、Fiji のステータスバーのプログレスバー](../assets/shots/12-log-progress.png)
-
 ## キャンセル：コードが手伝う必要がある理由 { #cancel-why-your-code-has-to-help }
 
 Fiji のウィンドウをクリックして **Esc** を押します。Log には

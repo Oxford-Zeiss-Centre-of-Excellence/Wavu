@@ -58,8 +58,6 @@ def run(ctx, inputs, params):
     }
 ```
 
-![라벨 이미지, Results 표, ROI Manager의 윤곽선](../assets/shots/11-outputs.png)
-
 ## ROI Manager용 윤곽선
 
 Fiji의 ROI Manager는 ImageJ *RoiSet* zip 파일을 읽어요. Wavu가 실행마다 주는

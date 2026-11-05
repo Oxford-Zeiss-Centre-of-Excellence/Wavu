@@ -58,8 +58,6 @@ def run(ctx, inputs, params):
     }
 ```
 
-![ラベル画像、Results 表、ROI Manager の輪郭](../assets/shots/11-outputs.png)
-
 ## ROI Manager 用の輪郭
 
 Fiji の ROI Manager は ImageJ の *RoiSet* zip ファイルを読みます。Wavu が

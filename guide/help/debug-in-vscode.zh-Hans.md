@@ -30,8 +30,6 @@ sequenceDiagram
 4. 在 VS Code 里打开 **Run and Debug**（左侧带小虫子的播放图标），选择 **Attach to Wavu worker**，点击绿色的 ▶ 按钮。
 5. 脚本开始运行，并停在你的红点上。
 
-![VS Code 停在 script.py 的断点处，并显示变量](../assets/shots/16-vscode-breakpoint.png)
-
 暂停时，把鼠标悬停在变量上就能看到它的值，或者看 **Variables** 面板。用工具栏单步跳过（++f10++）或继续（++f5++）。运行结束后，结果会像平常一样在 Fiji 里打开。
 
 ## 终端的办法

@@ -55,8 +55,6 @@ Fiji で **File › Open Samples › Blobs (25K)** を選びます。
    フォルダー選択画面が開きます。`Wavu-Script-Template-main` フォルダーを
    選んで確定します。
 
-![フォルダー選択画面でテンプレートフォルダーを選ぶ](../assets/shots/04-choose-folder.png)
-
 !!! info "最初の起動は一度だけ数分かかります"
     Log ウィンドウに
     *First start of '…': downloading its Python packages. This happens once
@@ -64,14 +62,10 @@ Fiji で **File › Open Samples › Blobs (25K)** を選びます。
     数えます。これは pixi が食材庫をそろえているところです。終わるまで
     待ってください。次からは数秒で起動します。
 
-![最初の起動中の Log ウィンドウ](../assets/shots/05-first-start-log.png)
-
 3. **Wavu: script** ダイアログが表示されます。1 行目はスクリプトの説明
    *Gaussian blur -- the Wavu example script.* で、その下に **Image**、
    **Sigma (pixels)**、**Edges**、**Keep the input's pixel type** の欄と、
    **Debug in VS Code** チェックボックスがあります（オフのままにします）。
-
-![テンプレートの Wavu: script ダイアログ](../assets/shots/06-run-dialog.png)
 
 4. 既定値のまま、**Image** が `blobs.gif` になっていることを確かめて、
    **OK** を押します。
@@ -86,8 +80,6 @@ Fiji で **File › Open Samples › Blobs (25K)** を選びます。
 Blurring a (254, 256) uint8 image with sigma=2.0
 [Wavu] script finished
 ```
-
-![blobs と blobs-blurred を並べたところと Log](../assets/shots/07-blur-result.png)
 
 **Sigma (pixels)** を `8` にして、もう一度試してみてください。今度はすぐに
 始まります。厨房がまだ開いていて、食材庫もいっぱいだからです。

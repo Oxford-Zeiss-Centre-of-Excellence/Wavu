@@ -78,16 +78,12 @@ zip はスクリプトフォルダーの中の `dist/my-tool-fiji.zip` です。
 2. Fiji を再起動します。
 3. 画像を開き、**Plugins › My Lab › My Tool** を選びます。
 
-![同僚の Fiji の Plugins › My Lab › My Tool](../assets/shots/15-lab-menu.png)
-
 最初の起動では `pixi.lock` に書かれたパッケージをダウンロードし（一度だけ。
 Log にそう表示されます）、その後ダイアログが出ます。フォルダーを選ぶ必要は
 ありません。
 
 このツールは **Plugins › Wavu › Run Python Script** にも
 *installed: my-tool* として表示されます。
-
-![インストール済みのスクリプトが表示されたスクリプトフォルダーの一覧](../assets/shots/14-script-folder-picker.png)
 
 ## ツールを更新する
 

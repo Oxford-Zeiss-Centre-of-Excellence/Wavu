@@ -37,10 +37,6 @@ flowchart LR
 일어나지 않으면 **ZIP 내려받기**로 받아 압축을 풀고, VS Code에서
 **File › Open Folder…**를 고르세요.
 
-![Visual Studio Code를 열지 묻는 브라우저](../assets/shots/08-vscode-browser-prompt.png)
-
-![VS Code에서 열린 템플릿 폴더, script.py가 보여요](../assets/shots/09-vscode-template-open.png)
-
 *GitHub에서 이 템플릿 사용하기*는 대신 나만의 온라인 사본을 만들어요.
 나중에 [전 세계와 공유](../share/with-the-world.md)하고 싶을 때 편리해요.
 

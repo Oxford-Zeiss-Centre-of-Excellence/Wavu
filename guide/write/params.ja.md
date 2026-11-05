@@ -37,8 +37,6 @@ PARAMS = {
 
 Fiji はこれを次のダイアログにします。
 
-![上の PARAMS から Fiji が作るダイアログ](../assets/shots/10-params-dialog.png)
-
 | `type` | Fiji での入力欄 | `run` が受け取るもの |
 |---|---|---|
 | `float` | 数値欄（小数 3 桁） | 小数、たとえば `2.0`、`params` の中 |

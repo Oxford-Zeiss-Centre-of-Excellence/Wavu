@@ -70,8 +70,6 @@ zip 檔裡有一個 `scripts` 資料夾。它必須放在你的 Fiji 資料夾�
     `inflating: …/Fiji.app/scripts/Plugins/Wavu/Run_Python_Script.groovy`
     的輸出。
 
-![解壓縮後的 Fiji.app 資料夾：裡面有 scripts/Plugins/Wavu](../assets/shots/01-unzip-into-fiji.png)
-
 ## 步驟 3：重新啟動 Fiji，找到選單
 
 結束 Fiji 再重新開啟。打開 **Plugins** 選單，在靠近底部的地方應該會看到
@@ -82,8 +80,6 @@ zip 檔裡有一個 `scripts` 資料夾。它必須放在你的 Fiji 資料夾�
 - **Setup Python (pixi)**（設定 Python）
 - **Stop Worker**（停止 worker）
 
-![Fiji 的 Plugins › Wavu 選單和它的四個項目](../assets/shots/02-plugins-wavu-menu.png)
-
 ## 步驟 4：執行一次 Setup Python (pixi)
 
 選擇 **Plugins › Wavu › Setup Python (pixi)**。Wavu 會下載官方的 pixi 程式
@@ -92,8 +88,6 @@ zip 檔裡有一個 `scripts` 資料夾。它必須放在你的 Fiji 資料夾�
 `Downloading pixi…` 和 `Checksum OK`。
 
 完成後，一個小視窗會顯示 **Ready:**，後面接著 pixi 的版本。
-
-![Setup Python (pixi) 完成後的「Ready: pixi …」訊息](../assets/shots/03-setup-python-ready.png)
 
 !!! tip "已經有 pixi 了？"
     如果你的電腦上已經裝了 pixi，Wavu 會說

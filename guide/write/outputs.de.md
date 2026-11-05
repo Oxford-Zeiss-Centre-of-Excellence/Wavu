@@ -61,8 +61,6 @@ def run(ctx, inputs, params):
     }
 ```
 
-![Ein Label-Bild, eine Results-Tabelle und Umrisse im ROI Manager](../assets/shots/11-outputs.png)
-
 ## Umrisse für den ROI Manager
 
 Fijis ROI Manager liest ImageJ-*RoiSet*-ZIP-Dateien. Schreiben Sie eine in

@@ -38,10 +38,6 @@ flowchart LR
 Para esto necesitas **VS Code** y **Git** instalados. Si no pasa nada, usa
 **Descargar ZIP**, descomprímelo y en VS Code elige **File › Open Folder…**.
 
-![El navegador preguntando si abrir Visual Studio Code](../assets/shots/08-vscode-browser-prompt.png)
-
-![La carpeta de la plantilla abierta en VS Code, con script.py visible](../assets/shots/09-vscode-template-open.png)
-
 *Usar esta plantilla en GitHub* crea en cambio tu propia copia en línea; eso
 viene bien más adelante, cuando quieras
 [compartir con el mundo](../share/with-the-world.md).

@@ -38,10 +38,6 @@ flowchart LR
 происходит, нажмите **Скачать ZIP**, распакуйте архив и в VS Code выберите
 **File › Open Folder…**.
 
-![Браузер спрашивает, открыть ли Visual Studio Code](../assets/shots/08-vscode-browser-prompt.png)
-
-![Папка шаблона открыта в VS Code, виден script.py](../assets/shots/09-vscode-template-open.png)
-
 *Использовать шаблон на GitHub* вместо этого создаёт вашу собственную копию
 в интернете; это пригодится позже, когда вы захотите
 [поделиться со всем миром](../share/with-the-world.md).

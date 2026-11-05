@@ -70,8 +70,6 @@ flowchart LR
     Вы увидите строки вроде
     `inflating: …/Fiji.app/scripts/Plugins/Wavu/Run_Python_Script.groovy`.
 
-![Папка Fiji.app после распаковки: внутри неё scripts/Plugins/Wavu](../assets/shots/01-unzip-into-fiji.png)
-
 ## Шаг 3: перезапустите Fiji и найдите меню
 
 Закройте Fiji и запустите снова. Откройте меню **Plugins**. Ближе к низу
@@ -82,8 +80,6 @@ flowchart LR
 - **Setup Python (pixi)**
 - **Stop Worker**
 
-![Меню Plugins › Wavu в Fiji с четырьмя пунктами](../assets/shots/02-plugins-wavu-menu.png)
-
 ## Шаг 4: Setup Python (pixi), один раз
 
 Выберите **Plugins › Wavu › Setup Python (pixi)**. Wavu скачает официальную
@@ -92,8 +88,6 @@ flowchart LR
 чтения). В окне Log появятся `Downloading pixi…` и `Checksum OK`.
 
 Когда всё готово, маленькое окно покажет **Ready:** и версию pixi.
-
-![Сообщение «Ready: pixi …» после Setup Python (pixi)](../assets/shots/03-setup-python-ready.png)
 
 !!! tip "pixi уже установлен?"
     Если pixi уже есть на компьютере, Wavu скажет

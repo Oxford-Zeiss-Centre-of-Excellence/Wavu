@@ -43,8 +43,6 @@ Debugger** extensions; VS Code offers them when you open the folder.
    left), choose **Attach to Wavu worker** and press the green ▶ button.
 5. The script runs and stops at your red dot.
 
-![VS Code paused at a breakpoint in script.py, showing the variables](../assets/shots/16-vscode-breakpoint.png)
-
 While paused, hover over a variable to see its value, or look in the
 **Variables** panel. Use the toolbar to step over (++f10++) or continue
 (++f5++). When it finishes, the results open in Fiji as usual.

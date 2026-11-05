@@ -48,8 +48,6 @@ for i, plane in enumerate(planes):
 Fiji 的進度條會慢慢填滿，Fiji 主視窗底部的狀態列會顯示腳本名稱和百分比，例如
 *Wavu: script 40%*。
 
-![Log 視窗裡的腳本訊息，以及 Fiji 狀態列上的進度條](../assets/shots/12-log-progress.png)
-
 ## 取消：為什麼需要你的程式碼配合 { #cancel-why-your-code-has-to-help }
 
 在任一個 Fiji 視窗上按一下，再按 **Esc**。Log 會顯示

@@ -38,8 +38,6 @@ PARAMS = {
 
 Fiji lo convierte en este diálogo:
 
-![El diálogo que Fiji construye a partir de los PARAMS de arriba](../assets/shots/10-params-dialog.png)
-
 | `type` | Campo en Fiji | Lo que recibe `run` |
 |---|---|---|
 | `float` | casilla numérica (3 decimales) | un número decimal, p. ej. `2.0`, en `params` |

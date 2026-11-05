@@ -41,10 +41,6 @@ Dafür müssen **VS Code** und **Git** installiert sein. Wenn nichts
 passiert, nehmen Sie **ZIP herunterladen**, entpacken die Datei und wählen
 in VS Code **File › Open Folder…** (Ordner öffnen).
 
-![Der Browser fragt, ob Visual Studio Code geöffnet werden soll](../assets/shots/08-vscode-browser-prompt.png)
-
-![Der Vorlagen-Ordner geöffnet in VS Code, script.py ist sichtbar](../assets/shots/09-vscode-template-open.png)
-
 *Diese Vorlage auf GitHub verwenden* legt stattdessen Ihre eigene
 Online-Kopie an; das ist später praktisch, wenn Sie
 [mit der ganzen Welt teilen](../share/with-the-world.md) möchten.

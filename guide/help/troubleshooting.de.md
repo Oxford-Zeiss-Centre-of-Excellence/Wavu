@@ -63,8 +63,6 @@ Modellgewichte herunterlädt, sollte es das mit `ctx.log` sagen
 Ein Fenster zeigt *script failed:* mit einer kurzen Meldung, und das Log
 enthält alle Details (den „Traceback“, also die Aufrufkette).
 
-![Das Wavu-Fehlerfenster und der Traceback im Log](../assets/shots/13-error-dialog.png)
-
 Lesen Sie den Traceback **von unten nach oben**: Die letzte Zeile ist der
 Fehler, die Zeilen darüber zeigen auf die Zeile in `script.py`, die ihn
 verursacht hat. Häufige Fälle:

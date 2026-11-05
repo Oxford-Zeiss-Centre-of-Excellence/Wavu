@@ -37,8 +37,6 @@ PARAMS = {
 
 Fiji turns that into this dialog:
 
-![The dialog Fiji builds from the PARAMS above](../assets/shots/10-params-dialog.png)
-
 | `type` | Field in Fiji | What `run` receives |
 |---|---|---|
 | `float` | number box (3 decimals) | a decimal number, e.g. `2.0`, in `params` |

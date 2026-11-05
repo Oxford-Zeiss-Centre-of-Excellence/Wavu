@@ -68,12 +68,5 @@
 }
 .md-typeset .grid.cards .md-button { margin-top: .4rem; }
 
-/* Screenshots: framed like a window. */
-.md-typeset img[src*="assets/shots/"] {
-  border: 1px solid var(--md-default-fg-color--lightest);
-  border-radius: 10px;
-  box-shadow: var(--wavu-shadow);
-}
-
 /* Mermaid boxes keep their light fills in dark mode; keep their text dark. */
 [data-md-color-scheme="slate"] .mermaid .nodeLabel { color: #1a1a1a; }

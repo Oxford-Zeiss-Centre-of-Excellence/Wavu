@@ -51,8 +51,6 @@ La barra de progreso de Fiji se llena, y la barra de estado, en la parte
 inferior de la ventana principal de Fiji, muestra el nombre del script y un
 porcentaje, como *Wavu: script 40%*.
 
-![La ventana Log con mensajes del script, y la barra de progreso en la barra de estado de Fiji](../assets/shots/12-log-progress.png)
-
 ## Cancelar: por qué tu código tiene que ayudar { #cancel-why-your-code-has-to-help }
 
 Haz clic en una ventana de Fiji y pulsa **Esc**. El Log dice

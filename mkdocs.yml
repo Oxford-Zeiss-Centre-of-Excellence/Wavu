@@ -14,7 +14,6 @@ copyright: Wavu is GPL-3.0-or-later · Oxford-Zeiss Centre of Excellence
 docs_dir: guide
 exclude_docs: |
   TRANSLATING.md
-  assets/shots/SHOT-LIST.md
 
 theme:
   name: material

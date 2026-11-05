@@ -53,8 +53,6 @@ sequenceDiagram
    *Wavu: choose a script folder (contains pixi.toml)*. Выберите папку
    `Wavu-Script-Template-main` и подтвердите.
 
-![Выбор папки шаблона в окне выбора папки](../assets/shots/04-choose-folder.png)
-
 !!! info "Первый старт занимает несколько минут, один раз"
     В окне Log написано
     *First start of '…': downloading its Python packages. This happens once
@@ -62,14 +60,10 @@ sequenceDiagram
     Это pixi заполняет кладовую. Дождитесь окончания; в следующий раз скрипт
     стартует за секунды.
 
-![Окно Log во время первого старта](../assets/shots/05-first-start-log.png)
-
 3. Появится диалог **Wavu: script**. В первой строке — описание скрипта,
    *Gaussian blur -- the Wavu example script.*, затем поля **Image**,
    **Sigma (pixels)**, **Edges** и **Keep the input's pixel type**, а также
    галочка **Debug in VS Code** (оставьте её выключенной).
-
-![Диалог Wavu: script для шаблона](../assets/shots/06-run-dialog.png)
 
 4. Оставьте значения по умолчанию, проверьте, что в **Image** указано
    `blobs.gif`, и нажмите **OK**.
@@ -84,8 +78,6 @@ Log показывает, что произошло:
 Blurring a (254, 256) uint8 image with sigma=2.0
 [Wavu] script finished
 ```
-
-![Blobs и blobs-blurred рядом, вместе с Log](../assets/shots/07-blur-result.png)
 
 Попробуйте ещё раз с **Sigma (pixels)** равным `8`. Теперь запуск мгновенный:
 кухня всё ещё работает, а кладовая полна.

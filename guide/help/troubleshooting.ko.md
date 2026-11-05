@@ -56,8 +56,6 @@ Log에서
 *script failed:*와 짧은 메시지가 적힌 창이 뜨고, Log에는 자세한 내용
 ("traceback", 오류 추적 기록)이 있어요.
 
-![Wavu 오류 창과 Log의 traceback](../assets/shots/13-error-dialog.png)
-
 traceback은 **아래에서 위로** 읽으세요. 마지막 줄이 오류이고, 그 위의 줄들이
 오류를 일으킨 `script.py`의 줄을 가리켜요. 흔한 경우는 이래요.
 

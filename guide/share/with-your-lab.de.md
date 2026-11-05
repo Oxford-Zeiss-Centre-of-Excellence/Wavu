@@ -81,16 +81,12 @@ Ihre Kollegin braucht ein installiertes Wavu
 2. Fiji neu starten.
 3. Ein Bild öffnen und **Plugins › My Lab › My Tool** wählen.
 
-![Plugins › My Lab › My Tool im Fiji einer Kollegin](../assets/shots/15-lab-menu.png)
-
 Der erste Start lädt die Pakete aus Ihrer `pixi.lock` herunter (einmalig;
 das Log sagt Bescheid), dann erscheint der Dialog. Es gibt keinen Ordner
 auszuwählen.
 
 Das Werkzeug erscheint außerdem in **Plugins › Wavu › Run Python Script**
 als *installed: my-tool*.
-
-![Die Liste der Skriptordner mit einem installierten Skript](../assets/shots/14-script-folder-picker.png)
 
 ## Das Werkzeug aktualisieren { #updating-the-tool }
 

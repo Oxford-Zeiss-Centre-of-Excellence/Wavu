@@ -60,8 +60,6 @@ def run(ctx, inputs, params):
     }
 ```
 
-![Una imagen de etiquetas, una tabla Results y contornos en el ROI Manager](../assets/shots/11-outputs.png)
-
 ## Contornos para el ROI Manager
 
 El ROI Manager de Fiji lee archivos zip *RoiSet* de ImageJ. Escribe uno en

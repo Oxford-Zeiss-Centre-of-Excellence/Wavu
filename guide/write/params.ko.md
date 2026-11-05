@@ -37,8 +37,6 @@ PARAMS = {
 
 Fiji는 이걸 이런 대화상자로 바꿔요.
 
-![위의 PARAMS로 Fiji가 만든 대화상자](../assets/shots/10-params-dialog.png)
-
 | `type` | Fiji의 입력란 | `run`이 받는 것 |
 |---|---|---|
 | `float` | 숫자 상자(소수점 3자리) | 소수, 예: `2.0`, `params`로 |

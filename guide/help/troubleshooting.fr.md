@@ -62,8 +62,6 @@ modèle à la première utilisation, il devrait le dire avec `ctx.log`
 Une fenêtre affiche *script failed:* avec un court message, et le Log
 contient tous les détails (la « traceback », la pile d'appels).
 
-![La fenêtre d'erreur de Wavu et la traceback dans le Log](../assets/shots/13-error-dialog.png)
-
 Lisez la traceback **de bas en haut** : la dernière ligne est l'erreur, les
 lignes au-dessus indiquent la ligne de `script.py` qui l'a provoquée. Les
 cas courants :

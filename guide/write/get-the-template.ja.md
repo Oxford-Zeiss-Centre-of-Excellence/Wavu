@@ -39,10 +39,6 @@ flowchart LR
 場合は **ZIP をダウンロード** を使って解凍し、VS Code で
 **File › Open Folder…**（フォルダーを開く）を選んでください。
 
-![Visual Studio Code を開くか聞いてくるブラウザー](../assets/shots/08-vscode-browser-prompt.png)
-
-![VS Code で開いたテンプレートフォルダー、script.py が見えている](../assets/shots/09-vscode-template-open.png)
-
 *GitHub でこのテンプレートを使う* は、代わりにあなた専用のオンラインの
 コピーを作ります。あとで [世界と共有](../share/with-the-world.md) したく
 なったときに便利です。

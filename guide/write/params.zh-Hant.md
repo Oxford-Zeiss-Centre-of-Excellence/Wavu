@@ -36,8 +36,6 @@ PARAMS = {
 
 Fiji 會把它變成這個對話框：
 
-![Fiji 根據上面的 PARAMS 產生的對話框](../assets/shots/10-params-dialog.png)
-
 | `type` | Fiji 裡的欄位 | `run` 收到的東西 |
 |---|---|---|
 | `float` | 數字框（3 位小數） | 一個小數，例如 `2.0`，在 `params` 裡 |

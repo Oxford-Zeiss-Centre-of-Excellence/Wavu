@@ -59,8 +59,6 @@ def run(ctx, inputs, params):
     }
 ```
 
-![A label image, a Results table and outlines in the ROI Manager](../assets/shots/11-outputs.png)
-
 ## Outlines for the ROI Manager
 
 Fiji's ROI Manager reads ImageJ *RoiSet* zip files. Write one into

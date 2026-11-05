@@ -50,8 +50,6 @@ Fiji's progress bar fills up, and the status bar at the bottom of the main
 Fiji window shows the script name and a percentage, such as
 *Wavu: script 40%*.
 
-![The Log window with script messages, and the progress bar in Fiji's status bar](../assets/shots/12-log-progress.png)
-
 ## Cancel: why your code has to help
 
 Click on a Fiji window and press **Esc**. The Log says

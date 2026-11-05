@@ -46,8 +46,8 @@ names (*Start here*, *Write a script*, *Share*, *Help*) can be translated with
    **Plugins › Wavu › Run Python Script** (Python-Skript ausführen).
    The same applies to button and field names (**OK**, **Sigma (pixels)**,
    **Debug in VS Code**).
-4. **Keep screenshot paths unchanged** (`../assets/shots/06-run-dialog.png`).
-   The screenshots are shared by all languages; translate only the
+4. **Keep image paths unchanged** (`../assets/img/restaurant.svg`).
+   The illustrations are shared by all languages; translate only the
    alt text in `![…]`.
 5. **Keep admonitions, tabs and buttons** (`!!! tip`, `=== "Windows"`,
    `{ .md-button }`) as they are; translate only their visible titles/text.

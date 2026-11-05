@@ -41,10 +41,6 @@ Il faut que **VS Code** et **Git** soient installés. Si rien ne se passe,
 utilisez **Télécharger le ZIP**, décompressez-le, et dans VS Code choisissez
 **File › Open Folder…** (ouvrir un dossier).
 
-![Le navigateur demande d'ouvrir Visual Studio Code](../assets/shots/08-vscode-browser-prompt.png)
-
-![Le dossier modèle ouvert dans VS Code, avec script.py visible](../assets/shots/09-vscode-template-open.png)
-
 *Utiliser ce modèle sur GitHub* crée plutôt votre propre copie en ligne ;
 c'est pratique plus tard, quand vous voudrez
 [partager avec le monde](../share/with-the-world.md).

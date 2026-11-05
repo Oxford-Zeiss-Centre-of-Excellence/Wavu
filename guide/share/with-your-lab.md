@@ -75,15 +75,11 @@ Then:
 2. Restart Fiji.
 3. Open an image and choose **Plugins › My Lab › My Tool**.
 
-![Plugins › My Lab › My Tool in a colleague's Fiji](../assets/shots/15-lab-menu.png)
-
 The first start downloads the packages from your `pixi.lock` (once; the Log
 says so), then the dialog appears. There is no folder to pick.
 
 The tool also appears in **Plugins › Wavu › Run Python Script** as
 *installed: my-tool*.
-
-![The script folder list showing an installed script](../assets/shots/14-script-folder-picker.png)
 
 ## Updating the tool
 

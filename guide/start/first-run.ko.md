@@ -50,8 +50,6 @@ Fiji에서 **File › Open Samples › Blobs (25K)**를 고르세요.
 2. *Wavu: choose a script folder (contains pixi.toml)*라는 제목의 폴더
    선택 창이 열려요. `Wavu-Script-Template-main` 폴더를 선택하고 확인하세요.
 
-![폴더 선택 창에서 템플릿 폴더 고르기](../assets/shots/04-choose-folder.png)
-
 !!! info "첫 시작은 몇 분 걸려요, 한 번만요"
     Log 창에
     *First start of '…': downloading its Python packages. This happens once
@@ -59,15 +57,11 @@ Fiji에서 **File › Open Samples › Blobs (25K)**를 고르세요.
     pixi가 창고를 채우는 중이에요. 끝날 때까지 기다리세요. 다음부터는 몇 초
     만에 시작해요.
 
-![첫 시작 중의 Log 창](../assets/shots/05-first-start-log.png)
-
 3. **Wavu: script** 대화상자가 나타나요. 첫 줄은 스크립트 설명인
    *Gaussian blur -- the Wavu example script.*이고, 그 아래에
    **Image**, **Sigma (pixels)**, **Edges**,
    **Keep the input's pixel type** 입력란과 **Debug in VS Code**
    체크박스가 있어요(꺼 두세요).
-
-![템플릿의 Wavu: script 대화상자](../assets/shots/06-run-dialog.png)
 
 4. 기본값은 그대로 두고, **Image**가 `blobs.gif`인지 확인한 뒤 **OK**를
    누르세요.
@@ -82,8 +76,6 @@ Log에는 무슨 일이 있었는지 나와요.
 Blurring a (254, 256) uint8 image with sigma=2.0
 [Wavu] script finished
 ```
-
-![Blobs와 blobs-blurred를 나란히, Log와 함께](../assets/shots/07-blur-result.png)
 
 **Sigma (pixels)**를 `8`로 바꿔 다시 해 보세요. 이번에는 바로 시작해요.
 주방이 아직 열려 있고 창고도 가득 차 있으니까요.

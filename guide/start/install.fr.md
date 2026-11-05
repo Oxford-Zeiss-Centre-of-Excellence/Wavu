@@ -75,8 +75,6 @@ de Fiji, pour que les fichiers se retrouvent dans
     Vous devriez voir des lignes comme
     `inflating: …/Fiji.app/scripts/Plugins/Wavu/Run_Python_Script.groovy`.
 
-![Le dossier Fiji.app après décompression : scripts/Plugins/Wavu se trouve à l'intérieur](../assets/shots/01-unzip-into-fiji.png)
-
 ## Étape 3 : redémarrer Fiji et chercher le menu { #step-3-restart-fiji-and-look-for-the-menu }
 
 Quittez Fiji et relancez-le. Ouvrez le menu **Plugins**. Vers le bas, vous
@@ -86,8 +84,6 @@ devriez maintenant voir **Wavu** avec quatre entrées :
 - **Run Python Script** (lancer un script Python)
 - **Setup Python (pixi)** (installer Python)
 - **Stop Worker** (arrêter le worker)
-
-![Le menu Plugins › Wavu de Fiji avec ses quatre entrées](../assets/shots/02-plugins-wavu-menu.png)
 
 ## Étape 4 : Setup Python (pixi), une seule fois { #step-4-setup-python-pixi-once }
 
@@ -99,8 +95,6 @@ dossier de Fiji est en lecture seule). La fenêtre Log affiche
 
 Quand c'est fini, une petite fenêtre affiche **Ready:** suivi de la version
 de pixi.
-
-![Le message « Ready: pixi … » après Setup Python (pixi)](../assets/shots/03-setup-python-ready.png)
 
 !!! tip "Vous avez déjà pixi ?"
     Si pixi est déjà installé sur votre ordinateur, Wavu affiche

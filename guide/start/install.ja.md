@@ -73,8 +73,6 @@ zip には `scripts` フォルダーが入っています。これを Fiji フ�
     `inflating: …/Fiji.app/scripts/Plugins/Wavu/Run_Python_Script.groovy`
     のような行が表示されるはずです。
 
-![解凍後の Fiji.app フォルダー：中に scripts/Plugins/Wavu がある](../assets/shots/01-unzip-into-fiji.png)
-
 ## ステップ 3：Fiji を再起動してメニューを探す
 
 Fiji を終了して、もう一度起動します。**Plugins** メニューを開くと、
@@ -85,8 +83,6 @@ Fiji を終了して、もう一度起動します。**Plugins** メニューを
 - **Setup Python (pixi)**（Python をセットアップ）
 - **Stop Worker**（ワーカーを停止）
 
-![Fiji の Plugins › Wavu メニューと 4 つの項目](../assets/shots/02-plugins-wavu-menu.png)
-
 ## ステップ 4：Setup Python (pixi) を一度だけ
 
 **Plugins › Wavu › Setup Python (pixi)** を選びます。Wavu は公式の pixi
@@ -96,8 +92,6 @@ Fiji を終了して、もう一度起動します。**Plugins** メニューを
 `Checksum OK` が表示されます。
 
 終わると、小さなウィンドウに **Ready:** と pixi のバージョンが表示されます。
-
-![Setup Python (pixi) の後の「Ready: pixi …」メッセージ](../assets/shots/03-setup-python-ready.png)
 
 !!! tip "すでに pixi を持っている場合"
     pixi がすでにコンピューターにインストールされていると、Wavu は

@@ -57,8 +57,6 @@ it should say so with `ctx.log` ([how](../write/real-images.md#slow-first-runs-a
 A window says *script failed:* with a short message, and the Log holds the
 full details (the "traceback").
 
-![The Wavu error window and the traceback in the Log](../assets/shots/13-error-dialog.png)
-
 Read the traceback **from the bottom up**: the last line is the error, the
 lines above it point to the line in `script.py` that caused it. Common ones:
 

@@ -45,8 +45,6 @@ Debugger** de VS Code; VS Code te las ofrece al abrir la carpeta.
    la izquierda), elige **Attach to Wavu worker** y pulsa el botón verde ▶.
 5. El script se ejecuta y se detiene en tu punto rojo.
 
-![VS Code pausado en un punto de interrupción de script.py, mostrando las variables](../assets/shots/16-vscode-breakpoint.png)
-
 Mientras está en pausa, pasa el ratón por encima de una variable para ver su
 valor, o mira el panel **Variables**. Usa la barra de herramientas para
 avanzar paso a paso (++f10++) o continuar (++f5++). Cuando termina, los

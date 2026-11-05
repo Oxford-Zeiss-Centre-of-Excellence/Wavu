@@ -38,8 +38,6 @@ PARAMS = {
 
 Fiji en fait cette boîte de dialogue :
 
-![La boîte de dialogue que Fiji construit à partir des PARAMS ci-dessus](../assets/shots/10-params-dialog.png)
-
 | `type` | Champ dans Fiji | Ce que `run` reçoit |
 |---|---|---|
 | `float` | case numérique (3 décimales) | un nombre décimal, p. ex. `2.0`, dans `params` |

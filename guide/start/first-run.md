@@ -54,8 +54,6 @@ In Fiji: **File › Open Samples › Blobs (25K)**.
    *Wavu: choose a script folder (contains pixi.toml)*. Select the
    `Wavu-Script-Template-main` folder and confirm.
 
-![Choosing the template folder in the folder chooser](../assets/shots/04-choose-folder.png)
-
 !!! info "The first start takes a few minutes, once"
     The Log window says
     *First start of '…': downloading its Python packages. This happens once
@@ -63,15 +61,11 @@ In Fiji: **File › Open Samples › Blobs (25K)**.
     This is pixi stocking the pantry. Let it finish; next time the script
     starts in seconds.
 
-![The Log window during the first start](../assets/shots/05-first-start-log.png)
-
 3. The dialog **Wavu: script** appears. Its first line is the script's
    description, *Gaussian blur -- the Wavu example script.*, followed by the
    fields **Image**, **Sigma (pixels)**, **Edges** and
    **Keep the input's pixel type**, plus a **Debug in VS Code** checkbox
    (leave it off).
-
-![The Wavu: script dialog for the template](../assets/shots/06-run-dialog.png)
 
 4. Leave the defaults, check that **Image** shows `blobs.gif`, and press
    **OK**.
@@ -86,8 +80,6 @@ shows what happened:
 Blurring a (254, 256) uint8 image with sigma=2.0
 [Wavu] script finished
 ```
-
-![Blobs and blobs-blurred side by side, with the Log](../assets/shots/07-blur-result.png)
 
 Try again with **Sigma (pixels)** set to `8`. This time it starts at once,
 because the kitchen is still running and the pantry is full.

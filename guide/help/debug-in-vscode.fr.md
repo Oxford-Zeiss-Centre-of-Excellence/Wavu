@@ -48,8 +48,6 @@ dossier.
    vert ▶.
 5. Le script s'exécute et s'arrête sur votre point rouge.
 
-![VS Code en pause sur un point d'arrêt dans script.py, avec les variables](../assets/shots/16-vscode-breakpoint.png)
-
 Pendant la pause, survolez une variable pour voir sa valeur, ou regardez le
 panneau **Variables**. Utilisez la barre d'outils pour passer à la ligne
 suivante (++f10++) ou continuer (++f5++). Quand c'est fini, les résultats

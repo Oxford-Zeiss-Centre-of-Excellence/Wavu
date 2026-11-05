@@ -50,23 +50,17 @@ sequenceDiagram
    *Wavu: choose a script folder (contains pixi.toml)*。选择
    `Wavu-Script-Template-main` 文件夹并确认。
 
-![在文件夹选择窗口中选择模板文件夹](../assets/shots/04-choose-folder.png)
-
 !!! info "第一次启动要等几分钟，仅此一次"
     Log 窗口会显示
     *First start of '…': downloading its Python packages. This happens once
     and can take several minutes…*，状态栏也会显示已用的秒数。这是 pixi
     在备齐食材柜。让它跑完；下次这个脚本几秒内就能启动。
 
-![第一次启动时的 Log 窗口](../assets/shots/05-first-start-log.png)
-
 3. 弹出 **Wavu: script** 对话框。第一行是脚本的说明
    *Gaussian blur -- the Wavu example script.*，接着是
    **Image**、**Sigma (pixels)**、**Edges** 和
    **Keep the input's pixel type** 这几个输入项，还有一个
    **Debug in VS Code** 复选框（保持不勾选）。
-
-![模板的 Wavu: script 对话框](../assets/shots/06-run-dialog.png)
 
 4. 保留默认值，确认 **Image** 显示的是 `blobs.gif`，然后按 **OK**。
 
@@ -80,8 +74,6 @@ Log 会显示刚才发生了什么：
 Blurring a (254, 256) uint8 image with sigma=2.0
 [Wavu] script finished
 ```
-
-![Blobs 和 blobs-blurred 并排显示，旁边是 Log](../assets/shots/07-blur-result.png)
 
 把 **Sigma (pixels)** 改成 `8` 再试一次。这次会立刻开始，因为厨房还开着，
 食材柜也是满的。
