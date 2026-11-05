@@ -1,0 +1,72 @@
+[build-system]
+requires = ["hatchling>=1.21", "hatch-vcs>=0.4"]
+build-backend = "hatchling.build"
+
+[project]
+name = "wavu"
+dynamic = ["version"]
+description = "Run Python scripts, each in its own pixi environment, from Fiji -- logs and progress stream back."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+authors = [{ name = "Oxford-Zeiss Centre of Excellence" }]
+keywords = ["fiji", "imagej", "bioimage", "microscopy", "pixi", "bridge"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "Intended Audience :: Science/Research",
+]
+# Deliberately tiny: the worker itself is standard library only (http.server,
+# json, threading). numpy/tifffile are needed to hand arrays and TIFFs to
+# scripts. Everything else is optional and detected at run time.
+dependencies = [
+    "numpy>=1.24",
+    "tifffile>=2023.1",
+]
+
+[project.optional-dependencies]
+debug = ["debugpy>=1.8"]
+tables = ["pandas>=1.5"]
+rois = ["roifile>=2023.1"]
+
+[project.urls]
+Homepage = "https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu"
+Issues = "https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/issues"
+Changelog = "https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/blob/main/CHANGELOG.md"
+
+[project.scripts]
+wavu-worker = "wavu.worker:main"
+wavu = "wavu.cli:main"
+
+[tool.hatch.version]
+source = "vcs"
+# Used only when building outside a git checkout without tags (e.g. a source
+# tarball); a real build always takes the version from the git tag.
+fallback-version = "0.0.0"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/wavu/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/wavu"]
+
+# The script boilerplate ships inside the wheel so `wavu new-script` works for
+# users who never cloned this repo. Single source: templates/wavu-script.
+[tool.hatch.build.targets.wheel.force-include]
+"templates/wavu-script" = "wavu/template"
+
+[tool.hatch.build.targets.sdist]
+exclude = [".pixi", "tests/data", "**/pixi.lock", "**/.pixi"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "templates/wavu-script"]
+pythonpath = ["tests"]
+markers = [
+    "fiji: headless Fiji smoke test (WAVU_FIJI=<Fiji.app>; pixi run test-fiji); excluded from the default run",
+    "pixi_env: launches a worker through `pixi run` in a script's own environment (slow first time); excluded from the default run",
+    "cellpose: runs the cellpose example in its own heavy environment (weekly CI only)",
+    "test_data: needs the fetched CTC frame (pixi run fetch-test-data)",
+]
+addopts = "--import-mode=importlib -m 'not fiji and not pixi_env and not cellpose'"

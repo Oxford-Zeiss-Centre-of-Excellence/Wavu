@@ -1,0 +1,51 @@
+[workspace]
+name = "wavu"
+description = "Run Python scripts, each in its own pixi environment, from Fiji."
+channels = ["conda-forge"]
+platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+
+# The development environment: wavu itself (editable) plus what the tests
+# need to exercise every output kind (tables via pandas, ROI zips via roifile)
+# and the template script (scipy). Script environments are separate pixi
+# workspaces in their own folders -- see templates/wavu-script/pixi.toml.
+[dependencies]
+python = "3.12.*"
+numpy = ">=1.24"
+tifffile = ">=2023.1"
+imagecodecs = ">=2024.1"  # CTC test frames are LZW-compressed
+scipy = ">=1.10"
+pandas = ">=2.0"
+roifile = ">=2024.1"
+debugpy = ">=1.8"
+pytest = ">=8"
+pytest-timeout = ">=2.3"
+
+[pypi-dependencies]
+wavu = { path = ".", editable = true }
+
+[tasks]
+test = "pytest -q"
+# Launches real workers through `pixi run` inside the template's own env.
+test-integration = "pytest -q -m pixi_env -rs"
+# Headless Fiji smoke test: WAVU_FIJI=<Fiji.app> pixi run test-fiji
+test-fiji = "pytest -q -m fiji -rs -s"
+# Launch mode 2: a worker for the template script that Fiji can connect to.
+worker = "wavu-worker --script-dir templates/wavu-script --handshake-file --detached"
+# pixi run new-script my_analysis  -> ./my_analysis (copy of templates/wavu-script)
+new-script = "wavu new-script"
+# One CTC Fluo-N2DH-GOWT1 frame + GT segmentation into tests/data (docs/test-data.md).
+fetch-test-data = "python tools/fetch_test_data.py"
+# The Fiji client as a zip that unzips straight into Fiji.app (release asset).
+fiji-zip = "python tools/make_fiji_zip.py"
+
+[feature.build.dependencies]
+python-build = ">=1.2"
+hatchling = ">=1.21"
+hatch-vcs = ">=0.4"
+
+[feature.build.tasks]
+build = "python -m build --outdir dist"
+
+[environments]
+default = { solve-group = "default" }
+build = { features = ["build"], solve-group = "default" }

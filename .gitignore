@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.pixi/
+build/
+dist/
+*.egg-info/
+.DS_Store
+# hatch-vcs writes this from the git tag at build/install time
+src/wavu/_version.py
+# Downloaded test data (pixi run fetch-test-data) -- never committed, see docs/test-data.md
+tests/data/
+# Script outputs from `wavu run`
+wavu-out/
+# Fiji downloaded for the smoke test in CI
+.fiji/
