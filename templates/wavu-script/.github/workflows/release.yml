@@ -1,0 +1,97 @@
+# Release your Wavu script: push a tag like v1.0.0 and this workflow
+#   1. runs your tests (pixi run test),
+#   2. builds a Fiji-installable zip with `wavu package`,
+#   3. attaches it to a GitHub Release.
+# Users unzip that zip into Fiji.app (Wavu must be installed) and get a menu item.
+#
+# Optional jobs, off until you set repository *variables* (Settings > Secrets and variables > Actions):
+#   PYPI_PUBLISH=true      publish your Python package (needs a pyproject.toml here and a
+#                          PyPI trusted publisher for this repo + workflow).
+#   FIJI_UPDATE_SITE=true  upload to your own Fiji update site; needs the secrets
+#                          UPDATE_SITE_NAME, UPDATE_SITE_USER, UPDATE_SITE_PASS.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  SCRIPT_NAME: __SCRIPT_NAME__
+  # Where the command appears under Fiji's Plugins menu ("Submenu>Title").
+  MENU: "Wavu>__SCRIPT_NAME__"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.11.3
+        with:
+          pixi-version: v0.78.0
+          cache: true
+      - name: Test
+        run: pixi run test
+      - name: Package for Fiji
+        run: pixi run wavu package . --name "$SCRIPT_NAME" --menu "$MENU" --out dist/fiji
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fiji-package
+          path: dist/fiji
+      - name: GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --generate-notes
+          gh release upload "$TAG" "dist/${SCRIPT_NAME}-fiji.zip" --clobber
+
+  pypi:
+    needs: release
+    if: vars.PYPI_PUBLISH == 'true'
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.11.3
+        with:
+          pixi-version: v0.78.0
+          run-install: false
+      - name: Build (only if this repo has a pyproject.toml)
+        run: |
+          test -f pyproject.toml || { echo "::error::PYPI_PUBLISH is on but there is no pyproject.toml"; exit 1; }
+          pixi exec --spec python-build pyproject-build --outdir dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
+
+  fiji-update-site:
+    needs: release
+    if: vars.FIJI_UPDATE_SITE == 'true'
+    runs-on: ubuntu-latest
+    env:
+      UPDATE_SITE_NAME: ${{ secrets.UPDATE_SITE_NAME }}
+      UPDATE_SITE_USER: ${{ secrets.UPDATE_SITE_USER }}
+      UPDATE_SITE_PASS: ${{ secrets.UPDATE_SITE_PASS }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: fiji-package
+          path: package
+      - name: Upload to the update site with the Fiji updater CLI
+        run: |
+          if [ -z "$UPDATE_SITE_NAME" ] || [ -z "$UPDATE_SITE_USER" ] || [ -z "$UPDATE_SITE_PASS" ]; then
+            echo "::warning::update-site secrets missing -- skipping"; exit 0
+          fi
+          curl -fsSL -o fiji.zip https://downloads.imagej.net/fiji/latest/fiji-latest-linux64-jdk.zip
+          unzip -q fiji.zip
+          FIJI="$(find . -mindepth 1 -maxdepth 1 -type d ! -name package | head -n 1)"
+          LAUNCHER="$(cd "$FIJI" && ls fiji-linux-x64 ImageJ-linux64 2>/dev/null | head -n 1)"
+          cp -r package/. "$FIJI/"
+          cd "$FIJI"
+          "./$LAUNCHER" --update edit-update-site "$UPDATE_SITE_NAME" "https://sites.imagej.net/$UPDATE_SITE_NAME/" \
+            "webdav:$UPDATE_SITE_USER:$UPDATE_SITE_PASS" .
+          "./$LAUNCHER" --update upload-complete-site --force "$UPDATE_SITE_NAME"

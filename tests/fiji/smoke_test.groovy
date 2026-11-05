@@ -13,7 +13,8 @@ def wavu = new GroovyShell(this.class.classLoader).evaluate(new File(System.gete
 println "java=" + System.getProperty("java.version") + " ij=" + IJ.getVersion()
 try {
     File dir = new File(System.getenv("WAVU_SCRIPT_DIR"))
-    Map w = wavu.startWorker(dir, false)
+    println "installed scripts: " + wavu.installedScriptFolders()
+    Map w = wavu.workerFor(dir)  // same path the menu stubs use (runScriptFolder)
     if (w == null) fail("no pixi")
     Map listing = wavu.getOk(w, "/scripts")
     if (!listing.scripts.containsKey("script")) fail("template script not listed: " + listing)

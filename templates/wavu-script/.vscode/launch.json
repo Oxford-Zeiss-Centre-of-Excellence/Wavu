@@ -1,6 +1,6 @@
 {
   // Wavu debugging: start the worker with debugpy, then attach.
-  //   Terminal:  pixi run debug        (or tick "Debug with VS Code" in Fiji's Run dialog)
+  //   Terminal:  pixi run debug        (or tick "Debug in VS Code" in the Fiji Run dialog)
   //   VS Code:   Run and Debug > "Attach to Wavu worker", set breakpoints in script.py,
   //              then run the script from Fiji as usual.
   // Python interpreter for IntelliSense: .pixi/envs/default (Python: Select Interpreter).

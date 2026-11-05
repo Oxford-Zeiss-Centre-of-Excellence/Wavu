@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from pathlib import Path
 
 import numpy as np
@@ -129,23 +130,98 @@ def test_cli_run_writes_outputs(tmp_path, capsys):
     assert tifffile.imread(summary["image"]["path"]).max() == 14
 
 
-def test_new_script_copies_template_and_points_at_this_checkout(tmp_path):
+def test_new_script_outside_the_repo_depends_on_wavu_from_git(tmp_path):
     assert cli.main(["new-script", "my_analysis", "--dest", str(tmp_path)]) == 0
     dest = tmp_path / "my_analysis"
-    assert {p.name for p in dest.iterdir()} >= {"script.py", "test_script.py", "pixi.toml", "README.md", ".vscode"}
+    names = {p.name for p in dest.iterdir()}
+    assert names >= {"script.py", "test_script.py", "pixi.toml", "README.md", ".vscode", ".github"}
     assert not (dest / ".pixi").exists() and not (dest / "pixi.lock").exists()
     toml = (dest / "pixi.toml").read_text()
     assert 'name = "my_analysis"' in toml
     line = next(l for l in toml.splitlines() if l.startswith("wavu ="))
-    assert "editable = true" in line
-    rel = line.split('path = "')[1].split('"')[0]
-    assert ((dest / rel) / "pyproject.toml").resolve() == (REPO / "pyproject.toml").resolve()
+    assert 'git = "https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu.git"' in line
+    assert ("tag = \"v" in line) or ('branch = "main"' in line)
+    wf = (dest / ".github" / "workflows" / "release.yml").read_text()
+    assert "__SCRIPT_NAME__" not in wf and "SCRIPT_NAME: my_analysis" in wf
+    assert "wavu package" in wf and "vars.PYPI_PUBLISH == 'true'" in wf and "vars.FIJI_UPDATE_SITE == 'true'" in wf
 
 
-@pytest.mark.parametrize("source,fragment", [("release", "releases/download/v"), ("pypi", 'wavu = ">=0.1"')])
+def test_new_script_inside_the_repo_keeps_a_relative_path():
+    import tempfile
+
+    (REPO / "build").mkdir(exist_ok=True)
+    parent = Path(tempfile.mkdtemp(dir=REPO / "build"))
+    try:
+        cli.main(["new-script", "inrepo", "--dest", str(parent)])
+        line = next(l for l in (parent / "inrepo" / "pixi.toml").read_text().splitlines() if l.startswith("wavu ="))
+        assert "editable = true" in line
+        rel = line.split('path = "')[1].split('"')[0]
+        assert not Path(rel).is_absolute()
+        assert ((parent / "inrepo" / rel) / "pyproject.toml").resolve() == (REPO / "pyproject.toml").resolve()
+    finally:
+        shutil.rmtree(parent, ignore_errors=True)
+
+
+@pytest.mark.parametrize("source,fragment", [("pypi", 'wavu = ">=0.1"'), ("git", "Wavu.git")])
 def test_new_script_wavu_sources(tmp_path, source, fragment):
     cli.main(["new-script", "s", "--dest", str(tmp_path), "--wavu-source", source])
     assert fragment in (tmp_path / "s" / "pixi.toml").read_text()
+
+
+# -- wavu package -------------------------------------------------------------
+
+
+def _script_for_packaging(tmp_path, lock=True):
+    cli.main(["new-script", "blur", "--dest", str(tmp_path), "--wavu-source", "git"])
+    d = tmp_path / "blur"
+    if lock:
+        (d / "pixi.lock").write_text("version: 6\n")
+    (d / ".pixi").mkdir()
+    (d / ".pixi" / "junk").write_text("x")
+    return d
+
+
+def test_package_builds_an_update_site_tree_and_zip(tmp_path, capsys):
+    import zipfile
+
+    d = _script_for_packaging(tmp_path)
+    out = tmp_path / "dist" / "fiji"
+    assert cli.main(["package", str(d), "--name", "my-cellpose", "--menu", "My Lab>Cellpose Plus", "--out", str(out)]) == 0
+    inst = out / "wavu" / "scripts" / "my-cellpose"
+    assert {p.name for p in inst.iterdir()} >= {"script.py", "pixi.toml", "pixi.lock", "README.md"}
+    for absent in ("test_script.py", ".pixi", ".vscode", ".github"):
+        assert not (inst / absent).exists(), absent
+    stub = out / "scripts" / "Plugins" / "My Lab" / "Cellpose Plus.groovy"
+    text = stub.read_text()
+    assert 'wavu.runScriptFolder(new File(ij.IJ.getDirectory("imagej"), "wavu/scripts/my-cellpose"))' in text
+    assert "wavu_lib.groovy.txt" in text and len(text.splitlines()) < 15
+    with zipfile.ZipFile(tmp_path / "dist" / "my-cellpose-fiji.zip") as z:
+        names = set(z.namelist())
+    assert "wavu/scripts/my-cellpose/pixi.lock" in names
+    assert "scripts/Plugins/My Lab/Cellpose Plus.groovy" in names
+
+
+def test_package_requires_a_lock_file(tmp_path):
+    d = _script_for_packaging(tmp_path, lock=False)
+    with pytest.raises(SystemExit, match="pixi.lock"):
+        cli.main(["package", str(d), "--menu", "X>Y", "--out", str(tmp_path / "o")])
+
+
+def test_package_rejects_a_local_path_dependency(tmp_path):
+    d = _script_for_packaging(tmp_path)
+    toml = d / "pixi.toml"
+    toml.write_text("\n".join(
+        'wavu = { path = "../..", editable = true }' if l.startswith("wavu =") else l
+        for l in toml.read_text().splitlines()))
+    with pytest.raises(SystemExit, match="local path"):
+        cli.main(["package", str(d), "--menu", "X>Y", "--out", str(tmp_path / "o")])
+
+
+@pytest.mark.parametrize("menu", ["", "A>B/C", "A>B:C"])
+def test_package_rejects_bad_menus(tmp_path, menu):
+    d = _script_for_packaging(tmp_path)
+    with pytest.raises(SystemExit, match="menu"):
+        cli.main(["package", str(d), "--menu", menu, "--out", str(tmp_path / "o")])
 
 
 def test_new_script_refuses_bad_names_and_existing_folders(tmp_path):
