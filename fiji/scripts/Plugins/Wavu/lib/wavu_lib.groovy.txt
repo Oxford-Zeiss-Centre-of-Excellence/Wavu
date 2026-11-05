@@ -1,0 +1,628 @@
+// Wavu Fiji client library -- shared by every script in Plugins > Wavu.
+//
+// Why ".groovy.txt": Fiji turns every *.groovy file under scripts/Plugins into
+// a menu item. This file is a library, not a command, so it carries an
+// extension no script language claims; the menu scripts load it with
+// GroovyShell.evaluate (docs/decisions.md D6). Plain Groovy + ImageJ 1.x API,
+// Java 8 compatible (Fiji still ships Java 8 on some installs).
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import ij.IJ
+import ij.ImagePlus
+import ij.ImageStack
+import ij.Prefs
+import ij.WindowManager
+import ij.CompositeImage
+import ij.measure.Calibration
+import ij.measure.ResultsTable
+import ij.plugin.frame.RoiManager
+import ij.process.ByteProcessor
+import ij.process.ColorProcessor
+import ij.process.FloatProcessor
+import ij.process.ImageProcessor
+import ij.process.ShortProcessor
+
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.security.MessageDigest
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.TimeUnit
+import java.util.zip.GZIPInputStream
+import java.util.zip.ZipInputStream
+
+class WavuLib {
+    // Replaced with the release version by tools/make_fiji_zip.py.
+    static final String VERSION = "@WAVU_VERSION@"
+    static final String STORE = "wavu.workers"
+    static final int INLINE_LIMIT = 4 * 1024 * 1024
+    static final int DEBUG_PORT = 5678
+
+    // ---------------------------------------------------------------- misc --
+
+    void log(String msg) { IJ.log("[Wavu] " + msg) }
+
+    boolean isWindows() { System.getProperty("os.name").toLowerCase().contains("win") }
+
+    boolean isMac() { System.getProperty("os.name").toLowerCase().contains("mac") }
+
+    File fijiDir() {
+        String d = IJ.getDirectory("imagej")
+        return new File(d ?: System.getProperty("user.dir"))
+    }
+
+    File userDir() { new File(System.getProperty("user.home"), ".wavu") }
+
+    /** Live workers, keyed by script folder, kept across menu commands in this JVM. */
+    Map workers() {
+        Properties p = System.getProperties()
+        synchronized (p) {
+            Object m = p.get(STORE)
+            if (m == null) {
+                m = Collections.synchronizedMap(new LinkedHashMap())
+                p.put(STORE, m)
+            }
+            return (Map) m
+        }
+    }
+
+    // ---------------------------------------------------------------- pixi --
+
+    String pixiName() { isWindows() ? "pixi.exe" : "pixi" }
+
+    /** pixi from: Prefs, <Fiji>/wavu, ~/.wavu/bin, PATH, ~/.pixi/bin. null if none. */
+    File findPixi() {
+        List<File> candidates = []
+        String pref = Prefs.get("wavu.pixi", "")
+        if (pref) candidates << new File(pref)
+        candidates << new File(new File(fijiDir(), "wavu"), pixiName())
+        candidates << new File(new File(userDir(), "bin"), pixiName())
+        String path = System.getenv("PATH") ?: ""
+        path.split(File.pathSeparator).each { if (it) candidates << new File(it, pixiName()) }
+        candidates << new File(new File(System.getProperty("user.home"), ".pixi/bin"), pixiName())
+        return candidates.find { it.isFile() && it.canExecute() }
+    }
+
+    /** Where Setup puts pixi: <Fiji>/wavu if writable, else ~/.wavu/bin. */
+    File pixiInstallDir() {
+        File d = new File(fijiDir(), "wavu")
+        d.mkdirs()
+        if (d.isDirectory() && d.canWrite()) return d
+        File u = new File(userDir(), "bin")
+        u.mkdirs()
+        return u
+    }
+
+    String pixiAssetName() {
+        String arch = System.getProperty("os.arch").toLowerCase()
+        String cpu = (arch.contains("aarch64") || arch.contains("arm64")) ? "aarch64" : "x86_64"
+        if (isWindows()) return "pixi-${cpu}-pc-windows-msvc.zip"
+        if (isMac()) return "pixi-${cpu}-apple-darwin.tar.gz"
+        return "pixi-${cpu}-unknown-linux-musl.tar.gz"
+    }
+
+    String latestPixiTag() {
+        HttpURLConnection c = (HttpURLConnection) new URL("https://github.com/prefix-dev/pixi/releases/latest").openConnection()
+        c.setInstanceFollowRedirects(false)
+        c.setConnectTimeout(20000)
+        c.setReadTimeout(20000)
+        String loc = c.getHeaderField("Location")
+        c.disconnect()
+        if (!loc || !loc.contains("/tag/")) throw new IOException("could not find the latest pixi release (no redirect from GitHub)")
+        return loc.substring(loc.lastIndexOf("/tag/") + 5)
+    }
+
+    byte[] download(String url) {
+        URLConnection c = new URL(url).openConnection()
+        c.setConnectTimeout(30000)
+        c.setReadTimeout(120000)
+        c.getInputStream().withStream { return it.bytes }
+    }
+
+    static String sha256(byte[] data) {
+        MessageDigest.getInstance("SHA-256").digest(data).collect { String.format("%02x", it & 0xff) }.join("")
+    }
+
+    /** Download the official pixi binary, verify its sha256 against the release checksum file, install it. */
+    File setupPixi(String tag = null) {
+        tag = tag ?: Prefs.get("wavu.pixi.version", "") ?: latestPixiTag()
+        String asset = pixiAssetName()
+        String base = "https://github.com/prefix-dev/pixi/releases/download/${tag}/"
+        log("Downloading pixi ${tag} (${asset})...")
+        String sums = new String(download(base + "sha256.sum"), "UTF-8")
+        String expected = sums.readLines().collect { it.trim().split(/\s+/) }.find { it.length == 2 && it[1].replaceFirst(/^\*/, "") == asset }?.getAt(0)
+        if (!expected) throw new IOException("${asset} is not listed in the ${tag} sha256.sum -- unsupported platform?")
+        byte[] archive = download(base + asset)
+        String got = sha256(archive)
+        if (!got.equalsIgnoreCase(expected)) throw new IOException("checksum mismatch for ${asset}: expected ${expected}, got ${got}")
+        log("Checksum OK (sha256 ${got.substring(0, 16)}...)")
+        byte[] binary = asset.endsWith(".zip") ? fromZip(archive, pixiName()) : fromTarGz(archive, "pixi")
+        if (binary == null) throw new IOException("no ${pixiName()} inside ${asset}")
+        File dest = new File(pixiInstallDir(), pixiName())
+        dest.bytes = binary
+        dest.setExecutable(true, false)
+        Prefs.set("wavu.pixi", dest.getAbsolutePath())
+        Prefs.savePreferences()
+        log("pixi installed: " + dest)
+        return dest
+    }
+
+    static byte[] fromZip(byte[] zip, String name) {
+        new ZipInputStream(new ByteArrayInputStream(zip)).withStream { zis ->
+            def e
+            while ((e = zis.getNextEntry()) != null) {
+                if (!e.isDirectory() && new File(e.getName()).getName() == name) return zis.bytes
+            }
+        }
+        return null
+    }
+
+    /** Minimal tar reader: 512-byte headers, size in octal at offset 124. */
+    static byte[] fromTarGz(byte[] tgz, String name) {
+        byte[] tar = new GZIPInputStream(new ByteArrayInputStream(tgz)).withStream { it.bytes }
+        int pos = 0
+        while (pos + 512 <= tar.length) {
+            String entry = new String(tar, pos, 100, "US-ASCII").replaceAll(/\u0000.*$/, "")
+            if (!entry) break
+            String sizeField = new String(tar, pos + 124, 12, "US-ASCII").replaceAll(/[\u0000 ]/, "")
+            long size = sizeField ? Long.parseLong(sizeField, 8) : 0
+            char type = (char) tar[pos + 156]
+            pos += 512
+            if ((type == ('0' as char) || type == (0 as char)) && new File(entry).getName() == name) {
+                return Arrays.copyOfRange(tar, pos, (int) (pos + size))
+            }
+            pos += (int) (((size + 511) / 512) * 512)
+        }
+        return null
+    }
+
+    /** pixi, installing it first if the user agrees (or if ask == false). */
+    File ensurePixi(boolean ask = true) {
+        File p = findPixi()
+        if (p != null) return p
+        if (ask && !IJ.showMessageWithCancel("Wavu",
+                "Wavu needs pixi (a small, self-contained Python environment manager).\n" +
+                "Download it now from github.com/prefix-dev/pixi (about 20 MB, checksum-verified)?")) return null
+        return setupPixi()
+    }
+
+    // ---------------------------------------------------------------- HTTP --
+
+    String baseUrl(Map w) { "http://${w.host ?: '127.0.0.1'}:${w.port}" }
+
+    HttpURLConnection open(Map w, String method, String path, int readTimeoutMs) {
+        HttpURLConnection c = (HttpURLConnection) new URL(baseUrl(w) + path).openConnection(Proxy.NO_PROXY)
+        c.setRequestMethod(method)
+        c.setConnectTimeout(10000)
+        c.setReadTimeout(readTimeoutMs)
+        c.setRequestProperty("Authorization", "Bearer " + w.token)
+        return c
+    }
+
+    /** JSON request; returns [status: int, body: Object]. */
+    Map call(Map w, String method, String path, Object body = null, int readTimeoutMs = 60000) {
+        HttpURLConnection c = open(w, method, path, readTimeoutMs)
+        if (body != null || method == "POST") {
+            byte[] data = JsonOutput.toJson(body ?: [:]).getBytes("UTF-8")
+            c.setDoOutput(true)
+            c.setRequestProperty("Content-Type", "application/json")
+            c.setFixedLengthStreamingMode(data.length)
+            c.getOutputStream().withStream { it.write(data) }
+        }
+        int status = c.getResponseCode()
+        InputStream is = status >= 400 ? c.getErrorStream() : c.getInputStream()
+        String text = is == null ? "" : is.withStream { new String(it.bytes, "UTF-8") }
+        c.disconnect()
+        return [status: status, body: text ? new JsonSlurper().parseText(text) : [:]]
+    }
+
+    Map getOk(Map w, String path) {
+        Map r = call(w, "GET", path)
+        if (r.status != 200) throw new IOException("GET ${path}: HTTP ${r.status} ${r.body?.error ?: ''}")
+        return (Map) r.body
+    }
+
+    boolean alive(Map w) {
+        try {
+            if (w.process != null && !((Process) w.process).isAlive()) return false
+            return call(w, "GET", "/health", null, 5000).status == 200
+        } catch (Exception ignored) {
+            return false
+        }
+    }
+
+    /** Read a job's server-sent events until done/error/cancelled; calls onEvent(kind, data). */
+    String streamEvents(Map w, String job, Closure onEvent) {
+        int seen = 0
+        for (int attempt = 0; attempt < 5; attempt++) {
+            HttpURLConnection c = open(w, "GET", "/jobs/${job}/events?since=${seen}", 0)
+            String kind = null
+            try {
+                c.getInputStream().withReader("UTF-8") { reader ->
+                    String line
+                    while ((line = reader.readLine()) != null) {
+                        if (line.startsWith("event: ")) kind = line.substring(7)
+                        else if (line.startsWith("data: ")) {
+                            seen++
+                            onEvent(kind, new JsonSlurper().parseText(line.substring(6)))
+                            if (kind in ["done", "error", "cancelled"]) return
+                        }
+                    }
+                }
+            } finally {
+                c.disconnect()
+            }
+            if (kind in ["done", "error", "cancelled"]) return kind
+            Thread.sleep(500) // stream dropped: reconnect where we left off
+        }
+        throw new IOException("lost the event stream for job ${job}")
+    }
+
+    // ------------------------------------------------------------- workers --
+
+    /** Start `pixi run wavu-worker` in the script folder's own environment and wait for its handshake. */
+    Map startWorker(File scriptDir, boolean debug = false) {
+        File pixi = ensurePixi()
+        if (pixi == null) return null
+        File manifest = new File(scriptDir, "pixi.toml")
+        if (!manifest.isFile()) throw new IOException("${scriptDir} has no pixi.toml -- not a Wavu script folder (see templates/wavu-script)")
+        List<String> cmd = [pixi.getAbsolutePath(), "run", "--manifest-path", manifest.getAbsolutePath(),
+                            "wavu-worker", "--script-dir", scriptDir.getAbsolutePath()]
+        if (debug) cmd += ["--debugpy", String.valueOf(DEBUG_PORT), "--debugpy-wait"]
+        log("Starting worker: " + cmd.join(" "))
+        log("(the first start installs the script's environment -- this can take a few minutes)")
+        ProcessBuilder pb = new ProcessBuilder(cmd).directory(scriptDir)
+        pb.environment().put("NO_COLOR", "1")
+        pb.environment().put("PYTHONUNBUFFERED", "1")
+        pb.environment().put("PYTHONIOENCODING", "utf-8")
+        Process proc = pb.start()
+        // NB: we never close proc's stdin -- the worker exits when it closes, i.e. when Fiji does.
+        LinkedBlockingQueue<String> lines = new LinkedBlockingQueue<>()
+        Thread.start("wavu-stdout") {
+            proc.getInputStream().withReader("UTF-8") { r -> String l; while ((l = r.readLine()) != null) lines.put(l) }
+        }
+        List<String> errTail = Collections.synchronizedList([])
+        Thread.start("wavu-stderr") {
+            proc.getErrorStream().withReader("UTF-8") { r ->
+                String l
+                while ((l = r.readLine()) != null) {
+                    l = l.replaceAll(/\u001B\[[0-9;]*[A-Za-z]/, "").trim()
+                    if (!l) continue
+                    errTail << l
+                    if (errTail.size() > 40) errTail.remove(0)
+                    IJ.log("  " + l)
+                }
+            }
+        }
+        Map hello = null
+        long t0 = System.currentTimeMillis()
+        while (hello == null) {
+            String line = lines.poll(250, TimeUnit.MILLISECONDS)
+            if (line != null) {
+                try {
+                    Object o = new JsonSlurper().parseText(line)
+                    if (o instanceof Map && o.port && o.token) hello = (Map) o
+                    else IJ.log("  " + line)
+                } catch (Exception ignored) {
+                    IJ.log("  " + line)
+                }
+                continue
+            }
+            if (!proc.isAlive()) throw new IOException("the worker exited (code ${proc.exitValue()}) before starting:\n" + errTail.join("\n"))
+            if (IJ.escapePressed()) {
+                IJ.resetEscape()
+                proc.destroy()
+                throw new InterruptedException("cancelled while starting the worker")
+            }
+            long s = (System.currentTimeMillis() - t0) / 1000
+            IJ.showStatus(debug ? "Wavu: waiting for VS Code to attach on port ${DEBUG_PORT} (Esc to give up)" : "Wavu: starting worker... ${s}s (Esc to cancel)")
+        }
+        Thread.start("wavu-stdout-drain") { while (proc.isAlive()) lines.poll(1, TimeUnit.SECONDS) }
+        Map w = [host: "127.0.0.1", port: hello.port, token: hello.token, version: hello.wavu, process: proc,
+                 scriptDir: scriptDir.getAbsolutePath(), debug: debug, hostPrefix: null, workerPrefix: null]
+        checkVersion(w)
+        workers().put(w.scriptDir, w)
+        IJ.showStatus("Wavu: worker ready on port ${w.port}")
+        log("Worker ready (wavu ${hello.wavu}, port ${hello.port})")
+        return w
+    }
+
+    void checkVersion(Map w) {
+        if (VERSION.startsWith("@") || !w.version) return
+        def mm = { String v -> v.tokenize(".").take(2).join(".") }
+        if (mm(VERSION) != mm(w.version.toString()))
+            log("Note: Fiji client ${VERSION} and worker ${w.version} differ -- update the script's wavu dependency or the Fiji scripts if something fails.")
+    }
+
+    /** Attach to a worker started elsewhere (terminal, container) through its handshake file. */
+    Map connect(File handshake, String hostPrefix = null, String workerPrefix = null, String host = null) {
+        if (!handshake.isFile()) throw new IOException("no handshake file at ${handshake} -- start the worker with `pixi run worker` first")
+        Map info = (Map) new JsonSlurper().parse(handshake, "UTF-8")
+        String h = host ?: info.host
+        if (!h || h == "0.0.0.0") h = "127.0.0.1"
+        Map w = [host: h, port: info.port, token: info.token, version: info.wavu, process: null,
+                 scriptDir: info.script_dir ?: handshake.getAbsolutePath(), debug: false,
+                 hostPrefix: hostPrefix ?: null, workerPrefix: workerPrefix ?: null]
+        if (!alive(w)) throw new IOException("worker at ${h}:${info.port} is not answering (stale ${handshake}?)")
+        checkVersion(w)
+        workers().put("connected:" + w.scriptDir, w)
+        log("Connected to worker on ${h}:${w.port} serving ${w.scriptDir}")
+        return w
+    }
+
+    void stopWorker(Map w) {
+        try { call(w, "POST", "/shutdown", [:], 5000) } catch (Exception ignored) {}
+        Process p = (Process) w.process
+        if (p != null) {
+            try { p.getOutputStream().close() } catch (Exception ignored) {}
+            if (!p.waitFor(5, TimeUnit.SECONDS)) p.destroyForcibly()
+        }
+        workers().values().remove(w)
+        log("Stopped worker for ${w.scriptDir}")
+    }
+
+    int stopAll() {
+        List all = new ArrayList(workers().values())
+        all.each { stopWorker((Map) it) }
+        return all.size()
+    }
+
+    // ---------------------------------------------------------- path mapping --
+
+    /** Host path -> path as the worker sees it (container mode maps a prefix pair). */
+    String toWorker(Map w, String path) {
+        if (w.hostPrefix && w.workerPrefix) {
+            String p = path.replace('\\', '/')
+            String hp = ((String) w.hostPrefix).replace('\\', '/')
+            if (p.toLowerCase().startsWith(hp.toLowerCase())) return w.workerPrefix + p.substring(hp.length())
+        }
+        return path
+    }
+
+    String fromWorker(Map w, String path) {
+        if (w.hostPrefix && w.workerPrefix && path.startsWith((String) w.workerPrefix))
+            return new File((String) w.hostPrefix, path.substring(((String) w.workerPrefix).length())).getPath()
+        return path
+    }
+
+    File inputTmpDir(Map w) {
+        File d
+        if (w.hostPrefix) d = new File((String) w.hostPrefix, ".wavu-tmp")
+        else d = new File(System.getProperty("java.io.tmpdir"), "wavu-inputs")
+        d.mkdirs()
+        return d
+    }
+
+    // -------------------------------------------------------------- images --
+
+    Map imageMeta(ImagePlus imp) {
+        Map meta = [title: imp.getTitle()]
+        Calibration cal = imp.getCalibration()
+        String unit = (cal.getUnit() ?: "").toLowerCase()
+        if (cal.pixelWidth > 0 && unit in ["um", "micron", "microns", "µm", "µm"]) meta.pixel_um = cal.pixelWidth
+        else if (cal.pixelWidth > 0 && unit == "nm") meta.pixel_um = cal.pixelWidth / 1000.0
+        return meta
+    }
+
+    /** [shape, axes] of an ImagePlus as numpy sees it (ImageJ stack order is C fastest, then Z, then T). */
+    List shapeOf(ImagePlus imp) {
+        int[] d = imp.getDimensions() // w, h, c, z, t
+        List shape = []
+        String axes = ""
+        if (d[4] > 1) { shape << d[4]; axes += "T" }
+        if (d[3] > 1) { shape << d[3]; axes += "Z" }
+        if (d[2] > 1) { shape << d[2]; axes += "C" }
+        shape += [d[1], d[0]]
+        axes += "YX"
+        if (imp.getType() == ImagePlus.COLOR_RGB) { shape << 3; axes += "S" }
+        return [shape, axes]
+    }
+
+    /** An open image as a /run input: inline base64 when small, else a temp TIFF path. */
+    Map encodeImage(ImagePlus imp, Map w, int inlineLimit = INLINE_LIMIT) {
+        List sa = shapeOf(imp)
+        Map meta = imageMeta(imp) + [axes: sa[1]]
+        ImageStack st = imp.getStack()
+        int n = st.getSize(), px = imp.getWidth() * imp.getHeight()
+        int type = imp.getType()
+        int bpp = type == ImagePlus.GRAY16 ? 2 : (type == ImagePlus.GRAY32 ? 4 : (type == ImagePlus.COLOR_RGB ? 3 : 1))
+        long nbytes = (long) px * n * bpp
+        if (nbytes > inlineLimit || type == ImagePlus.COLOR_256) {
+            File f = new File(inputTmpDir(w), "input-" + UUID.randomUUID().toString().substring(0, 8) + ".tif")
+            ImagePlus dup = imp.duplicate()
+            if (type == ImagePlus.COLOR_256) IJ.run(dup, "RGB Color", "")
+            IJ.saveAsTiff(dup, f.getAbsolutePath())
+            dup.close()
+            return [path: toWorker(w, f.getAbsolutePath()), meta: meta]
+        }
+        ByteBuffer buf = ByteBuffer.allocate((int) nbytes).order(ByteOrder.LITTLE_ENDIAN)
+        String dtype
+        for (int i = 1; i <= n; i++) {
+            Object pix = st.getPixels(i)
+            switch (type) {
+                case ImagePlus.GRAY8: buf.put((byte[]) pix); dtype = "uint8"; break
+                case ImagePlus.GRAY16: buf.asShortBuffer().put((short[]) pix); buf.position(buf.position() + px * 2); dtype = "uint16"; break
+                case ImagePlus.GRAY32: buf.asFloatBuffer().put((float[]) pix); buf.position(buf.position() + px * 4); dtype = "float32"; break
+                default: // RGB, interleaved samples
+                    for (int c : (int[]) pix) { buf.put((byte) ((c >> 16) & 0xff)); buf.put((byte) ((c >> 8) & 0xff)); buf.put((byte) (c & 0xff)) }
+                    dtype = "uint8"
+            }
+        }
+        return [dtype: dtype, shape: sa[0], data: Base64.getEncoder().encodeToString(buf.array()), meta: meta]
+    }
+
+    /** An inline image output -> ImagePlus (2-D or 3-D; the worker sends anything bigger as a TIFF). */
+    ImagePlus decodeInline(String title, Map spec) {
+        List shape = (List) spec.shape
+        int h = shape[-2] as int, wd = shape[-1] as int
+        int n = shape.size() == 3 ? (shape[0] as int) : 1
+        ByteBuffer buf = ByteBuffer.wrap(Base64.getDecoder().decode((String) spec.data)).order(ByteOrder.LITTLE_ENDIAN)
+        ImageStack st = new ImageStack(wd, h)
+        int px = wd * h
+        for (int i = 0; i < n; i++) {
+            ImageProcessor ip
+            switch (spec.dtype) {
+                case "uint8": byte[] b = new byte[px]; buf.get(b); ip = new ByteProcessor(wd, h, b, null); break
+                case "uint16": short[] s = new short[px]; buf.asShortBuffer().get(s); buf.position(buf.position() + px * 2); ip = new ShortProcessor(wd, h, s, null); break
+                case "float32": float[] f = new float[px]; buf.asFloatBuffer().get(f); buf.position(buf.position() + px * 4); ip = new FloatProcessor(wd, h, f, null); break
+                default: throw new IOException("unexpected dtype ${spec.dtype} for ${title}")
+            }
+            st.addSlice(ip)
+        }
+        ImagePlus imp = new ImagePlus(title, st)
+        String axes = (spec.meta?.axes ?: "") as String
+        if (n > 1) {
+            if (axes.startsWith("C")) imp.setDimensions(n, 1, 1)
+            else if (axes.startsWith("T")) imp.setDimensions(1, 1, n)
+            else imp.setDimensions(1, n, 1)
+            if (axes.startsWith("C")) imp = new CompositeImage(imp, CompositeImage.COMPOSITE)
+        }
+        return imp
+    }
+
+    /** Any image output (inline or TIFF path) -> ImagePlus with calibration applied. */
+    ImagePlus toImagePlus(Map w, String name, Map spec, ImagePlus ref = null) {
+        ImagePlus imp
+        if (spec.data != null) imp = decodeInline(name, spec)
+        else {
+            imp = IJ.openImage(fromWorker(w, (String) spec.path))
+            if (imp == null) throw new IOException("could not open ${spec.path}")
+            imp.setTitle(name)
+        }
+        Map meta = (Map) (spec.meta ?: [:])
+        if (meta.pixel_um) {
+            Calibration cal = imp.getCalibration()
+            cal.pixelWidth = cal.pixelHeight = meta.pixel_um as double
+            cal.setUnit("micron")
+        } else if (ref != null && ref.getWidth() == imp.getWidth() && ref.getHeight() == imp.getHeight()) {
+            imp.setCalibration(ref.getCalibration().copy())
+        }
+        if (meta.channel_names instanceof List && imp.getNChannels() == ((List) meta.channel_names).size()) {
+            ((List) meta.channel_names).eachWithIndex { cn, i -> imp.getStack().setSliceLabel(cn as String, i + 1) }
+        }
+        return imp
+    }
+
+    /** Show every output of a finished job in Fiji. Returns the ImagePlus outputs by name. */
+    Map openOutputs(Map w, Map outputs, ImagePlus ref, String prefix, boolean show = true) {
+        Map images = [:]
+        outputs.each { String name, Map spec ->
+            String title = prefix + name
+            switch (spec.kind) {
+                case "image":
+                    ImagePlus imp = toImagePlus(w, title, spec, ref)
+                    imp.resetDisplayRange()
+                    if (show) {
+                        imp.show()
+                        if (name.toLowerCase().contains("label") && imp.getBitDepth() != 24) {
+                            try { IJ.run(imp, "glasbey on dark", "") } catch (Exception ignored) {}
+                        }
+                    }
+                    images[name] = imp
+                    break
+                case "table":
+                    ResultsTable rt = ResultsTable.open(fromWorker(w, (String) spec.path))
+                    if (show) rt.show(title)
+                    break
+                case "rois":
+                    if (show) {
+                        RoiManager rm = RoiManager.getRoiManager()
+                        rm.open(fromWorker(w, (String) spec.path))
+                        if (ref != null && ref.getWindow() != null) rm.runCommand(ref, "Show All")
+                    }
+                    log("${name}: ROIs from ${spec.path}")
+                    break
+                case "file":
+                    log("${name}: ${fromWorker(w, (String) spec.path)}")
+                    break
+                default:
+                    log("${name} = ${spec.value}")
+            }
+        }
+        return images
+    }
+
+    // ---------------------------------------------------------------- jobs --
+
+    /**
+     * Run a script and block until it finishes, streaming logs to the Log
+     * window and progress to the status bar. Esc cancels. Returns the result map.
+     */
+    Map runJob(Map w, String script, Map params, Map inputs, int inlineLimit = INLINE_LIMIT) {
+        Map r = call(w, "POST", "/run", [script: script, params: params, inputs: inputs, inline_limit: inlineLimit], 300000)
+        if (r.status != 200) throw new IOException("could not start ${script}: ${r.body?.error ?: 'HTTP ' + r.status}")
+        String job = r.body.job
+        boolean[] finished = [false] as boolean[]
+        Thread watcher = Thread.start("wavu-cancel-watch") {
+            while (!finished[0]) {
+                if (IJ.escapePressed()) {
+                    IJ.resetEscape()
+                    log("Cancelling ${script}...")
+                    try { call(w, "POST", "/jobs/${job}/cancel", [:], 5000) } catch (Exception ignored) {}
+                }
+                Thread.sleep(200)
+            }
+        }
+        String end
+        try {
+            end = streamEvents(w, job) { String kind, Map data ->
+                switch (kind) {
+                    case "log": IJ.log(data.message as String); break
+                    case "progress": IJ.showProgress(data.value as double); IJ.showStatus("Wavu: ${script} ${Math.round((data.value as double) * 100)}%"); break
+                    case "error": IJ.log("[Wavu] ${script} failed: ${data.message}\n${data.traceback ?: ''}"); break
+                    case "cancelled": log("${script} cancelled"); break
+                }
+            }
+        } finally {
+            finished[0] = true
+            IJ.showProgress(1.0)
+        }
+        Map result = getOk(w, "/jobs/${job}/result")
+        IJ.showStatus("Wavu: ${script} ${end}")
+        return result
+    }
+
+    // -------------------------------------------------------------- dialog --
+
+    /** GenericDialog from a PARAMS schema; returns [params:, images:, debug:] or null if cancelled. */
+    Map askParams(String script, Map schema, boolean offerDebug) {
+        def gd = new ij.gui.GenericDialog("Wavu: " + script)
+        String doc = (schema.doc ?: "") as String
+        if (doc) gd.addMessage(doc.readLines().first())
+        String[] titles = WindowManager.getImageTitles()
+        Map params = (Map) schema.params
+        params.each { String name, Map p ->
+            switch (p.type) {
+                case "float": gd.addNumericField(p.label as String, p.default as double, 3); break
+                case "int": gd.addNumericField(p.label as String, p.default as double, 0); break
+                case "bool": gd.addCheckbox(p.label as String, p.default as boolean); break
+                case "choice": gd.addChoice(p.label as String, (p.choices as List<String>) as String[], p.default as String); break
+                case "image":
+                    if (titles.length == 0) throw new IOException("${script} needs an image -- open one first")
+                    ImagePlus cur = WindowManager.getCurrentImage()
+                    gd.addChoice(p.label as String, titles, cur != null ? cur.getTitle() : titles[0]); break
+                default: gd.addStringField(p.label as String, (p.default ?: "") as String, 20)
+            }
+        }
+        if (offerDebug) gd.addCheckbox("Debug in VS Code (restart worker with debugpy on port ${DEBUG_PORT})", false)
+        gd.showDialog()
+        if (gd.wasCanceled()) return null
+        Map values = [:], images = [:]
+        params.each { String name, Map p ->
+            switch (p.type) {
+                case "float": values[name] = gd.getNextNumber(); break
+                case "int": values[name] = Math.round(gd.getNextNumber()) as long; break
+                case "bool": values[name] = gd.getNextBoolean(); break
+                case "choice": values[name] = gd.getNextChoice(); break
+                case "image": images[name] = WindowManager.getImage(gd.getNextChoice()); break
+                default: values[name] = gd.getNextString()
+            }
+        }
+        boolean debug = offerDebug ? gd.getNextBoolean() : false
+        return [params: values, images: images, debug: debug]
+    }
+}
+
+new WavuLib()
