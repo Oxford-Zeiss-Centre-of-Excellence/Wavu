@@ -18,8 +18,7 @@ exclude_docs: |
 theme:
   name: material
   language: en
-  icon:
-    logo: material/bridge
+  logo: assets/img/favicon.svg
   favicon: assets/img/favicon.svg
   font:
     text: Inter
@@ -40,26 +39,11 @@ theme:
     - content.code.annotate
     - content.tabs.link
     - content.tooltips
-  # Three-way toggle: follow the system, light, dark. Colours: stylesheets/extra.css
+  # Light theme only. Colours: stylesheets/extra.css
   palette:
-    - media: "(prefers-color-scheme)"
-      toggle:
-        icon: material/brightness-auto
-        name: Switch to light mode
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: custom
-      accent: custom
-      toggle:
-        icon: material/weather-sunny
-        name: Switch to dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: custom
-      accent: custom
-      toggle:
-        icon: material/weather-night
-        name: Follow the system setting
+    scheme: default
+    primary: custom
+    accent: custom
 
 extra_css:
   - stylesheets/extra.css
@@ -79,27 +63,75 @@ plugins:
         - locale: fr
           name: Français
           build: true
+          nav_translations:
+            Home: Accueil
+            Start here: Pour commencer
+            Write a script: Écrire un script
+            Share: Partager
+            Help: Aide
         - locale: de
           name: Deutsch
           build: true
+          nav_translations:
+            Home: Startseite
+            Start here: Erste Schritte
+            Write a script: Skript schreiben
+            Share: Teilen
+            Help: Hilfe
         - locale: es
           name: Español
           build: true
+          nav_translations:
+            Home: Inicio
+            Start here: Para empezar
+            Write a script: Escribir un script
+            Share: Compartir
+            Help: Ayuda
         - locale: ru
           name: Русский
           build: true
+          nav_translations:
+            Home: Главная
+            Start here: С чего начать
+            Write a script: Написать скрипт
+            Share: Поделиться
+            Help: Помощь
         - locale: ja
           name: 日本語
           build: true
+          nav_translations:
+            Home: ホーム
+            Start here: はじめに
+            Write a script: スクリプトを書く
+            Share: 共有する
+            Help: ヘルプ
         - locale: ko
           name: 한국어
           build: true
+          nav_translations:
+            Home: 홈
+            Start here: 시작하기
+            Write a script: 스크립트 작성
+            Share: 공유하기
+            Help: 도움말
         - locale: zh-Hant
           name: 繁體中文
           build: true
+          nav_translations:
+            Home: 首頁
+            Start here: 從這裡開始
+            Write a script: 撰寫腳本
+            Share: 分享
+            Help: 說明
         - locale: zh-Hans
           name: 简体中文
           build: true
+          nav_translations:
+            Home: 首页
+            Start here: 从这里开始
+            Write a script: 编写脚本
+            Share: 分享
+            Help: 帮助
           theme:
             language: zh  # Material calls Simplified Chinese "zh"
 

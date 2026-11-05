@@ -1,28 +1,28 @@
 /* Wavu guide theme on top of Material: Wavu's palette, softer shapes, both schemes. */
 
-/* -- colours ------------------------------------------------------------ */
-[data-md-color-scheme="default"] {
+/* -- colours (light theme only) ----------------------------------------- */
+:root > * {
   --md-primary-fg-color: #1565c0;         /* Fiji blue (as in the diagrams) */
   --md-primary-fg-color--light: #42a5f5;
   --md-primary-fg-color--dark: #0d47a1;
   --md-accent-fg-color: #ef6c00;          /* script orange */
   --md-accent-fg-color--transparent: #ef6c001a;
   --md-default-bg-color: #fbfcfe;
+  --md-footer-bg-color: #1565c0;          /* bottom bar = top bar */
+  --md-footer-bg-color--dark: #1565c0;
   --wavu-card-bg: #ffffff;
   --wavu-shadow: 0 1px 2px #0d47a114, 0 6px 20px #0d47a10f;
 }
-[data-md-color-scheme="slate"] {
-  --md-hue: 215;
-  --md-primary-fg-color: #0f2440;
-  --md-primary-fg-color--light: #1e3a5f;
-  --md-primary-fg-color--dark: #0a1a2f;
-  --md-accent-fg-color: #ffa726;
-  --md-accent-fg-color--transparent: #ffa7261a;
-  --md-default-bg-color: #0f1724;
-  --md-typeset-a-color: #90caf9;
-  --wavu-card-bg: #152238;
-  --wavu-shadow: 0 1px 2px #0006, 0 8px 24px #0005;
+
+/* -- logo: the jetty, big enough to read -------------------------------- */
+.md-header__button.md-logo { padding: .2rem; margin: .1rem .4rem; }
+.md-header__button.md-logo img, .md-header__button.md-logo svg {
+  height: 2.2rem;
+  width: auto;
+  border-radius: .45rem;
+  box-shadow: 0 1px 3px #0003;
 }
+.md-header__title { font-size: 1.1rem; font-weight: 700; }
 
 /* -- type --------------------------------------------------------------- */
 .md-typeset { font-size: .8rem; line-height: 1.7; }
@@ -51,7 +51,6 @@
   border-color: var(--md-accent-fg-color);
   color: #fff;
 }
-[data-md-color-scheme="slate"] .md-typeset .md-button--primary { color: #1a1a1a; }
 .md-typeset .md-button:hover { transform: translateY(-1px); box-shadow: var(--wavu-shadow); }
 
 /* Home-page cards: lifted tiles. */
@@ -68,5 +67,3 @@
 }
 .md-typeset .grid.cards .md-button { margin-top: .4rem; }
 
-/* Mermaid boxes keep their light fills in dark mode; keep their text dark. */
-[data-md-color-scheme="slate"] .mermaid .nodeLabel { color: #1a1a1a; }
