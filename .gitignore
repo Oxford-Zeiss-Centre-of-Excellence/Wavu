@@ -12,3 +12,5 @@ src/wavu/_version.py
 wavu-out/
 # Fiji downloaded for the smoke test in CI
 .fiji/
+# MkDocs output (pixi run -e docs docs-build)
+site/

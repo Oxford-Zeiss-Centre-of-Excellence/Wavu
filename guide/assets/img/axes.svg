@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" role="img" aria-labelledby="t d" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <title id="t">Image axes in Wavu</title>
+  <desc id="d">A z-stack with two channels arrives as one array with axes Z, C, Y, X. Time comes first, then Z, then channels, then Y and X.</desc>
+  <rect x="0" y="0" width="640" height="260" rx="16" fill="#fafafa" stroke="#cfd8dc"/>
+  <!-- stack of planes -->
+  <g stroke-width="2">
+    <rect x="70" y="40" width="130" height="100" rx="6" fill="#f3e5f5" stroke="#6a1b9a"/>
+    <rect x="58" y="52" width="130" height="100" rx="6" fill="#f3e5f5" stroke="#6a1b9a"/>
+    <rect x="46" y="64" width="130" height="100" rx="6" fill="#e8f5e9" stroke="#2e7d32"/>
+    <rect x="34" y="76" width="130" height="100" rx="6" fill="#e3f2fd" stroke="#1565c0"/>
+  </g>
+  <text x="99" y="132" text-anchor="middle" font-size="15" fill="#0d47a1">Y × X</text>
+  <text x="99" y="205" text-anchor="middle" font-size="13" fill="#37474f">planes and channels</text>
+  <text x="99" y="223" text-anchor="middle" font-size="13" fill="#37474f">in Fiji</text>
+  <line x1="220" y1="120" x2="290" y2="120" stroke="#546e7a" stroke-width="2.5"/>
+  <path d="M290,113 L302,120 L290,127 z" fill="#546e7a"/>
+  <!-- axis boxes -->
+  <g font-size="22" font-weight="700" text-anchor="middle">
+    <rect x="316" y="92" width="52" height="56" rx="8" fill="#eceff1" stroke="#90a4ae" stroke-width="2"/>
+    <text x="342" y="128" fill="#455a64">T</text>
+    <rect x="372" y="92" width="52" height="56" rx="8" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="2"/>
+    <text x="398" y="128" fill="#4a148c">Z</text>
+    <rect x="428" y="92" width="52" height="56" rx="8" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+    <text x="454" y="128" fill="#1b5e20">C</text>
+    <rect x="484" y="92" width="52" height="56" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+    <text x="510" y="128" fill="#0d47a1">Y</text>
+    <rect x="540" y="92" width="52" height="56" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+    <text x="566" y="128" fill="#0d47a1">X</text>
+  </g>
+  <g font-size="12" text-anchor="middle" fill="#37474f">
+    <text x="342" y="168">time</text>
+    <text x="398" y="168">planes</text>
+    <text x="454" y="168">channels</text>
+    <text x="538" y="168">rows × columns</text>
+  </g>
+  <text x="454" y="72" text-anchor="middle" font-size="14" fill="#37474f">one NumPy array, always in this order</text>
+  <text x="454" y="210" text-anchor="middle" font-size="13" fill="#37474f">axes of length 1 are left out:</text>
+  <text x="454" y="230" text-anchor="middle" font-size="13" fill="#37474f">a 2-channel z-stack is ZCYX, one plain image is YX</text>
+</svg>

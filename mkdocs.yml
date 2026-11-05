@@ -1,0 +1,136 @@
+# The beginner tutorial website (https://oxford-zeiss-centre-of-excellence.github.io/Wavu/).
+# Sources: guide/ (English: page.md; translations: page.fr.md, page.zh-Hant.md, ...).
+# Developer docs stay in docs/ and are linked from the README.
+#   pixi run -e docs docs-serve   # live preview on http://127.0.0.1:8000
+#   pixi run -e docs docs-build   # what CI runs (.github/workflows/docs.yml)
+site_name: Wavu
+site_description: Run your Python image analysis from Fiji, each script in its own environment.
+site_url: https://oxford-zeiss-centre-of-excellence.github.io/Wavu/
+repo_url: https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu
+repo_name: Oxford-Zeiss-Centre-of-Excellence/Wavu
+edit_uri: ""
+copyright: Wavu is GPL-3.0-or-later · Oxford-Zeiss Centre of Excellence
+
+docs_dir: guide
+exclude_docs: |
+  TRANSLATING.md
+  assets/shots/SHOT-LIST.md
+
+theme:
+  name: material
+  language: en
+  icon:
+    logo: material/bridge
+  favicon: assets/img/favicon.svg
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: orange
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: orange
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+extra_css:
+  - stylesheets/extra.css
+
+plugins:
+  - search
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: fr
+          name: Français
+          build: true
+        - locale: de
+          name: Deutsch
+          build: true
+        - locale: es
+          name: Español
+          build: true
+        - locale: ru
+          name: Русский
+          build: true
+        - locale: ja
+          name: 日本語
+          build: true
+        - locale: ko
+          name: 한국어
+          build: true
+        - locale: zh-Hant
+          name: 繁體中文
+          build: true
+        - locale: zh-Hans
+          name: 简体中文
+          build: true
+          theme:
+            language: zh  # Material calls Simplified Chinese "zh"
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.keys
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+nav:
+  - Home: index.md
+  - Start here:
+      - start/what-is-wavu.md
+      - start/install.md
+      - start/first-run.md
+  - Write a script:
+      - write/get-the-template.md
+      - write/from-notebook.md
+      - write/params.md
+      - write/outputs.md
+      - write/logs-progress-cancel.md
+      - write/real-images.md
+      - write/test-without-fiji.md
+  - Share:
+      - share/with-your-lab.md
+      - share/with-the-world.md
+  - Help:
+      - help/troubleshooting.md
+      - help/debug-in-vscode.md
+      - help/glossary.md

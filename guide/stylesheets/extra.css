@@ -1,0 +1,8 @@
+/* Wavu guide: small additions on top of Material. */
+.md-typeset .grid.cards .md-button { margin-top: .4rem; }
+.md-typeset img[src*="assets/shots/"] {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 6px;
+}
+/* Mermaid boxes keep their light fills in dark mode; keep their text dark. */
+[data-md-color-scheme="slate"] .mermaid .nodeLabel { color: #1a1a1a; }
