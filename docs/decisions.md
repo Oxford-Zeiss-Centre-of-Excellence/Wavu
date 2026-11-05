@@ -128,11 +128,15 @@ switched on with repository *variables*:
 This is the owner's choice. It is compatible with Fiji (GPL) and keeps
 derivatives open.
 
-## D12: Test data is fetched, never committed
+## D12: Test data is BBBC039, committed
 
-The Cell Tracking Challenge terms forbid redistributing ("cloning") its
-datasets, so `pixi run fetch-test-data` downloads one frame from the official
-server and verifies it by sha256. See [test-data.md](test-data.md).
+The tests use one BBBC039 image and its ground-truth mask (Broad Bioimage
+Benchmark Collection; U2OS nuclei; licence CC0). Together they are 0.74 MB,
+committed unmodified under `tests/data/BBBC039/`, so every CI run can use
+real data without a network. `pixi run fetch-test-data` checks them by
+sha256. An earlier draft used the Cell Tracking Challenge data, which was
+dropped: its terms require permission for public non-challenge use and
+forbid redistribution. See [test-data.md](test-data.md).
 
 ## D13: Distributing a script: `wavu package` and installed folders
 

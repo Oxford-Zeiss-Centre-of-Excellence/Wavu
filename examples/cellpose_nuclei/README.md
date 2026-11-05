@@ -25,8 +25,8 @@ and returns:
 
 **Not run locally while writing this first version** -- it is exercised only by
 the weekly CI job (`.github/workflows/weekly.yml`). The test (`pixi run test`
-in this folder) segments a synthetic image and, when the Cell Tracking Challenge
-frame has been fetched (`pixi run fetch-test-data` at the repo root), checks the
-result against that frame's ground-truth segmentation.
+in this folder) segments a synthetic image, then segments the BBBC039 image
+committed in `tests/data/BBBC039` (CC0) and requires an F1 score above 0.7
+against its ground-truth mask, counting a match at IoU > 0.5.
 
 Cite Cellpose if you use it: Stringer et al., *Nature Methods* 18, 100-106 (2021).

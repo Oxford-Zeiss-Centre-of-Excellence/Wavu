@@ -1,57 +1,44 @@
 # Test data
 
-`pixi run fetch-test-data` writes these files to
-`tests/data/Fluo-N2DH-GOWT1/`, which git ignores:
+These files are **committed** under `tests/data/BBBC039/`. They are 0.74 MB
+together and CC0, so every CI run and every clone has them:
 
-| file | what | sha256 of the original zip member |
+| file | what | sha256 (identical to the published zip member) |
 |---|---|---|
-| `t021.tif` | Fluo-N2DH-GOWT1, training sequence 01, frame 21. 1024×1024 uint8, GFP-labelled nuclei of GOWT1 mouse embryonic stem cells | `e238390fc4d1edf5e38e24638b4a9165a10b8e94252b14c8c85fe2c6f32d35e5` |
-| `man_seg021.tif` | The gold-standard segmentation of that frame, with 24 nuclei (uint16 labels) | `abd1dee1d6ace107c908819100221774c57e13c150456e92e6d08bc59a83d94a` |
+| `A02_s1.tif` | BBBC039 `images/IXMtest_A02_s1_w1051DAA7C-7042-435F-99F0-1E847D9B42CB.tif`: U2OS nuclei, Hoechst, 520×696 uint16 | `9eacee0e5a4c29af70307af4d310320632e31ed84b4d8b5fd4fce42930f780ec` |
+| `A02_s1_mask.png` | the matching `masks/...png`, the ground truth with 110 nuclei | `c56c246edcd456f81fb0d61d318c2b7a378afba207bd0b409834db16d30cfb72` |
+| `SOURCE.txt` | licence and citation | |
 
-The script downloads the whole training archive once,
-`https://data.celltrackingchallenge.net/training-datasets/Fluo-N2DH-GOWT1.zip`
-(59,331,035 bytes ≈ 57 MiB; the CTC site says "53 MB"), and caches it in
-`~/.cache/wavu/`. Set `WAVU_CACHE` to use another folder. It then checks both
-members against the hashes above and re-saves them uncompressed. The
-originals are LZW-compressed and would need `imagecodecs` to read.
+The files are unmodified. In the mask PNG, channel 0 holds a 4-colouring
+(0 = background, 1-3 = colours). Each nucleus is one connected component of
+one colour. `bbbc039_labels()` in `tests/test_bbbc039.py` and in
+`examples/cellpose_nuclei/test_script.py` turns that into a label image.
 
-**Why this dataset.** It is the smallest CTC 2-D *nuclei* training set. The
-alternatives were Fluo-N2DL-HeLa (182 MB) and Fluo-N2DH-SIM+ (91 MB,
-simulated). Frame 21 is used because most GOWT1 `SEG` frames annotate only
-1-3 nuclei, while frame 21 annotates all 24. No crop is needed: 1 MB.
+`pixi run fetch-test-data` checks both sha256 sums. If the files are
+missing, it downloads `images.zip` (77,915,748 bytes) and `masks.zip`
+(2,753,811 bytes) from https://data.broadinstitute.org/bbbc/BBBC039/ into
+`~/.cache/wavu/BBBC039/` (or `$WAVU_CACHE`) and extracts only this pair. The
+BBBC page offers no per-file URLs, only these zips.
 
-## Licence and terms (checked 2026-11-05)
+**Why this dataset.** It is real 2-D fluorescent nuclei with expert
+instance masks (200 fields in total), the licence is CC0, and one field is
+small enough to commit.
 
-The CTC website states no open licence for the data. Its
-[dataset terms](https://celltrackingchallenge.net/datasets/) say, in summary:
+## Licence (checked 2026-11-05 on https://bbbc.broadinstitute.org/BBBC039)
 
-1. Publications using the data must cite Maška et al., *Nature Methods* 20,
-   1010-1020 (2023), https://doi.org/10.1038/s41592-023-01879-y, and
-   acknowledge the Cell Tracking Challenge.
-2. CTC-related use needs no explicit consent.
-3. **Public scientific use outside the CTC requires explicit permission from
-   the challenge organizers.**
-4. Commercial use requires permission from the organizers and the data
-   providers.
-5. **Cloning the datasets or their parts, including reference annotations, is
-   prohibited.** Link to the download pages instead.
+> Copyright: CC0. To the extent possible under law, the various contributors
+> of the imagesets have waived all copyright and related or neighboring
+> rights to BBBC039v1.
 
-Wavu therefore never commits or redistributes the files. It downloads them
-from the official server on demand, for local and CI tests only.
+## Citation (as requested on that page)
 
-> **Owner action:** term 3 arguably covers using the frame in a *public*
-> project's CI. Either ask the CTC organizers for permission
-> (https://celltrackingchallenge.net/contact-us/), or, if declined, switch
-> `tools/fetch_test_data.py` to an openly licensed nuclei image. For example,
-> the BBBC039 / BBBC038 (Data Science Bowl 2018) images are CC0/CC-BY. Right
-> now only the weekly CI job (`weekly.yml` → cellpose) fetches it. The
-> default CI does not.
+> We used image set BBBC039v1 Caicedo et al. 2018, available from the Broad
+> Bioimage Benchmark Collection [Ljosa et al., Nature Methods, 2012].
 
-## Attribution
-
-> Fluo-N2DH-GOWT1 from the Cell Tracking Challenge
-> (https://celltrackingchallenge.net). M. Maška et al., "The Cell Tracking
-> Challenge: 10 years of objective benchmarking", *Nature Methods* 20,
-> 1010-1020 (2023).
-
-`SOURCE.txt`, written next to the files, repeats this.
+- V. Ljosa, K. L. Sokolnicki, A. E. Carpenter, "Annotated high-throughput
+  microscopy image sets for validation", *Nature Methods* 9, 637 (2012),
+  https://doi.org/10.1038/nmeth.2083
+- J. C. Caicedo et al., "Evaluation of Deep Learning Strategies for Nucleus
+  Segmentation in Fluorescence Images", *Cytometry Part A* (2019),
+  https://doi.org/10.1002/cyto.a.23863. This is the publication behind BBBC039;
+  the BBBC page dates it 2018.

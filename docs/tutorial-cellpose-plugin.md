@@ -190,13 +190,13 @@ def test_rejects_stacks():
 pixi run test
 ```
 
-**Real test data:** Wavu's own tests use one frame from the Cell Tracking Challenge (2-D fluorescent nuclei), downloaded on demand by `pixi run fetch-test-data` in the Wavu repo. The data is **not** redistributed; see `docs/test-data.md` for its licence and citation. You can use the same frame to test against its ground-truth segmentation, e.g. assert F1 > 0.8.
+**Real test data:** Wavu's own tests use one BBBC039 image of U2OS nuclei (Hoechst, 2-D) and its ground-truth mask. It is CC0, so it is committed in the Wavu repo under `tests/data/BBBC039/`; see `docs/test-data.md` for the citation. Copy it into your project to test against the ground truth, as `examples/cellpose_nuclei/test_script.py` does (F1 > 0.7 at IoU 0.5).
 
 ---
 
 ## 5. Try it in Fiji
 
-1. Open a nuclei image, e.g. the CTC frame or **File › Open Samples › Blobs**.
+1. Open a nuclei image, e.g. Wavu's `tests/data/BBBC039/A02_s1.tif` or **File › Open Samples › Blobs**.
 2. Start **Plugins › Wavu › Run Python Script…** and choose your `my-cellpose` folder.
 3. The first start builds your environment from `pixi.lock`. That's a one-off download, about 1–2 GB with PyTorch, and the Log shows progress. Later starts are fast.
 4. Fill in the dialog (a script picker appears first only if the folder has several scripts), click **OK**. Press **Esc** to cancel. Log lines and the progress bar update live.

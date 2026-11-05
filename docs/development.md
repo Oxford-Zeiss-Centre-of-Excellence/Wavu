@@ -7,7 +7,7 @@ All you need is pixi. Everything else comes from `pixi.toml`.
 | `pixi run test` | Unit and protocol tests. They start real `wavu-worker` subprocesses against `tests/scripts/` and run the template's own tests. |
 | `pixi run test-integration` | Starts a worker through `pixi run` in `templates/wavu-script`'s own environment and runs the blur. |
 | `WAVU_FIJI=<Fiji.app> pixi run test-fiji` | Headless Fiji smoke test. Fiji runs `tests/fiji/smoke_test.groovy`, which loads the real client library, starts a worker for the template through pixi, and blurs a synthetic 16-bit image. It does this once with inline transfer and once through TIFF files, and checks size, type, blur and calibration. Set `WAVU_FIJI_LAUNCHER` to choose the launcher. |
-| `pixi run fetch-test-data` | Downloads the CTC frame (see [test-data.md](test-data.md)). `tests/test_ctc_frame.py` then runs too. |
+| `pixi run fetch-test-data` | Verifies the committed BBBC039 image and mask by sha256, and re-downloads them if they are missing (see [test-data.md](test-data.md)). |
 | `pixi run worker` | Launch mode 2 for the template. |
 | `pixi run new-script NAME` | Copies the template to `./NAME`. |
 | `pixi run fiji-zip [VERSION]` | Builds `dist/wavu-fiji-<version>.zip`. |
