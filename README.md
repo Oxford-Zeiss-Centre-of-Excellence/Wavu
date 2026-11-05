@@ -3,60 +3,84 @@
 *Wavu* is Fijian for "bridge". It is a bridge from [Fiji](https://fiji.sc) to
 Python. You write a short Python script, Fiji shows a dialog for its
 parameters, and the script runs in **its own isolated [pixi](https://pixi.sh)
-environment**. Logs and progress stream back into Fiji, the results open as
-images, tables or ROIs, and you can set breakpoints in VS Code.
+environment**. Logs and progress stream back into Fiji, and the results open
+as images, tables or ROIs.
 
+```mermaid
+flowchart LR
+    subgraph FIJI["Fiji"]
+        D["Dialog built from PARAMS"]:::fiji
+        R["Results<br/>images · tables · ROIs<br/>Log · progress"]:::fiji
+    end
+    subgraph PY["wavu-worker · Python"]
+        W["stdlib HTTP server"]:::worker
+        S["your script.py<br/>run(ctx, inputs, params)"]:::script
+    end
+    E[("the script folder's<br/>own pixi env")]:::env
+
+    D -- "HTTP/JSON on 127.0.0.1 + token" --> W
+    W --> S
+    S -.- E
+    W -- "results + live log" --> R
+
+    classDef fiji   fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
+    classDef worker fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    classDef script fill:#fff3e0,stroke:#ef6c00,color:#e65100
+    classDef env    fill:#f3e5f5,stroke:#6a1b9a,color:#4a148c
+    style FIJI fill:#f5f9ff,stroke:#90caf9
+    style PY   fill:#f6fbf6,stroke:#a5d6a7
 ```
-Fiji (Groovy client, no Java build)  --HTTP/JSON on 127.0.0.1, token-->  wavu-worker (Python, stdlib server)
-   dialog from PARAMS, Log, progress                                       runs run(ctx, inputs, params)
-                                                                           inside the script folder's pixi env
-```
 
-## Who it is for, and the scope
+**For** entry-level Python users who want to call Cellpose, scikit-image or
+their own code from Fiji. **Small, interactive data only** (one image that
+fits in RAM, roughly up to 1-2 GB).
 
-Wavu is for **entry-level Python users** who want to call a Python tool such
-as Cellpose, scikit-image or their own code from Fiji. Each script keeps its
-own dependencies, so a PyTorch script and a NumPy-2-only script never fight.
+<details>
+<summary>More about the scope</summary>
 
-**Small, interactive data only.** One image at a time that fits comfortably in
-RAM, roughly up to 1-2 GB. Images travel as base64 JSON when small, or as a
-temporary TIFF otherwise. **Wavu is not the tool for large data.** For big
-volumes, many files or anything that does not fit in memory, convert to
-OME-Zarr and use a chunked batch or HPC workflow. Wavu does not try to be that.
+Each script keeps its own dependencies, so a PyTorch script and a
+NumPy-2-only script never fight. Images travel as base64 JSON when small, or
+as a temporary TIFF otherwise.
+
+**Wavu is not the tool for large data.** For big volumes, many files or
+anything that does not fit in memory, convert to OME-Zarr and use a chunked
+batch or HPC workflow.
 
 The environments isolate *dependencies*. They are **not a security sandbox**.
 A script can do anything your user account can do, so run only scripts you
 trust.
 
-## Install (interim: release zip)
+</details>
 
-The Fiji update site "Wavu" is **coming soon**. Until then:
+## Install
 
 1. Download `wavu-fiji-<version>.zip` from the
    [latest release](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/releases/latest).
-2. Unzip it **into your Fiji folder** (`Fiji.app`). This adds
-   `scripts/Plugins/Wavu/`.
-3. Restart Fiji. A **Plugins > Wavu** menu appears.
-4. Run **Plugins > Wavu > Setup Python (pixi)** once. It downloads the
-   official single-file `pixi` for your system from
-   [prefix-dev/pixi releases](https://github.com/prefix-dev/pixi/releases),
-   checks its sha256 against the release checksum file, and installs it into
-   `Fiji.app/wavu/`. If that folder is read-only, it uses `~/.wavu/bin`
-   instead. Skip this step if `pixi` is already on your PATH.
+2. Unzip it **into your Fiji folder** (`Fiji.app`) and restart Fiji.
+3. Run **Plugins › Wavu › Setup Python (pixi)** once.
 
-You need nothing else: no Python install, no conda, no compiler and no Java
-build.
+You need nothing else: no Python, no conda, no compiler and no Java build. A
+Fiji update site is coming soon.
+
+<details>
+<summary>What does "Setup Python (pixi)" do?</summary>
+
+It downloads the official single-file `pixi` for your system from
+[prefix-dev/pixi releases](https://github.com/prefix-dev/pixi/releases),
+checks its sha256 against the release checksum file, and installs it into
+`Fiji.app/wavu/`. If that folder is read-only, it uses `~/.wavu/bin` instead.
+Skip this step if `pixi` is already on your PATH.
+
+</details>
 
 ## Quick start
 
-1. Get a script folder. You can download the
-   [template](templates/wavu-script), or, with a clone of this repo, run
-   `pixi run new-script my_analysis`.
-2. In Fiji, open an image, then choose **Plugins > Wavu > Run Python Script**
-   and pick the folder.
-3. The first run builds that folder's environment. This takes a few minutes,
-   once. After that, fill in the dialog and press OK. The blurred image opens.
-   Press **Esc** to cancel a run.
+1. Get a script folder: download the [template](templates/wavu-script), or,
+   in a clone of this repo, run `pixi run new-script my_analysis`.
+2. In Fiji, open an image, choose **Plugins › Wavu › Run Python Script** and
+   pick the folder.
+3. The first run builds the environment (a few minutes, once). Fill in the
+   dialog and press OK. Press **Esc** to cancel.
 
 A script is a plain Python file:
 
@@ -72,61 +96,30 @@ def run(ctx, inputs, params):
     return {"blurred": ndimage.gaussian_filter(inputs["image"], params["sigma"])}
 ```
 
-The full contract is in [docs/script-contract.md](docs/script-contract.md).
-You can test a script without Fiji using `wavu.testing.FakeCtx`.
+## Documentation
 
-## Launch modes
+| I want to… | Read |
+|---|---|
+| write a script | [Script contract](docs/script-contract.md) |
+| go from an idea to a released Fiji menu item | [Cellpose plugin tutorial](docs/tutorial-cellpose-plugin.md) |
+| run a worker by hand, in Docker, offline, or debug in VS Code | [Running and debugging](docs/running-and-debugging.md) |
+| share my script with other Fiji users | [Sharing](docs/sharing.md) |
+| understand the HTTP API | [Protocol](docs/protocol.md) |
+| know why it is built this way | [Decisions](docs/decisions.md) |
+| run the tests or make a release | [Development](docs/development.md), [CONTRIBUTING](CONTRIBUTING.md) |
 
-| # | How the worker starts | When to use it |
-|---|---|---|
-| 1 | **Automatic.** Fiji runs `pixi run --manifest-path <folder>/pixi.toml wavu-worker --script-dir <folder>`. Wavu downloads pixi if needed. | The default. |
-| 2 | **By hand.** In the script folder, run `pixi run worker` (or `pixi run debug` for VS Code), then use **Plugins > Wavu > Connect to Running Worker**. The worker writes its port and token to `~/.wavu/worker.json`. | Developing a script, or keeping one worker alive across Fiji restarts. |
-| 3 | **Container.** `docker run --rm -p 127.0.0.1:8765:8765 -e WAVU_TOKEN=pick-one -v /my/data:/data ghcr.io/oxford-zeiss-centre-of-excellence/wavu-worker`, then **Connect to Running Worker** with handshake file `/my/data/.wavu/worker.json`, host folder `/my/data` and container folder `/data`. | Locked-down machines, or reproducing an exact environment. The image is built from the committed `pixi.lock`. See the [Dockerfile](Dockerfile) for building other script folders. |
+**Examples:** [`templates/wavu-script`](templates/wavu-script) (Gaussian
+blur, the boilerplate for new scripts) and
+[`examples/cellpose_nuclei`](examples/cellpose_nuclei) (Cellpose nuclei
+segmentation returning labels and an ImageJ RoiSet, CPU/MPS or CUDA). Using
+napari? See
+[Napari-Pixi](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Napari-Pixi).
 
-Each release also includes **offline bundles** (`wavu-offline-*.zip`, made
-with pixi-pack). They hold the template environment and the wavu wheel, for
-machines with no internet. See `packaging/bundle/README-offline.txt`.
+<details>
+<summary>Limitations</summary>
 
-## Debugging in VS Code
-
-Every script folder has `.vscode/launch.json` with **Attach to Wavu worker**.
-To use it, either tick *Debug in VS Code* in the Run dialog, or run
-`pixi run debug` and connect. Then attach from VS Code and run the script from
-Fiji. VS Code stops at your breakpoints.
-
-## Sharing your script with other Fiji users
-
-1. Commit `pixi.lock`. Run `pixi install` once in the script folder to create
-   it.
-2. Run `pixi run wavu package . --name my-tool --menu "My Lab>My Tool"`. This
-   writes `dist/fiji/` and `dist/my-tool-fiji.zip`.
-3. Users unzip that file into `Fiji.app` (Wavu must already be installed) and
-   get **Plugins > My Lab > My Tool**. The first start downloads the
-   packages pinned in your lock.
-
-Folders created with `wavu new-script` include
-`.github/workflows/release.yml`. Push a tag `v1.0.0` and GitHub tests the
-script, packages it and attaches the zip to a GitHub Release. You can switch
-on PyPI or your own Fiji update site with repository variables. See the
-comments in that file and [docs/script-contract.md](docs/script-contract.md).
-
-## Examples
-
-- [`templates/wavu-script`](templates/wavu-script): Gaussian blur. This is the
-  boilerplate for new scripts.
-- [`examples/cellpose_nuclei`](examples/cellpose_nuclei): Cellpose nuclei
-  segmentation, returning a label image and an ImageJ RoiSet. It has a CPU/MPS
-  environment and an optional CUDA environment.
-
-Using napari instead of Fiji? See the companion
-[Napari-Pixi](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Napari-Pixi)
-workspace. Its environment layout, including the `dl` PyTorch CUDA/MPS
-environment, is the model for the examples here.
-
-## Limitations
-
-- Data must be small: see the scope section above. The client sends only one
-  image per `image` parameter, plus plain values.
+- Data must be small. The client sends one image per `image` parameter, plus
+  plain values.
 - Cancelling is cooperative. A script must check `ctx.cancelled()`, because a
   running Python call cannot be interrupted safely from outside.
 - The first run of a script folder downloads its environment. For heavy
@@ -137,20 +130,10 @@ environment, is the model for the examples here.
 - Wavu is new. Expect rough edges and
   [report them](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/issues).
 
-## More
-
-- [docs/script-contract.md](docs/script-contract.md): what a script must look
-  like.
-- [docs/protocol.md](docs/protocol.md): the HTTP API between Fiji and the
-  worker.
-- [docs/decisions.md](docs/decisions.md): why it is built this way.
-- [docs/development.md](docs/development.md): tests, the Fiji smoke test and
-  releases.
-- [docs/test-data.md](docs/test-data.md): the test image, its licence and
-  attribution.
-- [CONTRIBUTING.md](CONTRIBUTING.md)
+</details>
 
 ## Licence and citation
 
 GPL-3.0-or-later. See [LICENSE](LICENSE). If Wavu helps your research, please
-cite it using [CITATION.cff](CITATION.cff). Releases are archived on Zenodo.
+cite it using [CITATION.cff](CITATION.cff). The test image is from BBBC039
+(CC0); see [docs/test-data.md](docs/test-data.md).

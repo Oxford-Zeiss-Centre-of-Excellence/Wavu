@@ -6,10 +6,17 @@ This guide takes you from a Python idea to a Fiji menu item that anyone can inst
 
 **What you will build:** *Plugins › My Lab › Cellpose Plus*. It runs Cellpose nuclei segmentation plus your own post-processing, then returns a label image, the outlines in the ROI Manager, and a results table.
 
-```
- Fiji (menu + dialog)  ──HTTP on localhost──▶  Wavu worker  ──▶  your script.py
-        ▲                                     (runs in YOUR pixi env:
-        └──── images, ROIs, tables ◀──────────  cellpose, torch, ...)
+```mermaid
+flowchart LR
+    F["Fiji<br/>menu + dialog"]:::fiji
+    W["Wavu worker"]:::worker
+    S["your script.py<br/>in YOUR pixi env:<br/>cellpose, torch, …"]:::script
+    F -- "HTTP on localhost" --> W --> S
+    S -- "images, ROIs, tables" --> F
+
+    classDef fiji   fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
+    classDef worker fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    classDef script fill:#fff3e0,stroke:#ef6c00,color:#e65100
 ```
 
 Your script runs in its **own** environment. Its packages can never clash with Fiji, with other Wavu scripts or with your system Python.
@@ -301,7 +308,7 @@ That's it: no Python, conda or terminal for your users.
 
 ### 8d. Container (optional, for HPC or reproducibility)
 
-Wavu publishes a worker image (`ghcr.io/oxford-zeiss-centre-of-excellence/wavu-worker`). To ship your own script as a container, see *Launch modes* in the Wavu README.
+Wavu publishes a worker image (`ghcr.io/oxford-zeiss-centre-of-excellence/wavu-worker`). To ship your own script as a container, see [Running and debugging](running-and-debugging.md#3-container).
 
 ---
 

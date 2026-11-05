@@ -6,7 +6,7 @@
 #
 # Then in Fiji: Plugins > Wavu > Connect to Running Worker, handshake file
 # <host data folder>/.wavu/worker.json, host data folder <host data folder>,
-# container folder /data. See README "Launch modes".
+# container folder /data. See docs/running-and-debugging.md "Launch modes".
 ARG PIXI_VERSION=0.78.0
 FROM ghcr.io/prefix-dev/pixi:${PIXI_VERSION}
 
