@@ -77,6 +77,83 @@ Die Form zu prüfen und einen klaren `ValueError` auszulösen ist freundlicher,
 als Ihren Code später abstürzen zu lassen: Fiji zeigt den Satz in einem
 Fehlerfenster, napari im Log des Panels und in einer Benachrichtigung.
 
+??? tip "Achsenreihenfolge: T C Z Y X empfohlen (Speicher, Transport, Rechnen)"
+
+    Wavu ordnet nichts um: Fiji sendet **T Z C Y X** (die Reihenfolge der
+    ImageJ-Hyperstacks), napari sendet die Reihenfolge des Layers, und Fiji
+    erwartet Ergebnisse in seiner Reihenfolge zurück. In Ihrem Skript haben
+    Sie freie Wahl. Wir empfehlen **T C Z Y X**; hier die Wahlmöglichkeiten
+    je Ebene:
+
+    | Ebene | empfohlen | Alternativen | die Alternative wählen, wenn |
+    |---|---|---|---|
+    | **Speicher** (Dateien auf der Festplatte) | OME-Zarr in **T C Z Y X** (oder C Z Y X, Z Y X) | ImageJ-TIFF in **T Z C Y X** | kleine Daten, die Sie meist in Fiji öffnen (ein ImageJ-TIFF kann nur seine eigene Reihenfolge speichern) |
+    | **Transport** (Wavu ↔ Ihr Skript) | am Anfang von `run()` in **T C Z Y X**, C-zusammenhängend, umwandeln; vor der Rückgabe zurückwandeln | behalten, was Wavu liefert (**T Z C Y X** aus Fiji) | Verarbeitung Ebene für Ebene (Filter, Schwellenwerte), bei der die Reihenfolge keine Rolle spielt |
+    | **Rechnen** (NumPy, PyTorch, GPU) | **T C Z Y X**: ein Zeitpunkt ist `(C, Z, Y, X)`, mit Batch-Achse PyTorchs `(N, C, D, H, W)` | **channels last** (B Z Y X C) nur im GPU-Speicher: `tensor.to(memory_format=torch.channels_last_3d)`; Standard bei TensorFlow/Keras | 3-D-Faltungen in gemischter Genauigkeit auf neueren NVIDIA-GPUs; Keras-Modelle |
+
+    Warum T C Z Y X? Vier Dinge ziehen an der Achsenreihenfolge, und diese
+    dient allen:
+
+    1. **Das Mikroskop.** Die Kamera liest jeweils ein **Y × X**-Bild aus (am
+       schnellsten), ein Piezotisch fährt in **Z**, Filter oder Laser
+       wechseln **C**, und das Zeitintervall **T** ist am langsamsten. Y, X
+       ganz innen und Z daneben zu halten folgt der Art, wie die Daten
+       aufgenommen werden, und hält das 3-D-Volumen zusammen. (Die genaue
+       Z/C-Schleifenreihenfolge unterscheidet sich zwischen Aufbauten.)
+    2. **Speicher und Chunks.** NumPy- und Zarr-Arrays sind *C-zusammenhängend*:
+       die letzte Achse ändert sich am schnellsten. Mit T C Z Y X ist ein
+       Chunk wie `(1, 1, 64, 512, 512)` ein kompakter 3-D-Block **eines
+       Kanals**, sodass das Lesen nur von Kanal 0 (etwa DAPI) nur diese
+       Dateien liest; mit verschachtelten Kanälen holt jeder Lesezugriff alle
+       Kanäle. Die
+       [OME-NGFF-Spezifikation](https://ngff.openmicroscopy.org/0.4/#axes-md)
+       verlangt deshalb zuerst die Zeit, dann den Kanal, dann den Raum
+       (Versionen 0.4 und 0.5; ein Vorschlag, das zu lockern,
+       [RFC-3](https://ngff.openmicroscopy.org/rfc/3/index.html), wird noch
+       geprüft). Fiji, napari und Bio-Formats lesen es alle. Daten auf der
+       Festplatte werden jahrzehntelang aufbewahrt; GPUs wechseln alle paar
+       Jahre.
+    3. **Deep Learning.** `(C, Z, Y, X)` plus eine Batch-Achse ist genau, was
+       [PyTorchs `Conv3d`](https://docs.pytorch.org/docs/stable/generated/torch.nn.Conv3d.html)
+       erwartet, `(N, C, D, H, W)`. `torch.from_numpy()` auf einem
+       C-zusammenhängenden Array teilt dessen Speicher: nichts wird kopiert.
+    4. **Die GPU.** NVIDIA-Tensor-Cores können 3-D-Faltungen in gemischter
+       Genauigkeit (FP16/BF16) schneller ausführen, wenn die Kanäle ganz
+       innen liegen („channels last“). Konvertieren Sie **nur im
+       GPU-Speicher**, direkt vor den aufwendigen Schichten; die Form bleibt
+       `(N, C, D, H, W)`, nur die Strides ändern sich. Machen Sie Ergebnisse
+       wieder zusammenhängend (`.contiguous()`), bevor sie die GPU verlassen.
+       Die Vorliebe des Chips erreicht nie die Dateien.
+
+    Hin- und Rückumwandlung in Ihrem Skript:
+
+    ```python
+    import numpy as np
+    import wavu
+
+    def to_tczyx(img, axes):
+        """Reorder to T, C, Z, Y, X (only the axes present). Returns (array, new axes)."""
+        new = "".join(a for a in "TCZYX" if a in axes)
+        return np.ascontiguousarray(np.transpose(img, [axes.index(a) for a in new])), new
+
+    def back(arr, axes_now, axes_wanted):
+        """Reorder a result back, e.g. to the input's own order before returning it."""
+        return np.ascontiguousarray(np.transpose(arr, [axes_now.index(a) for a in axes_wanted]))
+
+    def run(ctx, inputs, params):
+        axes = ctx.meta["image"].get("axes") or "YX"    # aus Fiji z. B. "TZCYX" oder "ZCYX"
+        x, ours = to_tczyx(inputs["image"], axes)       # z. B. (C, Z, Y, X), "CZYX"
+        # PyTorch: ein Zeitpunkt mit Batch-Achse, ohne Kopie
+        #   batch = torch.from_numpy(x)[None]           # (1, C, Z, Y, X) bei "CZYX"
+        y = x * 2                                       # Ihre Berechnung, gleiches Layout heraus
+        return {"result": wavu.Image(back(y, ours, axes), axes=axes)}
+    ```
+
+    (RGB-Bilder, deren Achsen auf `S` enden, sind hier ausgelassen: wandeln
+    Sie sie zuerst in Graustufen um oder trennen Sie die Farben. Kommt ein
+    napari-Layer ohne `axes` an, kennen Sie seine Reihenfolge am besten:
+    geben Sie die Buchstaben selbst an.)
+
 ## Wie groß ist zu groß? { #how-big-is-too-big }
 
 Wavu ist gemacht für **interaktives Arbeiten an einem Bild, das bequem in
@@ -92,9 +169,13 @@ beiden Fällen ein NumPy-Array. Die Grenze ist in Fiji und napari dieselbe.
     Layer, der in den Speicher passt (einen Ausschnitt, einen Kanal oder eine
     Kopie mit geringerer Auflösung).
 
-Jenseits dieser Größe, oder für Hunderte von Dateien, ist Wavu das falsche
-Werkzeug. Konvertieren Sie nach OME-Zarr und nehmen Sie besser einen
-Batch-Workflow oder einen Rechencluster (HPC).
+Jenseits dieser Größe konvertieren Sie nach OME-Zarr und lassen das Skript
+die Daten Stück für Stück lesen: Die
+[Streaming-Analyse](../workflows/large-data.md) schafft bis etwa 50 GB auf
+einem lokalen Computer. Das funktioniert, aber es wird nicht empfohlen, sie
+aus Fiji oder napari zu steuern. Für Hunderte von Dateien siehe
+[Batch-Verarbeitung](../workflows/batch.md); ab etwa 50 GB nehmen Sie einen
+Batch- oder HPC-Workflow.
 
 ## Langsame erste Durchläufe (und wie Sie die Benutzer beruhigen) { #slow-first-runs-and-how-to-keep-users-calm }
 
@@ -133,7 +214,8 @@ ctx.log("Model ready")
 
 Ihr Skript bekommt das ganze Bild als ein Array (aus Fiji in der Reihenfolge
 **T Z C Y X**, aus napari in der Reihenfolge des Layers; lesen Sie zur
-Sicherheit `ctx.meta` und die Form), es sollte in beiden Viewern unter etwa
+Sicherheit `ctx.meta` und die Form; wir empfehlen, es in **T C Z Y X**
+umzuordnen, die Reihenfolge von OME-NGFF und PyTorch), es sollte in beiden Viewern unter etwa
 1–2 GB bleiben, und vor allem Langsamen, etwa dem ersten Download eines
 Modells, sollten Sie `ctx.log` aufrufen.
 

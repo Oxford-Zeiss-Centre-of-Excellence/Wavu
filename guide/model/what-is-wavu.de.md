@@ -70,11 +70,14 @@ Neugierig, wie Kellner und Küche miteinander reden? Siehe
 
 ## Was Wavu nicht ist
 
-!!! warning "Nicht für große Datenmengen"
-    Wavu schickt jeweils ein Bild, und es muss in den Arbeitsspeicher Ihres
-    Computers passen (etwa bis 1–2 GB). Für riesige Volumen, viele Dateien
-    oder ganze Objektträger-Scans (Whole-Slide-Bilder) nehmen Sie besser einen
-    Batch-Workflow oder einen Rechencluster (HPC).
+!!! warning "Nicht für große Datenmengen gemacht"
+    Normalerweise schickt Wavu jeweils ein ganzes Bild, und es muss in den
+    Arbeitsspeicher Ihres Computers passen (etwa bis 1–2 GB). Größere Bilder,
+    bis etwa 50 GB auf einem lokalen Computer, lassen sich Stück für Stück mit
+    der [Streaming-Analyse](../workflows/large-data.md) (OME-Zarr, in Chunks)
+    verarbeiten: Das funktioniert, aber es aus Fiji oder napari zu steuern,
+    wird nicht empfohlen. Darüber hinaus, oder für sehr viele Dateien, nehmen
+    Sie besser einen Batch- oder HPC-Workflow.
 
 !!! warning "Keine Sicherheits-Sandbox"
     Die getrennten Umgebungen halten *Pakete* auseinander. Sie sperren ein

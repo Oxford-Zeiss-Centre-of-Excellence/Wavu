@@ -68,6 +68,69 @@ def run(ctx, inputs, params):
 先检查形状、抛出清楚的 `ValueError`，比让代码在后面崩掉更友好：
 Fiji 会在错误窗口里显示这句话，napari 则显示在面板日志里并弹出一条通知。
 
+??? tip "轴的顺序：推荐 T C Z Y X（存储、传递、计算）"
+
+    Wavu 不会重新排列任何东西：Fiji 发来 **T Z C Y X**（ImageJ hyperstack 的顺序），
+    napari 发来图层自己的顺序，而 Fiji 期望结果按它的顺序传回。在脚本里你可以
+    自由选择。我们推荐 **T C Z Y X**；以下是每一层的选择：
+
+    | 层 | 推荐 | 替代方案 | 何时选替代方案 |
+    |---|---|---|---|
+    | **存储**（磁盘上的文件） | **T C Z Y X**（或 C Z Y X、Z Y X）的 OME-Zarr | **T Z C Y X** 的 ImageJ TIFF | 主要在 Fiji 里打开的小数据（ImageJ TIFF 只能存它自己的顺序） |
+    | **传递**（Wavu ↔ 你的脚本） | 在 `run()` 开头转成 C 连续的 **T C Z Y X**；返回前再转回去 | 保留 Wavu 给的顺序（来自 Fiji 时是 **T Z C Y X**） | 逐平面处理（滤波、阈值），顺序无关紧要时 |
+    | **计算**（NumPy、PyTorch、GPU） | **T C Z Y X**：一个时间点是 `(C, Z, Y, X)`，加上 batch 轴就是 PyTorch 的 `(N, C, D, H, W)` | 只在 GPU 显存里用 **channels last**（B Z Y X C）：`tensor.to(memory_format=torch.channels_last_3d)`；TensorFlow/Keras 默认就是它 | 在较新的 NVIDIA GPU 上做混合精度 3-D 卷积；Keras 模型 |
+
+    为什么是 T C Z Y X？有四件事会影响轴的顺序，而它对四者都合适：
+
+    1. **显微镜。** 相机一次读出一帧 **Y × X**（最快），压电载物台沿 **Z** 移动，
+       滤光片或激光切换 **C**，时间间隔 **T** 最慢。把 Y、X 放在最内层、Z 紧挨着，
+       就和数据采集的方式一致，也让 3-D 体积保持在一起。（Z/C 循环的确切顺序
+       因设备而异。）
+    2. **存储与分块。** NumPy 和 Zarr 数组都是 *C 连续*：最后一个轴变化最快。
+       用 T C Z Y X 时，像 `(1, 1, 64, 512, 512)` 这样的分块（chunk）就是
+       **单个通道** 的一块紧凑 3-D 块，所以只读通道 0（比如 DAPI）时只会读到
+       那些文件；如果通道交错排列，每次读取都会取回所有通道。
+       因此 [OME-NGFF 规范](https://ngff.openmicroscopy.org/0.4/#axes-md)
+       要求先时间、再通道、再空间（0.4 和 0.5 版；放宽这条规定的提案
+       [RFC-3](https://ngff.openmicroscopy.org/rfc/3/index.html) 仍在评审中）。
+       Fiji、napari 和 Bio-Formats 都能读。磁盘上的数据要保存几十年，GPU
+       却每隔几年就换代。
+    3. **深度学习。** `(C, Z, Y, X)` 加上 batch 轴，就正好是
+       [PyTorch 的 `Conv3d`](https://docs.pytorch.org/docs/stable/generated/torch.nn.Conv3d.html)
+       要的 `(N, C, D, H, W)`。对 C 连续的数组用 `torch.from_numpy()` 会共享
+       内存：什么都不用复制。
+    4. **GPU。** 当通道在最内层（“channels last”）时，NVIDIA 的 Tensor Core
+       能更快地执行混合精度（FP16/BF16）3-D 卷积。**只在 GPU 显存里** 转换，
+       就在耗时的层之前；形状仍是 `(N, C, D, H, W)`，只有 stride 改变。结果离开
+       GPU 之前，要先让它重新连续（`.contiguous()`）。芯片的偏好绝不会进到文件里。
+
+    在脚本里转过去再转回来：
+
+    ```python
+    import numpy as np
+    import wavu
+
+    def to_tczyx(img, axes):
+        """Reorder to T, C, Z, Y, X (only the axes present). Returns (array, new axes)."""
+        new = "".join(a for a in "TCZYX" if a in axes)
+        return np.ascontiguousarray(np.transpose(img, [axes.index(a) for a in new])), new
+
+    def back(arr, axes_now, axes_wanted):
+        """Reorder a result back, e.g. to the input's own order before returning it."""
+        return np.ascontiguousarray(np.transpose(arr, [axes_now.index(a) for a in axes_wanted]))
+
+    def run(ctx, inputs, params):
+        axes = ctx.meta["image"].get("axes") or "YX"    # 来自 Fiji 时，例如 "TZCYX" 或 "ZCYX"
+        x, ours = to_tczyx(inputs["image"], axes)       # 例如 (C, Z, Y, X)、"CZYX"
+        # PyTorch：一个时间点加上 batch 轴，不复制
+        #   batch = torch.from_numpy(x)[None]           # "CZYX" 时为 (1, C, Z, Y, X)
+        y = x * 2                                       # 你的计算，输出排列不变
+        return {"result": wavu.Image(back(y, ours, axes), axes=axes)}
+    ```
+
+    （轴以 `S` 结尾的 RGB 图像不在此列：请先转成灰度或拆开颜色。如果 napari
+    图层发来时没有 `axes`，你最清楚它的顺序：自己传入这些字母。）
+
 ## 多大算太大？
 
 Wavu 是为**交互式处理一张能轻松放进内存的图像**设计的，大约到
@@ -80,8 +143,10 @@ TIFF 文件传递。你什么都不用做：不管哪种方式，`inputs["image"
     Wavu 做不到：它在发送前会把整个图层读进内存，所以请选一个放得进内存的图层
     （裁剪过的、单个通道，或者低分辨率的副本）。
 
-超过这个大小，或者要处理成百上千个文件时，Wavu 就不是合适的工具了。请转成
-OME-Zarr，改用批处理或 HPC 工作流。
+超过这个大小，请转成 OME-Zarr，让脚本一块一块读取：
+[流式分析](../workflows/large-data.md)在本机上可以处理约 50 GB 以内的数据。
+能用，但不建议由 Fiji 或 napari 来驱动。要处理成百上千个文件时，请看
+[批处理](../workflows/batch.md)；超过约 50 GB，请改用批处理或 HPC 工作流。
 
 ## 首次运行很慢（以及如何让用户安心） { #slow-first-runs-and-how-to-keep-users-calm }
 
@@ -112,7 +177,8 @@ ctx.log("Model ready")
 ## 一句话总结
 
 你的脚本拿到的是整张图像，一个数组（来自 Fiji 时按 **T Z C Y X** 顺序，来自
-napari 时按图层自己的顺序；看 `ctx.meta` 和形状来确认），不管在 Fiji 还是
+napari 时按图层自己的顺序；看 `ctx.meta` 和形状来确认；
+我们建议重新排成 **T C Z Y X**，也就是 OME-NGFF 和 PyTorch 的顺序），不管在 Fiji 还是
 napari 里，大小最好都在 1–2 GB 以内，并且在任何慢步骤（比如首次下载模型）
 之前都要先 `ctx.log`。
 

@@ -48,7 +48,9 @@ flowchart LR
    5분이에요. 핵 약 25개가 이리저리 떠다니고, 그중 4개가 분열하고, 1개는
    오른쪽으로 나가고 1개는 왼쪽에서 들어와요. 실제 개수는 처음에 25, 끝에
    29예요.
-   `25 25 25 25 25 25 26 26 26 25 25 25 26 26 26 26 26 27 27 28 28 28 28 29 29 29 29 29 29 29`.
+
+   ![데모 타임랩스: 30프레임 동안 떠다니며 분열하는 핵](../assets/img/demo-timelapse.gif){ width="256" }
+
 4. Groovy 버전에는 **TrackMate**가 필요해요. Fiji에 들어 있어요.
 
 첫 실행에서는 폴더마다 주방 도구를 갖춰요(1–2분, 한 번만).
@@ -294,7 +296,7 @@ flowchart LR
     }
     Overlay.show;
     Stack.setFrame(frames);                            // 트랙이 그려진 마지막 프레임
-    run("Flatten");
+    run("Flatten", "slice");
     saveAs("PNG", outDir + name + "-tracks.png");
     close();
     setBatchMode("exit and display");
@@ -337,7 +339,7 @@ flowchart LR
 
 | | 프레임별 세포 수 | 트랙 |
 |---|---|---|
-| Groovy (TrackMate) | `25 25 25 25 25 25 26 26 26 26 25 25 26 26 26 26 26 28 28 28 28 28 28 29 29 29 29 29 29 29` | 26, 분열 4번 |
+| Groovy (TrackMate) | 25 → 29 | 26, 분열 4번 |
 | 매크로 (trackpy) | 같음 | 30 |
 
 개수는 프레임 9(26, 실제는 25)와 프레임 17–18(28, 실제는 27)을 빼면 실제와

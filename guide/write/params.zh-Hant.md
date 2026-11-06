@@ -83,9 +83,81 @@ def run(ctx, inputs, params):
     ...
 ```
 
+## 表格、ROI、軌跡和檔案：從腳本傳入
+
+對話框只能選影像。其他東西（Results 表格、ROI Manager 裡的輪廓、TrackMate 或 napari 的軌跡、
+napari 的 Points 或 Shapes、OME-Zarr 資料夾）要在腳本**被另一個腳本呼叫**時才會傳進來，
+就像[分析流程](../workflows/index.md)裡那樣。這類輸入**不需要寫進 `PARAMS`**：
+腳本直接用名稱從 `inputs` 讀取。請在 docstring 裡寫明它需要哪些名稱。
+
+| 你傳入 | 腳本在 `inputs` 裡收到 |
+|---|---|
+| 影像（`ImagePlus`、NumPy 陣列） | NumPy 陣列 |
+| 表格（`ResultsTable`、巨集表格、pandas DataFrame、dict 串列） | pandas DataFrame（以 CSV 傳送） |
+| ImageJ ROI 的 `.zip`（從 ROI Manager 儲存，或從 napari Shapes 寫出） | `wavu.RoiSet`（用 `roifile` 讀取） |
+| 其他任何路徑（`.csv`、`.tif`、OME-Zarr 資料夾） | 載入後的檔案；資料夾則是 `pathlib.Path` |
+
+軌跡以表格傳遞：每個點一列，包含軌跡 ID、影格和位置。
+
+=== "Groovy (Fiji)"
+
+    ```groovy
+    def rm = wavu.roiManager()                               // 你看到的 ROI Manager
+    def zip = new File(IJ.getDirectory("temp"), "rois.zip")
+    rm.deselect(); rm.runCommand("Save", zip.path)           // 所有 ROI -> 一個 zip
+    Map r = wavu.run(folder, "script", [min_area: 30],
+                     [image: imp, rois: zip, spots: ResultsTable.getResultsTable()])
+    ```
+
+=== "ImageJ macro"
+
+    巨集用 `tables=` 依視窗標題傳遞表格。ROI 則先存成 zip，再把路徑當作腳本的
+    文字欄位（`"type": "str"`）傳入；路徑裡不要有空格：
+
+    ```javascript
+    zip = replace(getDirectory("temp"), "\\", "/") + "rois.zip";
+    roiManager("Save", zip);
+    run("Run Script (Macro)", "folder=[D:/scripts/measure] script=script " +
+        "params=[rois_zip=" + zip + "] tables=[spots=Results]");
+    ```
+
+    腳本再用 `roifile.roiread(...)` 讀取 `params["rois_zip"]`。
+
+=== "Python (napari)"
+
+    ```python
+    import pandas as pd
+    import roifile
+
+    pts, trk, shp = viewer.layers["spots"], viewer.layers["tracks"], viewer.layers["cells"]
+    points = pd.concat([pd.DataFrame(pts.data, columns=["frame", "y", "x"]), pts.features], axis=1)
+    tracks = pd.DataFrame(trk.data, columns=["track_id", "frame", "y", "x"])
+    roifile.roiwrite("rois.zip", [roifile.ImagejRoi.frompoints(s[:, -2:][:, ::-1])   # (y, x) -> (x, y)
+                                  for s in shp.data])
+
+    with Worker.start("D:/scripts/measure") as w:
+        res = w.run("script", {"min_area": 30},
+                    {"image": viewer.layers["nuclei"].data, "points": points,
+                     "tracks": tracks, "rois": "rois.zip"})
+    ```
+
+在腳本裡：
+
+```python
+"""Measure inside ROIs. Inputs: image, rois (ROI zip), tracks (table)."""
+import roifile
+
+def run(ctx, inputs, params):
+    img = inputs["image"]
+    tracks = inputs["tracks"]                               # DataFrame
+    rois = roifile.roiread(inputs["rois"].path)             # 輪廓；.coordinates() 是 (x, y)
+    ...
+```
+
 ## 一句話總結
 
 每個設定在 `PARAMS` 裡寫一行，附上型別和預設值，Fiji 或 napari 就會產生欄位，
-把檢查過的值放在 `params` 交給你（影像在 `inputs`）。
+把檢查過的值放在 `params` 交給你（影像在 `inputs`；被另一個腳本呼叫時，
+表格、ROI 和檔案也在 `inputs`）。
 
 [下一步：可以回傳什麼 :material-arrow-right:](outputs.md){ .md-button }

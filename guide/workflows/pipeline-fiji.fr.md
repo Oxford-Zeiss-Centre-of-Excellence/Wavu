@@ -51,8 +51,10 @@ script Wavu. Dans la version macro, l'étape 3 est verte elle aussi
    fait pour cette page : 30 images de 256 × 256 pixels, 0,65 µm par pixel,
    5 min par image. Environ 25 noyaux se déplacent, quatre d'entre eux se
    divisent, un sort par la droite et un entre par la gauche. Les vrais
-   comptes sont 25 au début et 29 à la fin :
-   `25 25 25 25 25 25 26 26 26 25 25 25 26 26 26 26 26 27 27 28 28 28 28 29 29 29 29 29 29 29`.
+   comptes sont 25 au début et 29 à la fin.
+
+   ![Le time-lapse de démonstration : des noyaux qui dérivent et se divisent sur 30 images](../assets/img/demo-timelapse.gif){ width="256" }
+
 4. **TrackMate** pour la version Groovy. Il est livré avec Fiji.
 
 La première exécution installe la batterie de cuisine de chaque dossier
@@ -300,7 +302,7 @@ La première exécution installe la batterie de cuisine de chaque dossier
     }
     Overlay.show;
     Stack.setFrame(frames);                            // dernière image, avec les trajectoires dessinées
-    run("Flatten");
+    run("Flatten", "slice");
     saveAs("PNG", outDir + name + "-tracks.png");
     close();
     setBatchMode("exit and display");
@@ -347,7 +349,7 @@ Sur la démo, les deux versions indiquent :
 
 | | cellules par image | trajectoires |
 |---|---|---|
-| Groovy (TrackMate) | `25 25 25 25 25 25 26 26 26 26 25 25 26 26 26 26 26 28 28 28 28 28 28 29 29 29 29 29 29 29` | 26, avec 4 divisions |
+| Groovy (TrackMate) | 25 → 29 | 26, avec 4 divisions |
 | Macro (trackpy) | les mêmes | 30 |
 
 Les comptes correspondent à la vérité, sauf à l'image 9 (26, vérité 25) et

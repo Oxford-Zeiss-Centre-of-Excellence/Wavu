@@ -167,6 +167,9 @@ sequenceDiagram
 ## 传输中的数据 { #data-on-the-wire }
 
 Wavu 是为**小数据**搭的桥（一张在内存里的图像，大约 1–2 GB 以内）。
+更大的数据，在本机上约 50 GB 以内，根本不用传输：脚本拿到的是一个指向
+OME-Zarr 存储的**路径**，再分块读取（[流式分析](../workflows/large-data.md)；
+能用，但不建议由 Fiji 或 napari 来驱动）。
 
 - **内联：**小数组（最多 **4 MiB**）以 base64 编码的小端字节放在 JSON 里传输，
   附带 `dtype`、`shape` 和 `meta`。worker 和 `wavu.client` 还要求它最多是

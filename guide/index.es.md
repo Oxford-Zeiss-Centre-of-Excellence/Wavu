@@ -51,6 +51,8 @@ medir, guardar) y solo le pasa a Wavu el paso pesado, como Cellpose; Wavu lo
 ejecuta en su propio entorno y devuelve el resultado al script. Un script,
 la carpeta entera, siempre igual.
 
+[Flujos de trabajo con scripts :material-arrow-right:](workflows/index.md){ .md-button .md-button--primary }
+
 ## ¿Por dónde quieres empezar?
 
 <div class="grid cards" markdown>

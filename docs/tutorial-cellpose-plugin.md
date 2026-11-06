@@ -21,7 +21,7 @@ flowchart LR
 
 Your script runs in its **own** environment. Its packages can never clash with Fiji, with other Wavu scripts or with your system Python.
 
-> **Scope:** Wavu is for interactive work on images that fit in memory (up to roughly 1–2 GB). For very large data, use a batch/HPC pipeline instead.
+> **Scope:** Wavu is for interactive work on images that fit in memory (up to roughly 1–2 GB). Larger data, up to about 50 GB, can be streamed from OME-Zarr in chunks (not recommended inside Fiji/napari); beyond that, use a batch/HPC pipeline.
 
 ---
 

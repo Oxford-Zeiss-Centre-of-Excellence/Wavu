@@ -66,10 +66,13 @@ Curious how the waiters and the kitchen talk? See
 
 ## What it is not
 
-!!! warning "Not for big data"
-    Wavu sends one image at a time, and it must fit in your computer's memory
-    (roughly up to 1–2 GB). For huge volumes, many files or whole-slide
-    images, use a batch or HPC workflow instead.
+!!! warning "Not made for big data"
+    Normally Wavu sends one whole image at a time, and it must fit in your
+    computer's memory (roughly up to 1–2 GB). Larger images, up to about
+    50 GB on a local computer, can be processed piece by piece with
+    [stream analysis](../workflows/large-data.md) (OME-Zarr, in chunks): it
+    works, but driving it from Fiji or napari is not recommended. Beyond
+    that, or for very many files, use a batch or HPC workflow instead.
 
 !!! warning "Not a security sandbox"
     The separate environments keep *packages* apart. They do not lock a script

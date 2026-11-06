@@ -51,8 +51,10 @@ Wavu-Skript. In der Makro-Version ist Schritt 3 ebenfalls grün
    eigens für diese Seite gemacht: 30 Einzelbilder mit 256 × 256 Pixeln,
    0,65 µm pro Pixel, 5 min pro Bild. Etwa 25 Zellkerne wandern umher, vier
    davon teilen sich, einer verlässt das Bild rechts und einer kommt links
-   herein. Die wahren Zahlen sind 25 am Anfang und 29 am Ende:
-   `25 25 25 25 25 25 26 26 26 25 25 25 26 26 26 26 26 27 27 28 28 28 28 29 29 29 29 29 29 29`.
+   herein. Die wahren Zahlen sind 25 am Anfang und 29 am Ende.
+
+   ![Der Demo-Zeitraffer: Zellkerne, die über 30 Bilder driften und sich teilen](../assets/img/demo-timelapse.gif){ width="256" }
+
 4. **TrackMate** für die Groovy-Version. Es ist in Fiji enthalten.
 
 Der erste Durchlauf richtet die Küchengeräte jedes Ordners ein (ein bis
@@ -301,7 +303,7 @@ zwei Minuten, einmalig).
     }
     Overlay.show;
     Stack.setFrame(frames);                            // letztes Bild, mit eingezeichneten Tracks
-    run("Flatten");
+    run("Flatten", "slice");
     saveAs("PNG", outDir + name + "-tracks.png");
     close();
     setBatchMode("exit and display");
@@ -348,7 +350,7 @@ Bei der Demo melden beide Versionen:
 
 | | Zellen pro Bild | Tracks |
 |---|---|---|
-| Groovy (TrackMate) | `25 25 25 25 25 25 26 26 26 26 25 25 26 26 26 26 26 28 28 28 28 28 28 29 29 29 29 29 29 29` | 26, mit 4 Teilungen |
+| Groovy (TrackMate) | 25 → 29 | 26, mit 4 Teilungen |
 | Makro (trackpy) | dieselben | 30 |
 
 Die Zahlen stimmen mit der Wahrheit überein, außer bei Bild 9 (26, wahr 25)

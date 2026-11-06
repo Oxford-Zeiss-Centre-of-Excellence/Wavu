@@ -42,6 +42,8 @@ Python 笔记本可以逐个处理整个文件夹，自己完成原生步骤（�
 保存），只把最繁重的步骤（例如 Cellpose）交给 Wavu；Wavu 在它自己的环境里
 运行这一步，再把结果交回给脚本。一个脚本、整个文件夹，每次都一样。
 
+[脚本化工作流 :material-arrow-right:](workflows/index.md){ .md-button .md-button--primary }
+
 ## 你想从哪里开始？
 
 <div class="grid cards" markdown>

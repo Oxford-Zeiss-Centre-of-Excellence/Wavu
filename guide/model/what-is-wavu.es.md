@@ -67,11 +67,14 @@ flowchart LR
 
 ## Lo que no es
 
-!!! warning "No es para datos grandes"
-    Wavu envía una imagen cada vez, y debe caber en la memoria de tu ordenador
-    (aproximadamente hasta 1–2 GB). Para volúmenes enormes, muchos archivos o
-    imágenes de portaobjetos completos (whole-slide), usa un flujo de trabajo
-    por lotes o en un clúster (HPC).
+!!! warning "No está hecho para datos grandes"
+    Normalmente Wavu envía una imagen entera cada vez, y debe caber en la
+    memoria de tu ordenador (aproximadamente hasta 1–2 GB). Las imágenes más
+    grandes, de hasta unos 50 GB en un ordenador local, se pueden procesar
+    pieza a pieza con el [análisis en flujo](../workflows/large-data.md)
+    (OME-Zarr, por bloques): funciona, pero no se recomienda dirigirlo desde
+    Fiji o napari. Por encima de eso, o para muchísimos archivos, usa en su
+    lugar un flujo de trabajo por lotes o en HPC.
 
 !!! warning "No es un entorno aislado de seguridad"
     Los entornos separados mantienen apartados los *paquetes*. No encierran al

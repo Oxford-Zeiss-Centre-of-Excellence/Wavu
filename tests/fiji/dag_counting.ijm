@@ -79,7 +79,7 @@ for (i = 1; i < n; i++) {
 }
 Overlay.show;
 Stack.setFrame(frames);                            // last frame, with the tracks drawn in
-run("Flatten");
+run("Flatten", "slice");
 saveAs("PNG", outDir + name + "-tracks.png");
 close();
 setBatchMode("exit and display");

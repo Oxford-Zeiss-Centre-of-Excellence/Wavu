@@ -187,7 +187,11 @@ sequenceDiagram
 ## Les données en transit { #data-on-the-wire }
 
 Wavu est un pont pour les **petites données** (une image en mémoire,
-jusqu'à environ 1–2 Go).
+jusqu'à environ 1–2 Go). Les données plus grandes, jusqu'à environ 50 Go
+en local, ne voyagent pas du tout : le script reçoit un **chemin** vers un
+stockage OME-Zarr et le lit par blocs
+([analyse en flux](../workflows/large-data.md) ; ça marche, mais il n'est
+pas recommandé de la piloter depuis Fiji ou napari).
 
 - **Inline :** un petit tableau (au plus **4 Mio**) voyage dans le JSON
   sous forme d'octets little-endian en base64, avec `dtype`, `shape` et

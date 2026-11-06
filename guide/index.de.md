@@ -52,6 +52,8 @@ Cellpose, an Wavu ab, das ihn in seiner eigenen Umgebung ausführt und das
 Ergebnis an das Skript zurückgibt. Ein Skript, der ganze Ordner, jedes Mal
 gleich.
 
+[Skriptgesteuerte Workflows :material-arrow-right:](workflows/index.md){ .md-button .md-button--primary }
+
 ## Wo möchten Sie anfangen?
 
 <div class="grid cards" markdown>

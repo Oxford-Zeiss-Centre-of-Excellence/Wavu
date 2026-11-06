@@ -93,10 +93,88 @@ def run(ctx, inputs, params):
     ...
 ```
 
+## Tabellen, ROIs, Tracks und Dateien: aus einem Skript
+
+Der Dialog bietet nur Bilder an. Alles andere (eine Results-Tabelle, die
+Umrisse im ROI Manager, Tracks aus TrackMate oder napari, napari-Points oder
+-Shapes, ein OME-Zarr-Ordner) erreicht Ihr Skript, wenn es **von einem
+anderen Skript aufgerufen** wird, wie in einer [Pipeline](../workflows/index.md).
+Solche Eingaben brauchen **keinen `PARAMS`-Eintrag**: Das Skript liest sie
+per Name aus `inputs`. Schreiben Sie in den Docstring, welche Namen es
+erwartet.
+
+| Sie übergeben | das Skript bekommt in `inputs` |
+|---|---|
+| ein Bild (`ImagePlus`, NumPy-Array) | NumPy-Array |
+| eine Tabelle (`ResultsTable`, eine Makro-Tabelle, ein pandas-DataFrame, eine Liste von Dicts) | pandas-DataFrame (als CSV gesendet) |
+| eine `.zip` mit ImageJ-ROIs (aus dem ROI Manager gespeichert oder aus napari-Shapes geschrieben) | `wavu.RoiSet` (mit `roifile` lesen) |
+| jeder andere Pfad (`.csv`, `.tif`, ein OME-Zarr-Ordner) | die geladene Datei, bei Ordnern ein `pathlib.Path` |
+
+Tracks reisen als Tabelle: eine Zeile pro Spot, mit Track-ID, Frame und
+Position.
+
+=== "Groovy (Fiji)"
+
+    ```groovy
+    def rm = wavu.roiManager()                               // der ROI Manager, den Sie sehen
+    def zip = new File(IJ.getDirectory("temp"), "rois.zip")
+    rm.deselect(); rm.runCommand("Save", zip.path)           // alle ROIs -> eine Zip-Datei
+    Map r = wavu.run(folder, "script", [min_area: 30],
+                     [image: imp, rois: zip, spots: ResultsTable.getResultsTable()])
+    ```
+
+=== "ImageJ macro"
+
+    Ein Makro übergibt Tabellen über den Fenstertitel mit `tables=`. Für
+    ROIs speichern Sie die Zip-Datei und geben ihren Pfad als Textfeld
+    (`"type": "str"`) des Skripts an; der Pfad darf keine Leerzeichen
+    enthalten:
+
+    ```javascript
+    zip = replace(getDirectory("temp"), "\\", "/") + "rois.zip";
+    roiManager("Save", zip);
+    run("Run Script (Macro)", "folder=[D:/scripts/measure] script=script " +
+        "params=[rois_zip=" + zip + "] tables=[spots=Results]");
+    ```
+
+    Das Skript liest dann `params["rois_zip"]` mit `roifile.roiread(...)`.
+
+=== "Python (napari)"
+
+    ```python
+    import pandas as pd
+    import roifile
+
+    pts, trk, shp = viewer.layers["spots"], viewer.layers["tracks"], viewer.layers["cells"]
+    points = pd.concat([pd.DataFrame(pts.data, columns=["frame", "y", "x"]), pts.features], axis=1)
+    tracks = pd.DataFrame(trk.data, columns=["track_id", "frame", "y", "x"])
+    roifile.roiwrite("rois.zip", [roifile.ImagejRoi.frompoints(s[:, -2:][:, ::-1])   # (y, x) -> (x, y)
+                                  for s in shp.data])
+
+    with Worker.start("D:/scripts/measure") as w:
+        res = w.run("script", {"min_area": 30},
+                    {"image": viewer.layers["nuclei"].data, "points": points,
+                     "tracks": tracks, "rois": "rois.zip"})
+    ```
+
+Im Skript:
+
+```python
+"""Measure inside ROIs. Inputs: image, rois (ROI zip), tracks (table)."""
+import roifile
+
+def run(ctx, inputs, params):
+    img = inputs["image"]
+    tracks = inputs["tracks"]                               # DataFrame
+    rois = roifile.roiread(inputs["rois"].path)             # Umrisse; .coordinates() ist (x, y)
+    ...
+```
+
 ## In einem Satz
 
 Schreiben Sie pro Einstellung eine `PARAMS`-Zeile mit Typ und Standardwert,
 und Fiji oder napari baut die Felder und reicht Ihnen die geprüften Werte in `params`
-(Bilder in `inputs`).
+(Bilder in `inputs`, und auch Tabellen, ROIs und Dateien, wenn ein anderes
+Skript Ihres aufruft).
 
 [Weiter: was Sie zurückgeben können :material-arrow-right:](outputs.md){ .md-button }

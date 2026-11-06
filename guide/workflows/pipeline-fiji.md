@@ -48,8 +48,10 @@ macro version, step 3 is green as well (`examples/track_trackpy`).
    for this page: 30 frames of 256 × 256 pixels, 0.65 µm per pixel, 5 min
    per frame. About 25 nuclei drift around, four of them divide, one leaves
    on the right and one comes in from the left. The true counts are 25 at
-   the start and 29 at the end:
-   `25 25 25 25 25 25 26 26 26 25 25 25 26 26 26 26 26 27 27 28 28 28 28 29 29 29 29 29 29 29`.
+   the start and 29 at the end.
+
+   ![The demo time-lapse: nuclei drifting and dividing over 30 frames](../assets/img/demo-timelapse.gif){ width="256" }
+
 4. **TrackMate** for the Groovy version. It ships with Fiji.
 
 The first run installs each folder's kitchenware (a minute or two, once).
@@ -294,7 +296,7 @@ The first run installs each folder's kitchenware (a minute or two, once).
     }
     Overlay.show;
     Stack.setFrame(frames);                            // last frame, with the tracks drawn in
-    run("Flatten");
+    run("Flatten", "slice");
     saveAs("PNG", outDir + name + "-tracks.png");
     close();
     setBatchMode("exit and display");
@@ -339,7 +341,7 @@ On the demo, both versions report:
 
 | | cells per frame | tracks |
 |---|---|---|
-| Groovy (TrackMate) | `25 25 25 25 25 25 26 26 26 26 25 25 26 26 26 26 26 28 28 28 28 28 28 29 29 29 29 29 29 29` | 26, with 4 divisions |
+| Groovy (TrackMate) | 25 → 29 | 26, with 4 divisions |
 | Macro (trackpy) | the same | 30 |
 
 The counts match the truth except at frame 9 (26, truth 25) and frames

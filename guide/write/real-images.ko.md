@@ -73,6 +73,75 @@ def run(ctx, inputs, params):
 죽는 것보다 친절해요. Fiji는 그 문장을 오류 창에, napari는 패널 로그와
 알림에 보여 주거든요.
 
+??? tip "축 순서: T C Z Y X 권장(저장, 전달, 계산)"
+
+    Wavu는 아무것도 다시 정렬하지 않아요. Fiji는 **T Z C Y X**(ImageJ
+    하이퍼스택 순서)로 보내고, napari는 레이어 자신의 순서로 보내며, Fiji는
+    결과를 자기 순서로 돌려받기를 기대해요. 스크립트 안에서는 마음대로 고를 수
+    있어요. 우리는 **T C Z Y X**를 권해요. 계층별 선택지는 다음과 같아요.
+
+    | 계층 | 권장 | 대안 | 대안을 고를 때 |
+    |---|---|---|---|
+    | **저장**(디스크의 파일) | **T C Z Y X**(또는 C Z Y X, Z Y X)의 OME-Zarr | **T Z C Y X**의 ImageJ TIFF | 주로 Fiji에서 여는 작은 데이터(ImageJ TIFF는 자기 순서로만 저장할 수 있어요) |
+    | **전달**(Wavu ↔ 스크립트) | `run()` 시작에서 C-연속 **T C Z Y X**로 바꾸고, 돌려주기 전에 되돌리기 | Wavu가 주는 그대로 두기(Fiji에서는 **T Z C Y X**) | 순서가 상관없는 평면별 처리(필터, 문턱값) |
+    | **계산**(NumPy, PyTorch, GPU) | **T C Z Y X**: 시점 하나는 `(C, Z, Y, X)`, 배치 축을 더하면 PyTorch의 `(N, C, D, H, W)` | GPU 메모리 안에서만 **channels last**(B Z Y X C): `tensor.to(memory_format=torch.channels_last_3d)`. TensorFlow/Keras의 기본값 | 최신 NVIDIA GPU에서 혼합 정밀도 3-D 합성곱, Keras 모델 |
+
+    왜 T C Z Y X일까요? 축 순서를 좌우하는 것은 네 가지인데, 이 순서는 그
+    모두에 맞아요.
+
+    1. **현미경.** 카메라는 한 번에 **Y × X** 프레임 하나를 읽고(가장 빠름),
+       피에조 스테이지가 **Z**로 움직이고, 필터나 레이저가 **C**를 바꾸며,
+       시간 간격 **T**가 가장 느려요. Y, X를 가장 안쪽에, 그 옆에 Z를 두면
+       데이터를 얻는 방식을 따르고 3-D 부피가 한데 모여 있어요. (Z/C 반복
+       순서는 장비마다 달라요.)
+    2. **저장과 청크.** NumPy와 Zarr 배열은 *C-연속*이라서 마지막 축이 가장
+       빨리 바뀌어요. T C Z Y X에서는 `(1, 1, 64, 512, 512)` 같은 청크가
+       **채널 하나**의 촘촘한 3-D 블록이라서, 채널 0(예: DAPI)만 읽으면 그
+       파일들만 읽어요. 채널이 섞여 있으면 읽을 때마다 모든 채널을 가져와요.
+       그래서 [OME-NGFF 사양](https://ngff.openmicroscopy.org/0.4/#axes-md)은
+       시간, 그다음 채널, 그다음 공간 순서를 요구해요(버전 0.4와 0.5. 이를
+       완화하자는 제안인 [RFC-3](https://ngff.openmicroscopy.org/rfc/3/index.html)은
+       아직 검토 중이에요). Fiji, napari, Bio-Formats 모두 이를 읽어요.
+       디스크의 데이터는 수십 년 동안 남지만 GPU는 몇 년마다 바뀌어요.
+    3. **딥러닝.** `(C, Z, Y, X)`에 배치 축을 더하면
+       [PyTorch의 `Conv3d`](https://docs.pytorch.org/docs/stable/generated/torch.nn.Conv3d.html)가
+       기대하는 `(N, C, D, H, W)`와 똑같아요. C-연속 배열에 `torch.from_numpy()`를
+       쓰면 메모리를 공유해서 아무것도 복사되지 않아요.
+    4. **GPU.** NVIDIA Tensor 코어는 채널이 가장 안쪽에 있을 때("channels
+       last") 혼합 정밀도(FP16/BF16) 3-D 합성곱을 더 빨리 돌릴 수 있어요.
+       변환은 **GPU 메모리 안에서만**, 무거운 층 바로 앞에서 하세요. 모양은
+       `(N, C, D, H, W)` 그대로이고 스트라이드만 바뀌어요. 결과가 GPU를 떠나기
+       전에 다시 연속으로 만드세요(`.contiguous()`). 칩의 취향은 파일까지
+       가지 않아요.
+
+    스크립트 안에서 바꿨다가 되돌리는 예:
+
+    ```python
+    import numpy as np
+    import wavu
+
+    def to_tczyx(img, axes):
+        """Reorder to T, C, Z, Y, X (only the axes present). Returns (array, new axes)."""
+        new = "".join(a for a in "TCZYX" if a in axes)
+        return np.ascontiguousarray(np.transpose(img, [axes.index(a) for a in new])), new
+
+    def back(arr, axes_now, axes_wanted):
+        """Reorder a result back, e.g. to the input's own order before returning it."""
+        return np.ascontiguousarray(np.transpose(arr, [axes_now.index(a) for a in axes_wanted]))
+
+    def run(ctx, inputs, params):
+        axes = ctx.meta["image"].get("axes") or "YX"    # Fiji에서는 예: "TZCYX" 또는 "ZCYX"
+        x, ours = to_tczyx(inputs["image"], axes)       # 예: (C, Z, Y, X), "CZYX"
+        # PyTorch: 배치 축을 붙인 시점 하나, 복사 없음
+        #   batch = torch.from_numpy(x)[None]           # "CZYX"면 (1, C, Z, Y, X)
+        y = x * 2                                       # 여러분의 계산, 출력도 같은 배치
+        return {"result": wavu.Image(back(y, ours, axes), axes=axes)}
+    ```
+
+    (축이 `S`로 끝나는 RGB 이미지는 여기서 다루지 않아요. 먼저 회색으로
+    바꾸거나 색을 나누세요. napari 레이어가 `axes` 없이 오면 그 순서는
+    여러분이 가장 잘 알아요. 글자를 직접 넘기세요.)
+
 ## 얼마나 크면 너무 큰가요?
 
 Wavu는 **메모리에 넉넉히 들어가는 이미지 한 장으로 하는 대화형 작업**,
@@ -87,8 +156,11 @@ Wavu는 **메모리에 넉넉히 들어가는 이미지 한 장으로 하는 대
     전체를 메모리에 불러오니, 메모리에 들어가는 레이어(잘라 낸 부분, 채널
     하나, 해상도를 낮춘 사본)를 고르세요.
 
-그보다 크거나 파일이 수백 개라면 Wavu는 맞는 도구가 아니에요. OME-Zarr로
-변환하고 배치(batch)나 HPC 워크플로를 쓰세요.
+그보다 크다면 OME-Zarr로 변환하고 스크립트가 조각조각 읽게 하세요.
+[스트림 분석](../workflows/large-data.md)은 로컬 컴퓨터에서 약 50 GB까지
+처리해요. 작동은 하지만, Fiji나 napari에서 조종하는 것은 권장하지 않아요.
+파일이 수백 개라면 [배치 처리](../workflows/batch.md)를 보세요. 약 50 GB를
+넘으면 배치나 HPC 워크플로를 쓰세요.
 
 ## 느린 첫 실행(과 사용자를 안심시키는 법) { #slow-first-runs-and-how-to-keep-users-calm }
 
@@ -121,7 +193,8 @@ ctx.log("Model ready")
 
 스크립트는 이미지 전체를 배열 하나로 받고(Fiji에서는 **T Z C Y X** 순서,
 napari에서는 레이어 자신의 순서. 확실히 하려면 `ctx.meta`와 모양을
-읽으세요), 크기는 어느 뷰어에서든 대략 1–2 GB 아래여야 하며, 첫 모델 다운로드처럼
+읽으세요. OME-NGFF와 PyTorch의 순서인 **T C Z Y X**로 다시 정렬하기를
+권해요), 크기는 어느 뷰어에서든 대략 1–2 GB 아래여야 하며, 첫 모델 다운로드처럼
 느린 일 전에는 `ctx.log`를 남기세요.
 
 [다음: 컨테이너로 공유하기 :material-arrow-right:](container.md){ .md-button }

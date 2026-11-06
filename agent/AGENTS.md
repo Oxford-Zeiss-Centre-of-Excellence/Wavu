@@ -88,6 +88,12 @@ PARAMS = {
   (+ `S` for RGB). Check `ndim` and raise `ValueError("...")` with a plain sentence if the shape is wrong; the viewer shows
   the message as is.
 - `ctx.meta["image"]` holds `pixel_um`, `axes`, `title` when the viewer knows them.
+- Wavu does not reorder axes. Recommend (do not require) that compute code works in **T, C, Z, Y, X**:
+  `np.transpose` by `ctx.meta["image"]["axes"]` + `np.ascontiguousarray` at the start of `run()`, and transpose
+  results back to the input's axes before returning `wavu.Image(..., axes=<input axes>)` (Fiji/ImageJ TIFF only stores
+  T, Z, C, Y, X). Why: OME-NGFF axis order (https://ngff.openmicroscopy.org/0.4/#axes-md), per time point PyTorch's
+  `(N, C, D, H, W)` with zero-copy `torch.from_numpy`. Store OME-Zarr in that order. Channels-last only inside GPU
+  memory (`tensor.to(memory_format=torch.channels_last_3d)`), never on disk. Plane-by-plane code can skip all this.
 - `ctx.log(msg)` writes to the viewer's log (Fiji's Log window, the napari panel); `ctx.progress(0..1)` drives the progress bar; check `ctx.cancelled()` in
   loops and return early (cancelling is cooperative); `ctx.tmpdir` is a scratch folder for files you return.
 - **Import heavy packages inside `run`** (cellpose, torch, skimage), so the viewer lists the script and shows its dialog
@@ -179,6 +185,12 @@ Turning a napari plugin, a notebook or a Fiji macro into a script folder:
 
 A Wavu script is also a function call. Teach and build these in this order.
 
+**Output first, like TDD.** Before any step, ask the scientist what they measure: the **dependent variable**
+(y: a count, area, intensity, speed) against the **independent variable** (x: time, treatment, genotype, dose).
+Never start from "help me analyse my images". Write the final output down first (the plot "y against x" and the
+table columns behind it), make it the test (e.g. expected counts on demo data), and only then derive the DAG: each
+step exists because the output needs it. The pipeline and the methods are by-products of the defined output.
+
 ### 1. Pipelines (DAG): chain native steps and Wavu steps
 
 Each step is either native (a Fiji plugin such as TrackMate, an ImageJ command, scikit-image/pandas in the
@@ -230,8 +242,9 @@ the output path.
 
 ## Scope and limits
 
-- Small, interactive data: one image that fits in memory (about 1–2 GB at most). For larger data suggest a batch
-  or HPC workflow instead of Wavu.
+- Interactive data: one image that fits in memory (about 1–2 GB at most) travels as an array. Larger data, up to
+  about 50 GB on a local computer, works with the stream pattern above (a path to OME-Zarr, read in chunks), but say
+  that driving it from Fiji/napari is not recommended. Beyond about 50 GB suggest a batch or HPC workflow.
 - Do not write Java, Groovy, Fiji or napari plugin code; wavu-fiji and wavu-napari already exist. Everything
   happens in the script, in Python.
 - The environment isolates dependencies; it is not a security sandbox.

@@ -50,8 +50,10 @@ Wavu. En la versión en macro, el paso 3 también es verde
    hecha para esta página: 30 fotogramas de 256 × 256 píxeles, 0,65 µm por
    píxel, 5 min por fotograma. Unos 25 núcleos se desplazan, cuatro de ellos
    se dividen, uno sale por la derecha y otro entra por la izquierda. Los
-   recuentos reales son 25 al principio y 29 al final:
-   `25 25 25 25 25 25 26 26 26 25 25 25 26 26 26 26 26 27 27 28 28 28 28 29 29 29 29 29 29 29`.
+   recuentos reales son 25 al principio y 29 al final.
+
+   ![La serie temporal de demostración: núcleos que se desplazan y se dividen en 30 fotogramas](../assets/img/demo-timelapse.gif){ width="256" }
+
 4. **TrackMate** para la versión en Groovy. Viene con Fiji.
 
 La primera ejecución instala los utensilios de cocina de cada carpeta (un
@@ -298,7 +300,7 @@ minuto o dos, una sola vez).
     }
     Overlay.show;
     Stack.setFrame(frames);                            // último fotograma, con las trayectorias dibujadas
-    run("Flatten");
+    run("Flatten", "slice");
     saveAs("PNG", outDir + name + "-tracks.png");
     close();
     setBatchMode("exit and display");
@@ -345,7 +347,7 @@ En la demo, las dos versiones dan:
 
 | | células por fotograma | trayectorias |
 |---|---|---|
-| Groovy (TrackMate) | `25 25 25 25 25 25 26 26 26 26 25 25 26 26 26 26 26 28 28 28 28 28 28 29 29 29 29 29 29 29` | 26, con 4 divisiones |
+| Groovy (TrackMate) | 25 → 29 | 26, con 4 divisiones |
 | Macro (trackpy) | lo mismo | 30 |
 
 Los recuentos coinciden con la realidad salvo en el fotograma 9 (26, la

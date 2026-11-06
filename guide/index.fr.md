@@ -52,6 +52,8 @@ enregistrer) et ne confie à Wavu que l'étape lourde, comme Cellpose ; Wavu
 l'exécute dans son propre environnement et renvoie le résultat au script. Un
 seul script, tout le dossier, à chaque fois de la même façon.
 
+[Workflows en script :material-arrow-right:](workflows/index.md){ .md-button .md-button--primary }
+
 ## Par où voulez-vous commencer ? { #where-do-you-want-to-start }
 
 <div class="grid cards" markdown>

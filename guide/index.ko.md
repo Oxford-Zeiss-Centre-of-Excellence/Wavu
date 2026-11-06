@@ -44,6 +44,8 @@ Wavu는 내 스크립트가 부를 수 있는 **함수 호출**이기도 해요.
 Wavu는 그것을 자기 환경에서 실행하고 결과를 스크립트로 돌려줘요. 스크립트
 하나로 폴더 전체를, 매번 똑같이 처리해요.
 
+[스크립트 워크플로 :material-arrow-right:](workflows/index.md){ .md-button .md-button--primary }
+
 ## 어디서 시작할까요?
 
 <div class="grid cards" markdown>

@@ -43,8 +43,10 @@ flowchart LR
 3. **数据**：`examples/data/demo_timelapse.tif`，一段专为本页制作的合成
    视频：30 帧，每帧 256 × 256 像素，每像素 0.65 µm，每帧间隔 5 分钟。
    大约 25 个细胞核四处漂移，其中四个会分裂，一个从右边离开，一个从左边
-   进来。真实的数量开始时是 25，最后是 29：
-   `25 25 25 25 25 25 26 26 26 25 25 25 26 26 26 26 26 27 27 28 28 28 28 29 29 29 29 29 29 29`。
+   进来。真实的数量开始时是 25，最后是 29。
+
+   ![示例延时视频：细胞核在 30 帧中漂移、分裂](../assets/img/demo-timelapse.gif){ width="256" }
+
 4. Groovy 版本需要 **TrackMate**。它随 Fiji 一起提供。
 
 第一次运行时会安装每个文件夹的厨具（一两分钟，只有一次）。
@@ -289,7 +291,7 @@ flowchart LR
     }
     Overlay.show;
     Stack.setFrame(frames);                            // 最后一帧，画上轨迹
-    run("Flatten");
+    run("Flatten", "slice");
     saveAs("PNG", outDir + name + "-tracks.png");
     close();
     setBatchMode("exit and display");
@@ -331,7 +333,7 @@ flowchart LR
 
 | | 每帧细胞数 | 轨迹 |
 |---|---|---|
-| Groovy（TrackMate） | `25 25 25 25 25 25 26 26 26 26 25 25 26 26 26 26 26 28 28 28 28 28 28 29 29 29 29 29 29 29` | 26 条，含 4 次分裂 |
+| Groovy（TrackMate） | 25 → 29 | 26 条，含 4 次分裂 |
 | 宏（trackpy） | 相同 | 30 |
 
 除了第 9 帧（26，实际是 25）和第 17–18 帧（28，实际是 27）之外，数量都和

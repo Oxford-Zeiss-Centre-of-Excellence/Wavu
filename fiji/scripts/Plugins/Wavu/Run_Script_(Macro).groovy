@@ -39,6 +39,10 @@ try {
         throw new IOException("no script '" + script + "' in " + dir + "; available: " + listing.scripts.keySet().join(", "))
     Map inputs = [:]
     // The current image: a visible window, or the macro's image in setBatchMode(true).
+    // Forget this thread's "temporary current image" first: showing outputs in batch
+    // mode sets it, and SciJava reuses threads, so a later call (e.g. the next file of
+    // a batch macro) would otherwise get an image that is already closed.
+    ij.WindowManager.setTempCurrentImage(null)
     ij.ImagePlus current = ij.WindowManager.getCurrentImage() ?: ij.macro.Interpreter.getLastBatchModeImage()
     ((Map) schema.params).each { String name, Map p ->
         if (p.type == "image") {
@@ -60,6 +64,8 @@ try {
     IJ.log("[Wavu] " + e)
     ij.macro.Interpreter.abort()  // stop the calling macro
     throw e
+} finally {
+    ij.WindowManager.setTempCurrentImage(null)
 }
 
 /** An open table by title: a table window, or a hidden table of a batch-mode macro. */

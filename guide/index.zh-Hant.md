@@ -42,6 +42,8 @@ Python 筆記本可以逐一處理整個資料夾，自己完成原生步驟（�
 儲存），只把最吃重的步驟（例如 Cellpose）交給 Wavu；Wavu 在它自己的環境裡
 執行這一步，再把結果交回給腳本。一個腳本、整個資料夾，每次都一樣。
 
+[腳本化工作流程 :material-arrow-right:](workflows/index.md){ .md-button .md-button--primary }
+
 ## 你想從哪裡開始？
 
 <div class="grid cards" markdown>

@@ -1,38 +1,53 @@
-# 腳本化工作流程
+# 工作流程
 
-!!! success "Wavu 最強大的部分"
-    選單是最容易上手的方式。真正的強項在於：**你自己的流程**可以像呼叫函式
-    一樣呼叫 Wavu 腳本，對資料夾裡的每一張影像都這樣做，其他步驟則由流程自己
-    完成。
+!!! question "分析之前：你到底要量什麼？"
+    這是每位生物影像分析師都會先問科學家的問題，也是寫下任何步驟之前就要
+    回答的問題。不是「幫我分析一下這些影像」，而是：
+
+    - **你要從影像裡量什麼**？這就是**應變數**（dependent variable），
+      也就是最後那張圖的 y 軸：數量、面積、強度、速度。
+    - **你改變或比較的是什麼**？這就是**自變數**（independent variable），
+      也就是 x 軸：時間、處理、基因型、劑量。
+
+    把它寫成一句話：「*y* 對 *x*」。在本節的範例裡，這句話是
+    「**細胞數對時間**」，而這句話決定了每一個步驟：為了計數細胞核而分割，
+    為了分辨分裂和新進來的細胞而追蹤，最後把每個影格的細胞數對時間畫出來。
+
+    像測試驅動開發（TDD）一樣工作：**先定義輸出**，也就是最後那張圖和它背後的
+    表格，並用已知答案的資料檢查它。步驟（DAG）和方法都是副產品：每一個步驟
+    之所以存在，是因為輸出需要它。
 
 ## 用白話說
 
-再回到餐廳，不過這次有一桌五十位客人預訂了套餐。服務生做他最擅長的事：
-帶位、倒水、結帳。只有那道需要特殊烤箱的菜才送進廚房。廚房只把烤箱
-**點火一次**，然後讓它一直保持高溫，供應全部五十盤。
+到目前為止，Wavu 一直是一座橋：Fiji 或 napari（服務生）把一張影像
+（食材）端到廚房，在那裡用食譜（你的腳本）和它自己的廚具（它的 pixi 環境）
+把菜煮出來。
 
-在腳本化工作流程裡：
+但服務生能做的不只是端盤子。從你自己的腳本來看，一個 Wavu 步驟就只是
+一次**函式呼叫**：數值和影像送進去，結果送出來。在這一行背後，工作是在
+另一個環境裡完成的，但你的腳本不必在意。所以你可以把 Wavu 步驟**和你已經
+在用的工具排成一列**：
 
-- **你的流程就是服務生。** 它可以是 Fiji 的 Groovy 腳本、ImageJ 巨集，
-  或 Python 筆記本、Python 腳本。它負責*原生*步驟：開啟影像、稍微清理一下、
-  測量、存檔。
-- **Wavu 步驟就是從廚房端出來的那道菜。** 它是最吃重的部分，需要自己的套件
-  （Cellpose、PyTorch……）。它在所屬資料夾自己的 pixi 環境（它的廚具）中執行，
-  結果會以影像、表格、ROI 和數值的形式**直接回到你的流程裡**。
-- **worker 只啟動一次**，服務每一張影像。只有第一張影像需要等烤箱預熱。
+- Fiji 的外掛，例如 **TrackMate**，以及一般的 **ImageJ 指令**；
+- Python 裡的 **scikit-image**、**pandas** 和 **matplotlib**；
+- **napari** 的圖層、顏色和停靠的圖表。
+
+你的腳本把整個分析串在一起，從開啟檔案到最後的圖。它決定順序，在步驟之間
+傳遞影像和表格，並決定結果要怎麼畫出來。這就是一個**工作流程**。
+
+## 往上三步
+
+這幾頁是一層一層疊上去的。請照這個順序學：
 
 ```mermaid
 flowchart LR
-    L["資料夾裡的<br/>每一張影像"]:::fiji
-    O["開啟 +<br/>前處理<br/>（原生）"]:::fiji
-    W["Wavu 步驟：<br/>Cellpose"]:::worker
-    E[("它自己的<br/>pixi 環境")]:::env
-    M["測量 +<br/>加入資料列<br/>（原生）"]:::fiji
-    C["整個資料夾<br/>一個 CSV"]:::script
-    L --> O --> W --> M
-    M -- "下一張影像" --> L
-    W -.- E
-    M -- "最後" --> C
+    S["你的腳本<br/>（Groovy、巨集<br/>或 Python）"]:::script
+    P["1 分析流程<br/>一段影片，<br/>好幾個步驟"]:::fiji
+    B["2 批次處理<br/>同一個分析流程<br/>處理每個檔案"]:::fiji
+    L["3 大型資料<br/>一張影像大到<br/>放不進記憶體"]:::worker
+    E[("每個 Wavu 步驟：<br/>它自己的 pixi<br/>環境")]:::env
+    S --> P --> B --> L
+    P -.- E
 
     classDef fiji   fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
     classDef worker fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
@@ -40,71 +55,76 @@ flowchart LR
     classDef env    fill:#f3e5f5,stroke:#6a1b9a,color:#4a148c
 ```
 
-## Wavu 步驟就是一次函式呼叫
+1. **分析流程**。一段縮時影片經過好幾個步驟：開啟、分割、追蹤、計數、
+   繪圖。有些步驟是 Wavu 廚房，其他的是原生工具。這些步驟組成一個
+   **DAG**（*directed acyclic graph*，有向無環圖：用箭頭連起來的方框，
+   箭頭只往前走）。
+2. **批次處理**。對資料夾裡的每個檔案執行同一個分析流程。廚房只啟動一次，
+   就能服務每個檔案；整個資料夾你會拿到一張表格。
+3. **大型資料**。一張影像大到放不進記憶體。你的腳本拿到的是一個路徑而
+   不是像素，然後一塊一塊地處理這張影像。
 
-從你的流程來看，Wavu 步驟和其他函式沒什麼兩樣：送進數值和一張影像，拿回
-結果。在 Groovy 裡是 `wavu.run(...)`，在巨集裡是
-`run("Run Script (Macro)", ...)`，在 Python 裡是 `w.run(...)`。在這一行背後，
-影像被送到住在另一個環境裡的 worker，輸出再送回來。
-
-這正是 Wavu 不只是一座橋的原因。你繼續使用已經信任的工具（Fiji 的測量、
-ROI Manager、用了好幾年的巨集、pandas），再加上一個現代的 AI 步驟，卻不必把
-PyTorch 安裝進 Fiji 或你的筆記本。來自兩個資料夾的兩個 Wavu 步驟，甚至可以在
-同一個流程裡前後相接，各自在自己的環境中執行。
-
-## 什麼時候用
-
-- **影像很多。** 一個資料夾的視野、一整盤樣本、存成個別檔案的時間序列。
-  按一次，得到一張表格。
-- **可以重複的流程。** 腳本*本身*就是方法：每次都是同樣的步驟、同樣的設定，
-  而且你可以把它寄給同事，或放進論文的補充資料。
-- **結合各自的長處。** 用 Fiji 開啟少見的檔案格式和做測量，用 Python 做深度
-  學習；反過來也行。
-
-!!! info "仍然是小型資料，一次一張影像"
-    Wavu 的適用範圍沒有改變：每次呼叫處理**一張放得進記憶體的影像**（大約
-    1–2 GB 以內）。這裡的重點是**迴圈**：許多這樣的影像，一張接一張，送進
-    同一個已經暖好的 worker。如果是單一的超大資料集，請改用批次處理或 HPC
-    流程。
-
-## 接下來幾頁的範例
-
-兩頁都建立同一個流程：**計算資料夾裡每張影像的細胞核數量**，並為整個資料夾
-寫出**一個 CSV**，每個細胞核一列，並記下它來自哪個檔案。吃重的步驟是 Wavu
-儲存庫裡的
-[`cellpose_nuclei`](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/tree/main/examples/cellpose_nuclei)
-範例資料夾。它接收 `image` 和 `diameter`（`0` 代表讓 Cellpose 自己估計），
-並回傳 `labels`（16 位元的標籤影像，每個細胞核一個編號）、`count`（細胞核
-數量）和 `rois`（以 ImageJ RoiSet 表示的輪廓）。
-
-想試試看的話，準備一個單一通道的細胞核 TIFF 資料夾，例如 BBBC039 資料集裡的
-影像（儲存庫在 `tests/data/BBBC039` 裡附了一張）。
+三頁都用同一個例子：在一段小小的合成影片
+`examples/data/demo_timelapse.tif` 裡**計算細胞數隨時間的變化**，我們知道
+它的正確答案。
 
 <div class="grid cards" markdown>
 
--   :material-microscope:{ .lg .middle } **在 Fiji 中**
+-   :material-microscope:{ .lg .middle } **1 · Fiji 中的分析流程**
 
     ---
 
-    以 Groovy 腳本和 ImageJ 巨集寫成的流程。
+    用 Groovy 搭配 TrackMate，以及一個 ImageJ 巨集，加上一兩個 Wavu 步驟。
 
-    [:octicons-arrow-right-24: Groovy 與 ImageJ 巨集](fiji.md)
+    [:octicons-arrow-right-24: Fiji 中的分析流程](pipeline-fiji.md)
 
--   :material-language-python:{ .lg .middle } **在 Python 和 napari 中**
+-   :material-language-python:{ .lg .middle } **1 · Python 與 napari 中的分析流程**
 
     ---
 
-    用 `wavu.client` 寫在筆記本裡的流程、在 napari 中顯示結果，以及串接多個
-    環境。
+    兩個 Wavu 廚房接連上菜；你的腳本在 napari 裡把結果畫出來。
 
-    [:octicons-arrow-right-24: Python 與 napari](python.md)
+    [:octicons-arrow-right-24: Python 中的分析流程](pipeline-python.md)
+
+-   :material-folder-multiple-image:{ .lg .middle } **2 · 批次處理**
+
+    ---
+
+    對一個資料夾執行同一個分析流程：每個檔案一列，一個 CSV，一張圖。
+
+    [:octicons-arrow-right-24: 批次處理](batch.md)
+
+-   :material-database-arrow-right:{ .lg .middle } **3 · 大型資料**
+
+    ---
+
+    用 dask 對 OME-Zarr 做流式分析，一個分塊接一個分塊。
+
+    [:octicons-arrow-right-24: 大型資料](large-data.md)
 
 </div>
 
+## 我需要哪一個？
+
+- **一張影像、一個 Wavu 腳本、結果顯示在 Fiji/napari 裡**？這些你都用
+  不到：選單（**Plugins › Wavu**，或 napari 的小工具）就能做到。
+- **一份資料、好幾個步驟，其中有些不是 Python**？從**分析流程**開始：
+  喜歡 Fiji 的工具和外掛，就看 [Fiji 版](pipeline-fiji.md)；平常都待在
+  notebook 和 napari 裡，就看 [Python 版](pipeline-python.md)。
+- **很多檔案，每個都放得進記憶體**（一片多孔盤、一資料夾的縮時影片）？
+  先為一個檔案寫好分析流程，再把它包進[批次處理](batch.md)的迴圈裡。
+- **一個檔案比你電腦的記憶體還大**（大約超過 1–2 GB）？請看
+  [大型資料](large-data.md)。超過約 50 GB，或工作要跑好幾個小時，就以
+  不開 Fiji/napari 的批次工作執行，或在叢集上執行。
+
+!!! tip "先為一個寫，再為很多個"
+    每個工作流程一開始都是一個在**一個**檔案上能跑的分析流程。在 Fiji/napari
+    裡用眼睛檢查它的結果。確認之後，才在整個資料夾上執行。
+
 ## 一句話總結
 
-讓你自己的腳本處理一般步驟，只有吃重的那一步才像呼叫函式一樣呼叫 Wavu；
-worker 只啟動一次，在自己的環境中執行，並為資料夾裡的每張影像把結果直接
-交回來。
+Wavu 步驟就是一次函式呼叫，只是在它自己的環境裡執行，所以你的腳本可以把它和 Fiji、
+Python、napari 的工具串成一個分析：先處理一段影片，再處理一個資料夾，然後
+處理大到放不進記憶體的資料。
 
-[下一步：在 Fiji 中 :material-arrow-right:](fiji.md){ .md-button }
+[下一頁：Fiji 中的分析流程 :material-arrow-right:](pipeline-fiji.md){ .md-button }

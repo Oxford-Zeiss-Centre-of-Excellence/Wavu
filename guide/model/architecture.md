@@ -178,7 +178,10 @@ sequenceDiagram
 ## Data on the wire
 
 Wavu is a bridge for **small data** (one image in memory, roughly up to
-1–2 GB).
+1–2 GB). Larger data, up to about 50 GB locally, does not travel at all:
+the script gets a **path** to an OME-Zarr store and reads it in chunks
+([stream analysis](../workflows/large-data.md); it works, but driving it from
+Fiji or napari is not recommended).
 
 - **Inline:** a small array (at most **4 MiB**) travels inside the JSON as
   base64 little-endian bytes, with `dtype`, `shape` and `meta`. The worker

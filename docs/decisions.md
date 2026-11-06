@@ -45,8 +45,11 @@ container image. This is **dependency isolation, not a security sandbox**.
 
 Images go inline as base64 when ≤ 4 MiB and at most 3-D. Otherwise they go as
 a TIFF in a per-job temp folder. Anything that does not fit comfortably in
-RAM belongs in an OME-Zarr plus chunked batch/HPC workflow. Wavu deliberately
-does not grow chunking, memory mapping or remote storage. That would
+RAM is streamed by the **script**, not by Wavu: the script gets a path to an
+OME-Zarr store and reads it in chunks (dask), which works up to about 50 GB on a
+local computer but is not recommended inside Fiji/napari; beyond that, a
+batch/HPC workflow. Wavu itself deliberately does not grow chunking, memory
+mapping or remote storage. That would
 multiply the code and the support load, and other tools already do it well.
 
 ## D5: Token auth even on localhost

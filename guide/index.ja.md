@@ -48,6 +48,8 @@ Groovy スクリプト、ImageJ マクロ、Python ノートブックがフォ�
 ような重い手順だけを Wavu に渡します。Wavu はそれを専用の環境で動かし、結果を
 スクリプトに返します。スクリプト 1 つでフォルダー全体を、毎回同じように。
 
+[スクリプトによるワークフロー :material-arrow-right:](workflows/index.md){ .md-button .md-button--primary }
+
 ## どこから始めますか？
 
 <div class="grid cards" markdown>

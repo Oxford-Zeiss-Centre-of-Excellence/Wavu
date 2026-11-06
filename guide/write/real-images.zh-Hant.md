@@ -68,6 +68,69 @@ def run(ctx, inputs, params):
 先檢查形狀、丟出清楚的 `ValueError`，比讓程式碼之後才當掉更友善：
 Fiji 會在錯誤視窗裡顯示這句話，napari 則顯示在面板的 log 和一則通知裡。
 
+??? tip "軸的順序：建議用 T C Z Y X（儲存、傳遞、運算）"
+
+    Wavu 不會重新排列任何東西：Fiji 送來 **T Z C Y X**（ImageJ hyperstack 的順序），
+    napari 送來圖層自己的順序，而 Fiji 期待結果以它的順序傳回。在腳本裡你可以
+    自由選擇。我們建議用 **T C Z Y X**；以下是每一層的選擇：
+
+    | 層 | 建議 | 替代方案 | 何時選替代方案 |
+    |---|---|---|---|
+    | **儲存**（磁碟上的檔案） | **T C Z Y X**（或 C Z Y X、Z Y X）的 OME-Zarr | **T Z C Y X** 的 ImageJ TIFF | 主要在 Fiji 裡開啟的小資料（ImageJ TIFF 只能存它自己的順序） |
+    | **傳遞**（Wavu ↔ 你的腳本） | 在 `run()` 開頭轉成 C 連續的 **T C Z Y X**；傳回前再轉回去 | 保留 Wavu 給的順序（從 Fiji 來是 **T Z C Y X**） | 逐平面處理（濾波、閾值），順序無關緊要時 |
+    | **運算**（NumPy、PyTorch、GPU） | **T C Z Y X**：一個時間點是 `(C, Z, Y, X)`，加上 batch 軸就是 PyTorch 的 `(N, C, D, H, W)` | 只在 GPU 記憶體裡用 **channels last**（B Z Y X C）：`tensor.to(memory_format=torch.channels_last_3d)`；TensorFlow/Keras 預設就是它 | 在新的 NVIDIA GPU 上做混合精度 3-D 卷積；Keras 模型 |
+
+    為什麼是 T C Z Y X？有四件事會影響軸的順序，而它對四者都合適：
+
+    1. **顯微鏡。** 相機一次讀出一張 **Y × X** 影格（最快），壓電載台沿 **Z** 移動，
+       濾鏡或雷射切換 **C**，時間間隔 **T** 最慢。把 Y、X 放在最內層、Z 緊挨著，
+       就跟資料擷取的方式一致，也讓 3-D 體積保持在一起。（Z/C 迴圈的確切順序
+       因設備而異。）
+    2. **儲存與區塊。** NumPy 和 Zarr 陣列都是 *C 連續*：最後一個軸變化最快。
+       用 T C Z Y X 時，像 `(1, 1, 64, 512, 512)` 這樣的區塊（chunk）就是
+       **單一通道** 的一塊緊湊 3-D 區塊，所以只讀通道 0（例如 DAPI）時只會讀到
+       那些檔案；如果通道交錯排列，每次讀取都會抓回所有通道。
+       因此 [OME-NGFF 規範](https://ngff.openmicroscopy.org/0.4/#axes-md)
+       要求先時間、再通道、再空間（0.4 和 0.5 版；放寬這條規定的提案
+       [RFC-3](https://ngff.openmicroscopy.org/rfc/3/index.html) 仍在審查中）。
+       Fiji、napari 和 Bio-Formats 都能讀。磁碟上的資料要保存數十年，GPU
+       卻每隔幾年就換代。
+    3. **深度學習。** `(C, Z, Y, X)` 加上 batch 軸，就正好是
+       [PyTorch 的 `Conv3d`](https://docs.pytorch.org/docs/stable/generated/torch.nn.Conv3d.html)
+       要的 `(N, C, D, H, W)`。對 C 連續的陣列用 `torch.from_numpy()` 會共用
+       記憶體：什麼都不用複製。
+    4. **GPU。** 當通道在最內層（「channels last」）時，NVIDIA 的 Tensor Core
+       能更快地執行混合精度（FP16/BF16）3-D 卷積。**只在 GPU 記憶體裡** 轉換，
+       就在耗時的層之前；形狀仍是 `(N, C, D, H, W)`，只有 stride 改變。結果離開
+       GPU 之前，要先讓它重新連續（`.contiguous()`）。晶片的偏好絕不會進到檔案裡。
+
+    在腳本裡轉過去再轉回來：
+
+    ```python
+    import numpy as np
+    import wavu
+
+    def to_tczyx(img, axes):
+        """Reorder to T, C, Z, Y, X (only the axes present). Returns (array, new axes)."""
+        new = "".join(a for a in "TCZYX" if a in axes)
+        return np.ascontiguousarray(np.transpose(img, [axes.index(a) for a in new])), new
+
+    def back(arr, axes_now, axes_wanted):
+        """Reorder a result back, e.g. to the input's own order before returning it."""
+        return np.ascontiguousarray(np.transpose(arr, [axes_now.index(a) for a in axes_wanted]))
+
+    def run(ctx, inputs, params):
+        axes = ctx.meta["image"].get("axes") or "YX"    # 從 Fiji 來，例如 "TZCYX" 或 "ZCYX"
+        x, ours = to_tczyx(inputs["image"], axes)       # 例如 (C, Z, Y, X)、"CZYX"
+        # PyTorch：一個時間點加上 batch 軸，不複製
+        #   batch = torch.from_numpy(x)[None]           # "CZYX" 時為 (1, C, Z, Y, X)
+        y = x * 2                                       # 你的運算，輸出排列不變
+        return {"result": wavu.Image(back(y, ours, axes), axes=axes)}
+    ```
+
+    （軸以 `S` 結尾的 RGB 影像不在此列：請先轉成灰階或拆開顏色。如果 napari
+    圖層送來時沒有 `axes`，你最清楚它的順序：自己傳入這些字母。）
+
 ## 多大算太大？
 
 Wavu 是為了**互動式處理一張能輕鬆放進記憶體的影像**而設計的，大約到
@@ -80,8 +143,10 @@ TIFF 檔傳遞。你什麼都不用做：無論哪種方式，`inputs["image"]` 
     Wavu 做不到：它會先把整個圖層載入記憶體再送出，所以請挑一個放得進記憶體的圖層
     （裁切過的一塊、一個通道，或解析度較低的副本）。
 
-超過這個大小，或要處理上百個檔案時，Wavu 就不是合適的工具。請轉成
-OME-Zarr，改用批次或 HPC 工作流程。
+超過這個大小，請轉成 OME-Zarr，讓腳本一塊一塊讀取：
+[流式分析](../workflows/large-data.md)在本機上可以處理約 50 GB 以內的資料。
+行得通，但不建議由 Fiji 或 napari 來驅動。要處理上百個檔案時，請看
+[批次處理](../workflows/batch.md)；超過約 50 GB，請改用批次或 HPC 工作流程。
 
 ## 第一次執行很慢（以及如何讓使用者安心） { #slow-first-runs-and-how-to-keep-users-calm }
 
@@ -112,7 +177,8 @@ ctx.log("Model ready")
 ## 一句話總結
 
 你的腳本會拿到整張影像，是一個陣列（從 Fiji 來是 **T Z C Y X** 順序，
-從 napari 來是圖層自己的順序；看 `ctx.meta` 和形狀確認），不管在 Fiji 還是 napari，
+從 napari 來是圖層自己的順序；看 `ctx.meta` 和形狀確認；
+我們建議重新排成 **T C Z Y X**，也就是 OME-NGFF 和 PyTorch 的順序），不管在 Fiji 還是 napari，
 大小最好都在 1–2 GB 以內，而且在任何耗時的步驟（例如第一次下載模型）
 之前，都應該先 `ctx.log`。
 

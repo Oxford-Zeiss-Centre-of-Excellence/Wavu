@@ -1,44 +1,63 @@
-# Skriptgesteuerte Workflows
+# Workflows
 
-!!! success "Der stärkste Teil von Wavu"
-    Die Menüs sind der einfache Einstieg. Die eigentliche Stärke ist, dass
-    **Ihre eigene Pipeline** ein Wavu-Skript wie eine Funktion aufrufen kann,
-    für jedes Bild in einem Ordner, und alle anderen Schritte selbst erledigt.
+!!! question "Vor jeder Analyse: Was genau messen Sie?"
+    Das ist die erste Frage, die Fachleute für Bildanalyse Forschenden
+    stellen, und sie gehört vor den ersten Schritt. Nicht „Bitte analysieren
+    Sie meine Bilder", sondern:
 
-## Die Idee in einfachen Worten
+    - **Was messen Sie in den Bildern?** Das ist die **abhängige Variable**,
+      die y-Achse Ihres finalen Plots: eine Anzahl, eine Fläche, eine
+      Intensität, eine Geschwindigkeit.
+    - **Was verändern oder vergleichen Sie?** Das ist die **unabhängige
+      Variable**, die x-Achse: Zeit, Behandlung, Genotyp, Dosis.
 
-Zurück ins Restaurant, aber jetzt hat ein Tisch mit fünfzig Gästen ein Menü
-bestellt. Der Kellner tut, was Kellner gut können: Er setzt die Gäste,
-schenkt Wasser ein und schreibt die Rechnung. Nur das eine Gericht, das den
-besonderen Ofen braucht, geht in die Küche. Die Küche heizt diesen Ofen
-**einmal** an und hält ihn für alle fünfzig Teller heiß.
+    Schreiben Sie es als einen Satz: „*y* gegen *x*". In den Beispielen
+    dieses Abschnitts heißt er „**Anzahl der Zellen gegen die Zeit**", und
+    dieser Satz bestimmt jeden Schritt: segmentieren, um die Kerne zu zählen,
+    verfolgen, um eine Teilung von einem Neuankömmling zu unterscheiden, und
+    dann die Zellen pro Bild über die Zeit plotten.
 
-In einem skriptgesteuerten Workflow gilt:
+    Arbeiten Sie wie bei testgetriebener Entwicklung: **Legen Sie zuerst das
+    Ergebnis fest**, den finalen Plot und die Tabelle dahinter, und prüfen Sie
+    es an Daten, deren Antwort Sie kennen. Die Schritte (der DAG) und die
+    Methoden ergeben sich dann daraus: Jeder Schritt ist da, weil das Ergebnis
+    ihn braucht.
 
-- **Ihre Pipeline ist der Kellner.** Das ist ein Groovy-Skript in Fiji, ein
-  ImageJ-Makro oder ein Python-Notebook bzw. -Skript. Sie erledigt die
-  *nativen* Schritte: das Bild öffnen, es etwas aufbereiten, messen,
-  speichern.
-- **Der Wavu-Schritt ist das Gericht aus der Küche.** Er ist der schwere
-  Teil, der eigene Pakete braucht (Cellpose, PyTorch…). Er läuft in der
-  eigenen pixi-Umgebung seines Ordners (seinen Küchengeräten), und seine
-  Ergebnisse kommen **direkt zurück in Ihre Pipeline**: als Bilder,
-  Tabellen, ROIs und Zahlen.
-- **Der Worker startet einmal** und bedient jedes Bild. Nur das erste Bild
-  wartet, bis der Ofen heiß ist.
+## Die Idee in einfachen Worten { #the-idea-in-plain-words }
+
+Bisher war Wavu eine Brücke: Fiji oder napari (der Kellner) bringt ein Bild
+(die Zutaten) zu einer Küche (dem Worker), wo ein Rezept (Ihr Skript) mit
+seinen eigenen Küchengeräten (seiner pixi-Umgebung) gekocht wird.
+
+Aber ein Kellner kann mehr als Teller tragen. Aus Sicht Ihres eigenen
+Skripts ist ein Wavu-Schritt einfach ein **Funktionsaufruf**: Werte und ein
+Bild gehen hinein, Ergebnisse kommen heraus. Hinter dieser einen Zeile läuft
+die Arbeit in einer anderen Umgebung, aber darum muss sich Ihr Skript nicht
+kümmern. Sie können Wavu-Schritte also **mit den Werkzeugen, die Sie schon
+benutzen, hintereinanderschalten**:
+
+- Fiji-Plugins wie **TrackMate** und gewöhnliche **ImageJ-Befehle**;
+- **scikit-image**, **pandas** und **matplotlib** in Python;
+- **napari**-Layer, Farben und angedockte Plots.
+
+Ihr Skript hält die ganze Analyse zusammen, vom Öffnen der Datei bis zum
+fertigen Bild. Es legt die Reihenfolge fest, reicht Bilder und Tabellen von
+Schritt zu Schritt weiter und entscheidet, wie das Ergebnis gezeichnet wird.
+Das ist ein **Workflow**.
+
+## Drei Stufen { #three-steps-up }
+
+Die Seiten bauen aufeinander auf. Lesen Sie sie in dieser Reihenfolge:
 
 ```mermaid
 flowchart LR
-    L["für jedes Bild<br/>im Ordner"]:::fiji
-    O["öffnen +<br/>vorverarbeiten<br/>(nativ)"]:::fiji
-    W["Wavu-Schritt:<br/>Cellpose"]:::worker
-    E[("eigene<br/>pixi-Umgebung")]:::env
-    M["messen +<br/>Zeilen anfügen<br/>(nativ)"]:::fiji
-    C["eine CSV für<br/>den Ordner"]:::script
-    L --> O --> W --> M
-    M -- "nächstes Bild" --> L
-    W -.- E
-    M -- "am Ende" --> C
+    S["Ihr Skript<br/>(Groovy, Makro<br/>oder Python)"]:::script
+    P["1 Pipelines<br/>ein Film,<br/>mehrere Schritte"]:::fiji
+    B["2 Batch<br/>dieselbe Pipeline<br/>für jede Datei"]:::fiji
+    L["3 Große Daten<br/>ein Bild zu groß<br/>für den Speicher"]:::worker
+    E[("jeder Wavu-Schritt:<br/>seine eigene<br/>pixi-Umgebung")]:::env
+    S --> P --> B --> L
+    P -.- E
 
     classDef fiji   fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
     classDef worker fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
@@ -46,81 +65,85 @@ flowchart LR
     classDef env    fill:#f3e5f5,stroke:#6a1b9a,color:#4a148c
 ```
 
-## Ein Wavu-Schritt ist ein Funktionsaufruf
+1. **Pipelines.** Ein Zeitraffer durchläuft mehrere Schritte: öffnen,
+   segmentieren, tracken, zählen, plotten. Manche Schritte sind Wavu-Küchen,
+   die anderen native Werkzeuge. Die Schritte bilden einen **DAG**
+   (gerichteter azyklischer Graph, *directed acyclic graph*: Kästen,
+   verbunden durch Pfeile, die nur vorwärts zeigen).
+2. **Batch-Verarbeitung.** Dieselbe Pipeline für jede Datei in einem Ordner.
+   Die Küchen starten einmal und bedienen jede Datei; Sie bekommen eine
+   Tabelle für den ganzen Ordner.
+3. **Große Daten.** Ein Bild, so groß, dass es nicht in den Arbeitsspeicher
+   passt. Ihr Skript bekommt einen Pfad statt Pixeln und arbeitet sich Stück
+   für Stück durch das Bild.
 
-Aus Sicht Ihrer Pipeline sieht ein Wavu-Schritt aus wie jede andere
-Funktion: Werte und ein Bild gehen hinein, Ergebnisse kommen heraus. In
-Groovy ist das `wavu.run(...)`, in einem Makro
-`run("Run Script (Macro)", ...)`, in Python `w.run(...)`. Hinter dieser
-einen Zeile reist das Bild zu einem Worker, der in einer anderen Umgebung
-lebt, und die Ergebnisse reisen zurück.
-
-Genau das macht Wavu zu mehr als einer Brücke. Sie behalten die Werkzeuge,
-denen Sie schon vertrauen (Fijis Messungen, den ROI Manager, ein Makro, das
-Sie seit Jahren nutzen, pandas), und fügen einen modernen KI-Schritt hinzu,
-ohne PyTorch in Fiji oder in Ihr Notebook zu installieren. Zwei Wavu-Schritte
-aus zwei Ordnern können sogar in einer Pipeline aufeinander folgen, jeder in
-seiner eigenen Umgebung.
-
-## Wann sich das lohnt
-
-- **Viele Bilder.** Ein Ordner mit Bildfeldern, eine Platte, eine Zeitreihe
-  als einzelne Dateien. Einmal klicken, eine Tabelle bekommen.
-- **Eine wiederholbare Pipeline.** Das Skript *ist* die Methode: dieselben
-  Schritte, dieselben Einstellungen, jedes Mal, und Sie können es einer
-  Kollegin schicken oder in den Anhang eines Papers legen.
-- **Stärken kombinieren.** Fiji zum Öffnen ungewöhnlicher Dateiformate und
-  zum Messen, Python für Deep Learning; oder umgekehrt.
-
-!!! info "Weiterhin kleine Daten, ein Bild nach dem anderen"
-    Wavus Rahmen ändert sich nicht: Jeder Aufruf verarbeitet **ein Bild, das
-    in den Arbeitsspeicher passt** (bis etwa 1–2 GB). Es geht hier um die
-    **Schleife**: viele solche Bilder, nacheinander, durch denselben warmen
-    Worker. Für einen einzigen riesigen Datensatz nehmen Sie besser einen
-    Batch- oder HPC-Workflow.
-
-## Das Beispiel auf den nächsten Seiten
-
-Beide Seiten bauen dieselbe Pipeline: **die Zellkerne in jedem Bild eines
-Ordners zählen** und **eine CSV** für den ganzen Ordner schreiben, mit einer
-Zeile pro Zellkern und der Datei, aus der er stammt. Der schwere Schritt ist
-der Beispielordner
-[`cellpose_nuclei`](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/tree/main/examples/cellpose_nuclei)
-aus dem Wavu-Repository. Er nimmt ein `image` und einen `diameter` (`0` lässt
-Cellpose ihn schätzen) und gibt `labels` (ein 16-Bit-Labelbild, eine Zahl pro
-Zellkern), `count` (die Anzahl der Zellkerne) und `rois` (die Umrisse als
-ImageJ-RoiSet) zurück.
-
-Zum Ausprobieren nehmen Sie einen Ordner mit einkanaligen Zellkern-TIFFs,
-etwa Bilder aus der BBBC039-Sammlung (das Repository enthält eines in
-`tests/data/BBBC039`).
+Alle drei benutzen dasselbe Beispiel: **Zellen über die Zeit zählen** in
+einem kleinen synthetischen Film, `examples/data/demo_timelapse.tif`, dessen
+richtige Antwort wir kennen.
 
 <div class="grid cards" markdown>
 
--   :material-microscope:{ .lg .middle } **In Fiji**
+-   :material-microscope:{ .lg .middle } **1 · Pipeline in Fiji**
 
     ---
 
-    Die Pipeline als Groovy-Skript und als ImageJ-Makro.
+    Groovy mit TrackMate und ein ImageJ-Makro, mit ein oder zwei Wavu-Schritten.
 
-    [:octicons-arrow-right-24: Groovy und ImageJ-Makro](fiji.md)
+    [:octicons-arrow-right-24: Pipeline in Fiji](pipeline-fiji.md)
 
--   :material-language-python:{ .lg .middle } **In Python und napari**
+-   :material-language-python:{ .lg .middle } **1 · Pipeline in Python und napari**
 
     ---
 
-    Die Pipeline in einem Notebook mit `wavu.client`, Ergebnisse in napari
-    und mehrere Umgebungen hintereinander.
+    Zwei Wavu-Küchen hintereinander; Ihr Skript zeichnet das Ergebnis in napari.
 
-    [:octicons-arrow-right-24: Python und napari](python.md)
+    [:octicons-arrow-right-24: Pipeline in Python](pipeline-python.md)
+
+-   :material-folder-multiple-image:{ .lg .middle } **2 · Batch-Verarbeitung**
+
+    ---
+
+    Dieselbe Pipeline über einen Ordner: eine Zeile pro Datei, eine CSV, ein Plot.
+
+    [:octicons-arrow-right-24: Batch-Verarbeitung](batch.md)
+
+-   :material-database-arrow-right:{ .lg .middle } **3 · Große Daten**
+
+    ---
+
+    Streaming-Analyse von OME-Zarr, Chunk für Chunk, mit dask.
+
+    [:octicons-arrow-right-24: Große Daten](large-data.md)
 
 </div>
 
-## In einem Satz
+## Was brauche ich? { #which-one-do-i-need }
 
-Lassen Sie Ihr eigenes Skript die gewöhnlichen Schritte erledigen und rufen
-Sie Wavu wie eine Funktion nur für den schweren Schritt auf; der Worker
-startet einmal, läuft in seiner eigenen Umgebung und gibt die Ergebnisse für
-jedes Bild im Ordner direkt zurück.
+- **Ein Bild, ein Wavu-Skript, Ergebnisse im Betrachter?** Dann brauchen
+  Sie nichts davon: Das erledigen die Menüs (**Plugins › Wavu** oder das
+  napari-Widget).
+- **Ein Datensatz, mehrere Schritte, manche davon nicht in Python?**
+  Beginnen Sie mit einer **Pipeline**: [in Fiji](pipeline-fiji.md), wenn Sie
+  Fijis Werkzeuge und Plugins mögen, [in Python](pipeline-python.md), wenn
+  Sie in Notebooks und napari zu Hause sind.
+- **Viele Dateien, die jeweils in den Arbeitsspeicher passen** (eine Platte,
+  ein Ordner voller Zeitraffer)? Schreiben Sie die Pipeline zuerst für eine
+  Datei und packen Sie sie dann in eine [Batch](batch.md)-Schleife.
+- **Eine Datei, die größer ist als der Arbeitsspeicher Ihres Computers**
+  (etwa ab 1–2 GB)? Lesen Sie [Große Daten](large-data.md). Ab etwa 50 GB
+  oder bei vielen Stunden Arbeit lassen Sie es als Batch-Job ohne Betrachter
+  laufen, oder auf einem Cluster.
 
-[Weiter: in Fiji :material-arrow-right:](fiji.md){ .md-button }
+!!! tip "Erst für eine, dann für viele"
+    Jeder Workflow beginnt als Pipeline, die mit **einer** Datei
+    funktioniert. Prüfen Sie ihr Ergebnis mit eigenen Augen im Betrachter.
+    Erst dann lassen Sie sie über einen Ordner laufen.
+
+## In einem Satz { #in-one-sentence }
+
+Ein Wavu-Schritt ist ein Funktionsaufruf in seine eigene Umgebung, also kann
+Ihr Skript ihn mit Fiji-, Python- und napari-Werkzeugen zu einer Analyse
+verketten: zuerst für einen Film, dann für einen Ordner, dann für Daten, die
+zu groß für den Arbeitsspeicher sind.
+
+[Weiter: Pipeline in Fiji :material-arrow-right:](pipeline-fiji.md){ .md-button }

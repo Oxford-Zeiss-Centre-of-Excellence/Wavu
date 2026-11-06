@@ -69,11 +69,15 @@ Curieux de savoir comment les serveurs et la cuisine se parlent ? Voir
 
 ## Ce que Wavu n'est pas { #what-it-is-not }
 
-!!! warning "Pas pour les grosses données"
-    Wavu envoie une image à la fois, et elle doit tenir dans la mémoire de
-    votre ordinateur (environ 1–2 Go au maximum). Pour de très gros volumes,
-    beaucoup de fichiers ou des lames entières, utilisez plutôt un traitement
-    par lots ou un cluster de calcul (HPC).
+!!! warning "Pas conçu pour les grosses données"
+    Normalement, Wavu envoie une image entière à la fois, et elle doit tenir
+    dans la mémoire de votre ordinateur (environ 1–2 Go au maximum). Des
+    images plus grandes, jusqu'à environ 50 Go sur un ordinateur local,
+    peuvent être traitées morceau par morceau avec
+    l'[analyse en flux](../workflows/large-data.md) (OME-Zarr, par blocs) :
+    ça marche, mais il n'est pas recommandé de la piloter depuis Fiji ou
+    napari. Au-delà, ou pour un très grand nombre de fichiers, utilisez
+    plutôt un traitement par lots ou HPC.
 
 !!! warning "Pas un bac à sable de sécurité"
     Les environnements séparés isolent les *paquets*. Ils n'enferment pas un

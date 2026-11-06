@@ -51,6 +51,8 @@ Wavu — это ещё и **вызов функции**, который могу
 своём окружении и возвращает результат скрипту. Один скрипт, вся папка,
 каждый раз одинаково.
 
+[Рабочие процессы в скриптах :material-arrow-right:](workflows/index.md){ .md-button .md-button--primary }
+
 ## С чего начать?
 
 <div class="grid cards" markdown>

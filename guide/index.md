@@ -46,6 +46,8 @@ steps itself (open, preprocess, measure, save) and hands only the heavy step,
 such as Cellpose, to Wavu, which runs it in its own environment and returns
 the result to the script. One script, the whole folder, every time the same.
 
+[Scripted workflows :material-arrow-right:](workflows/index.md){ .md-button .md-button--primary }
+
 ## Where do you want to start?
 
 <div class="grid cards" markdown>

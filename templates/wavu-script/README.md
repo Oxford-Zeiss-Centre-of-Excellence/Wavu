@@ -60,5 +60,7 @@ pixi add --pypi some-package # from PyPI
 - `ctx.log(msg)`, `ctx.progress(0..1)`, `ctx.cancelled()`, `ctx.tmpdir`, `ctx.meta[name]`
   (pixel size, channel names of each input image).
 
-Keep data small (one image that fits comfortably in memory). For big data use
-OME-Zarr and a chunked batch/HPC workflow instead.
+Keep data small (one image that fits comfortably in memory, roughly up to
+1–2 GB). Up to about 50 GB, a script can stream an OME-Zarr store in chunks
+(see the guide's "Large data: stream analysis"; it works, but is not
+recommended inside Fiji/napari). Beyond that, use a batch/HPC workflow.

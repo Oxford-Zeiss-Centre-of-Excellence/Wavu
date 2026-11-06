@@ -87,9 +87,83 @@ def run(ctx, inputs, params):
     ...
 ```
 
+## 표, ROI, 트랙, 파일: 스크립트에서
+
+대화상자에서는 이미지만 고를 수 있어요. 나머지(Results 표, ROI Manager의
+윤곽, TrackMate나 napari의 트랙, napari Points나 Shapes, OME-Zarr 폴더)는
+[파이프라인](../workflows/index.md)처럼 스크립트가 **다른 스크립트에서 불릴 때**
+들어와요. 이런 입력에는 **`PARAMS` 항목이 필요 없어요.** 스크립트가
+`inputs`에서 이름으로 읽어요. 어떤 이름을 기대하는지 docstring에 적어 두세요.
+
+| 넘기는 것 | 스크립트가 `inputs`로 받는 것 |
+|---|---|
+| 이미지(`ImagePlus`, NumPy 배열) | NumPy 배열 |
+| 표(`ResultsTable`, 매크로 표, pandas DataFrame, dict의 리스트) | pandas DataFrame(CSV로 전송돼요) |
+| ImageJ ROI의 `.zip`(ROI Manager에서 저장했거나 napari Shapes에서 쓴 것) | `wavu.RoiSet`(`roifile`로 읽어요) |
+| 그 밖의 경로(`.csv`, `.tif`, OME-Zarr 폴더) | 불러온 파일, 폴더라면 `pathlib.Path` |
+
+트랙은 표로 전달돼요. 스폿마다 한 행이고, 트랙 id, 프레임, 위치가 들어 있어요.
+
+=== "Groovy (Fiji)"
+
+    ```groovy
+    def rm = wavu.roiManager()                               // 눈에 보이는 ROI Manager
+    def zip = new File(IJ.getDirectory("temp"), "rois.zip")
+    rm.deselect(); rm.runCommand("Save", zip.path)           // 모든 ROI -> zip 하나
+    Map r = wavu.run(folder, "script", [min_area: 30],
+                     [image: imp, rois: zip, spots: ResultsTable.getResultsTable()])
+    ```
+
+=== "ImageJ macro"
+
+    매크로는 `tables=`로 창 제목을 지정해 표를 넘겨요. ROI는 zip으로 저장하고,
+    그 경로를 스크립트의 텍스트 입력란(`"type": "str"`)으로 넘기세요. 경로에는
+    띄어쓰기가 없어야 해요.
+
+    ```javascript
+    zip = replace(getDirectory("temp"), "\\", "/") + "rois.zip";
+    roiManager("Save", zip);
+    run("Run Script (Macro)", "folder=[D:/scripts/measure] script=script " +
+        "params=[rois_zip=" + zip + "] tables=[spots=Results]");
+    ```
+
+    그러면 스크립트가 `params["rois_zip"]`을 `roifile.roiread(...)`로 읽어요.
+
+=== "Python (napari)"
+
+    ```python
+    import pandas as pd
+    import roifile
+
+    pts, trk, shp = viewer.layers["spots"], viewer.layers["tracks"], viewer.layers["cells"]
+    points = pd.concat([pd.DataFrame(pts.data, columns=["frame", "y", "x"]), pts.features], axis=1)
+    tracks = pd.DataFrame(trk.data, columns=["track_id", "frame", "y", "x"])
+    roifile.roiwrite("rois.zip", [roifile.ImagejRoi.frompoints(s[:, -2:][:, ::-1])   # (y, x) -> (x, y)
+                                  for s in shp.data])
+
+    with Worker.start("D:/scripts/measure") as w:
+        res = w.run("script", {"min_area": 30},
+                    {"image": viewer.layers["nuclei"].data, "points": points,
+                     "tracks": tracks, "rois": "rois.zip"})
+    ```
+
+스크립트에서는:
+
+```python
+"""Measure inside ROIs. Inputs: image, rois (ROI zip), tracks (table)."""
+import roifile
+
+def run(ctx, inputs, params):
+    img = inputs["image"]
+    tracks = inputs["tracks"]                               # DataFrame
+    rois = roifile.roiread(inputs["rois"].path)             # 윤곽; .coordinates()는 (x, y)
+    ...
+```
+
 ## 한 문장으로
 
 설정마다 type과 default를 넣어 `PARAMS`에 한 줄씩 쓰면, Fiji나 napari가
-입력란을 만들고 확인된 값을 `params`로(이미지는 `inputs`로) 넘겨줘요.
+입력란을 만들고 확인된 값을 `params`로(이미지는 `inputs`로, 다른 스크립트가
+부를 때는 표, ROI, 파일도 `inputs`로) 넘겨줘요.
 
 [다음: 돌려줄 수 있는 것 :material-arrow-right:](outputs.md){ .md-button }

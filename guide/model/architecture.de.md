@@ -182,7 +182,10 @@ sequenceDiagram
 ## Daten auf der Leitung { #data-on-the-wire }
 
 Wavu ist eine Brücke für **kleine Daten** (ein Bild im Arbeitsspeicher, etwa
-bis 1–2 GB).
+bis 1–2 GB). Größere Daten, lokal bis etwa 50 GB, reisen gar nicht: Das
+Skript bekommt einen **Pfad** zu einem OME-Zarr-Speicher und liest ihn in
+Chunks ([Streaming-Analyse](../workflows/large-data.md); das funktioniert,
+aber es aus Fiji oder napari zu steuern, wird nicht empfohlen).
 
 - **Inline:** Ein kleines Array (höchstens **4 MiB**) reist im JSON als
   Base64-kodierte Little-Endian-Bytes, mit `dtype`, `shape` und `meta`. Der

@@ -56,9 +56,10 @@ NumPy-2-only script never fight, and neither touches the viewer's own
 environment. Images travel as base64 JSON when small, or as a temporary TIFF
 otherwise.
 
-**Wavu is not the tool for large data.** For big volumes, many files or
-anything that does not fit in memory, convert to OME-Zarr and use a chunked
-batch or HPC workflow.
+**Wavu is made for data that fits in memory** (roughly 1–2 GB per image).
+Up to about 50 GB on a local computer, a script can stream an OME-Zarr store
+in chunks; it works, but is not recommended inside Fiji or napari. Beyond
+that, use a chunked batch or HPC workflow.
 
 The environments isolate *dependencies*. They are **not a security sandbox**.
 A script can do anything your user account can do, so run only scripts you
