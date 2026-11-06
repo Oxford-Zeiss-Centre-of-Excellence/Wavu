@@ -14,7 +14,7 @@ sequenceDiagram
     participant N as napari パネル（ウェイター）
     participant W as ワーカー（厨房）
     You->>N: フォルダーを選び Start worker
-    N->>W: 起動（初回：食材庫をそろえる）
+    N->>W: 起動（初回：調理器具をそろえる）
     W-->>N: メニュー（PARAMS）
     N->>You: フォーム
     You->>N: Run
@@ -31,7 +31,7 @@ sequenceDiagram
 [ZIP をダウンロード](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
 
 `Wavu-Script-Template-main` というフォルダーができ、`script.py`（レシピ）と
-`pixi.toml`（食材庫の買い物リスト）が入っています。正しいフォルダーは、
+`pixi.toml`（調理器具のリスト）が入っています。正しいフォルダーは、
 `pixi.toml` を **直接** 含んでいるフォルダーです。
 
 ## ステップ 2：画像を開く
@@ -52,7 +52,7 @@ sequenceDiagram
     *(the first start installs the script's environment; this can take a few
     minutes)*（初回の起動ではスクリプトの環境をインストールします。数分
     かかることがあります）が表示され、続いて pixi の進み具合が出ます。
-    pixi がスクリプトの食材庫をそろえているところです。
+    pixi がスクリプトの調理器具をそろえているところです。
     `Worker ready (wavu …, port …)` が出たら完了です。次からはワーカーが
     数秒で起動します。やめたいときは **Cancel** を押します。
 
@@ -84,7 +84,7 @@ Done.
 ```
 
 **Sigma (pixels)** を `8` にしてもう一度試してください。今度はすぐに始まり
-ます。厨房はまだ動いていて、食材庫もいっぱいだからです。
+ます。厨房はまだ動いていて、調理器具もそろっているからです。
 
 ## キャンセルと停止
 
@@ -109,8 +109,8 @@ Done.
 
 ## ほかの場所にあるワーカー
 
-ワーカーはコンテナやサーバーの上でも動かせます。隣の厨房ではなく、
-キッチンカーのようなものです。**Remote / container** にチェックを入れると、
+ワーカーはコンテナやサーバーの上でも動かせます。厨房を調理器具ごと
+まるごと荷造りして、別の場所に設置したものです。**Remote / container** にチェックを入れると、
 4 つの欄が現れます。**Handshake file**（ハンドシェイクファイル。既定は
 `~/.wavu/worker.json`）、**Host**（ホスト。空ならハンドシェイクファイルの
 アドレス）、**Host folder** と **Container folder**（データフォルダーの
@@ -123,8 +123,8 @@ Fiji を使いますか？ 同じ手順は
 
 ## ひとことで言うと
 
-スクリプトフォルダーを選び、**Start worker** を押し（食材庫のために一度だけ
+スクリプトフォルダーを選び、**Start worker** を押し（調理器具のために一度だけ
 待ちます）、フォームに入力して **Run** を押せば、結果が新しいレイヤーとして
 現れます。
 
-[次へ：napari で戻ってくるもの :material-arrow-right:](layers.md){ .md-button }
+[次へ：wavu-napari の内部（上級） :material-arrow-right:](internals.md){ .md-button }

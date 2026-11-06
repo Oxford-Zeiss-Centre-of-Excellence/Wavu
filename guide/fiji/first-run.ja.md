@@ -14,7 +14,7 @@ sequenceDiagram
     participant Fiji as Fiji（ウェイター）
     participant W as ワーカー（厨房）
     You->>Fiji: Run Python Script、フォルダーを選ぶ
-    Fiji->>W: 起動（初回：食材庫をそろえる）
+    Fiji->>W: 起動（初回：調理器具をそろえる）
     W-->>Fiji: これがメニューです（PARAMS）
     Fiji->>You: ダイアログ
     You->>Fiji: OK
@@ -31,7 +31,7 @@ sequenceDiagram
 [ZIP をダウンロード](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
 
 `Wavu-Script-Template-main` というフォルダーができます。中には
-`script.py`（レシピ）と `pixi.toml`（食材庫の買い物リスト）があります。
+`script.py`（レシピ）と `pixi.toml`（調理器具のリスト）があります。
 *スクリプトフォルダー* とは、これだけのものです。
 
 !!! tip "フォルダーが 1 段深すぎる？"
@@ -59,7 +59,7 @@ Fiji で **File › Open Samples › Blobs (25K)** を選びます。
     Log ウィンドウに
     *First start of '…': downloading its Python packages. This happens once
     and can take several minutes…* と表示され、ステータスバーが秒数を
-    数えます。これは pixi が食材庫をそろえているところです。終わるまで
+    数えます。これは pixi が調理器具をそろえているところです。終わるまで
     待ってください。次からは数秒で起動します。
 
 3. **Wavu: script** ダイアログが表示されます。1 行目はスクリプトの説明
@@ -82,7 +82,7 @@ Blurring a (254, 256) uint8 image with sigma=2.0
 ```
 
 **Sigma (pixels)** を `8` にして、もう一度試してみてください。今度はすぐに
-始まります。厨房がまだ開いていて、食材庫もいっぱいだからです。
+始まります。厨房がまだ開いていて、調理器具もそろっているからです。
 
 ## 今、何が起きたの？
 

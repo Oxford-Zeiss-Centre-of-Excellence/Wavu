@@ -13,7 +13,7 @@ sequenceDiagram
     participant Fiji as Fiji (waiter)
     participant W as Worker (kitchen)
     You->>Fiji: Run Python Script, pick folder
-    Fiji->>W: start (first time: stock the pantry)
+    Fiji->>W: start (first time: set up the kitchenware)
     W-->>Fiji: here is my menu (PARAMS)
     Fiji->>You: dialog
     You->>Fiji: OK
@@ -30,7 +30,7 @@ for example in *Documents*:
 [Download ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
 
 You get a folder called `Wavu-Script-Template-main`. Inside are
-`script.py` (the recipe) and `pixi.toml` (the shopping list for its pantry).
+`script.py` (the recipe) and `pixi.toml` (the list of its kitchenware).
 That is all a *script folder* is.
 
 !!! tip "One folder too deep?"
@@ -58,7 +58,7 @@ In Fiji: **File › Open Samples › Blobs (25K)**.
     The Log window says
     *First start of '…': downloading its Python packages. This happens once
     and can take several minutes…*, and the status bar counts the seconds.
-    This is pixi stocking the pantry. Let it finish; next time the script
+    This is pixi setting up the kitchenware. Let it finish; next time the script
     starts in seconds.
 
 3. The dialog **Wavu: script** appears. Its first line is the script's
@@ -82,7 +82,7 @@ Blurring a (254, 256) uint8 image with sigma=2.0
 ```
 
 Try again with **Sigma (pixels)** set to `8`. This time it starts at once,
-because the kitchen is still running and the pantry is full.
+because the kitchen is still running and the kitchenware is ready.
 
 ## What just happened?
 

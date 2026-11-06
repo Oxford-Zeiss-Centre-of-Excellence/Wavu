@@ -5,7 +5,7 @@
 Ihr Rezept funktioniert. Jetzt sollen Ihre Kolleginnen und Kollegen es
 benutzen, **ohne** Ordner auszuwählen oder irgendetwas über Python zu
 wissen. Wavu kann Ihren Skriptordner in **eine einzige ZIP-Datei** packen,
-wie eine Kochbox: das Rezept, die genaue Einkaufsliste und einen
+wie eine Rezeptbox: das Rezept, die genaue Liste der Küchengeräte und einen
 Menüeintrag. Ihre Kollegin entpackt sie in Fiji, startet neu und findet Ihr
 Werkzeug im Menü **Plugins**, unter einem Namen, den Sie wählen.
 
@@ -29,7 +29,7 @@ flowchart LR
 
 ## Was ist `pixi.lock`? { #what-is-pixilock }
 
-`pixi.toml` ist die Einkaufsliste („etwas scikit-image“). `pixi.lock` ist
+`pixi.toml` ist die Liste der Küchengeräte („etwas scikit-image“). `pixi.lock` ist
 der **Kassenbon**: die genaue Version jedes Pakets, das tatsächlich gekauft
 wurde. Wenn Sie den Kassenbon mitliefern, bekommen Ihre Kollegen *genau*
 dieselben Pakete wie Sie, und das Werkzeug verhält sich auf ihren Computern

@@ -121,7 +121,7 @@ Fehler: Das Log sagt nur `Cancelled.`, ohne Benachrichtigung.
 ## Layer-Umwandlung
 
 `_convert.py` enthält die Regeln aus
-[Was Sie in napari zurückbekommen](layers.md):
+[Was Sie zurückgeben können](../write/outputs.md) (Tab napari):
 
 - `layer_input(layer)`: Daten (Ebene mit voller Auflösung, dask berechnet),
   der Titel, `pixel_um` aus gleichen letzten zwei `scale`-Werten in

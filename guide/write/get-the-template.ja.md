@@ -48,7 +48,7 @@ flowchart LR
 | ファイル | 何か |
 |---|---|
 | `script.py` | **あなたのレシピ。** `PARAMS`（ダイアログ）と `run`（処理）。 |
-| `pixi.toml` | このスクリプトの食材庫の買い物リスト。 |
+| `pixi.toml` | このスクリプトの調理器具のリスト。必要なパッケージです。 |
 | `test_script.py` | Fiji なしで動くチェック。**ここから始めます**（[まずテストから](test-without-fiji.md)）。 |
 | `.vscode/` | [VS Code でのデバッグ](../help/debug-in-vscode.md) をワンクリックにします。 |
 | `README.md`, `.github/` | メモと、自動リリース（[上級](../fiji/with-the-world.md)）。 |
@@ -68,7 +68,7 @@ flowchart LR
     厨房は開店するときにレシピを読みます。前回の実行から開いたままだと、
     *古い* レシピで料理を続けてしまいます。**Stop Worker** で厨房を閉めれば、
     次の実行で保存した変更が読み込まれます。かかるのは 1 秒ほどで、
-    食材庫はそろったままです。
+    調理器具はそろったままです。
 
 ## パッケージを追加する { #adding-a-package }
 

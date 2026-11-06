@@ -11,7 +11,7 @@ Wavu sur votre propre ordinateur.
 Un nouveau cuisinier est doué, mais il ne connaît pas les règles de la
 maison. Le fichier de skill, c'est le **règlement de la maison** scotché à
 l'intérieur de la porte de la cuisine : goûter d'abord, noter la commande sur
-le bon, utiliser notre garde-manger, dresser l'assiette à notre façon.
+le bon, utiliser notre batterie de cuisine, dresser l'assiette à notre façon.
 L'agent le lit avant de commencer à cuisiner.
 
 ```mermaid
@@ -75,16 +75,16 @@ flowchart LR
 
     Ou comme fichier de skill personnel, sans le plugin :
 
-    === "macOS / Linux"
-
-        ```sh
-        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         New-Item -ItemType Directory -Force "$HOME\.claude\skills\wavu" | Out-Null; irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -OutFile "$HOME\.claude\skills\wavu\SKILL.md"
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
         ```
 
 === "Claude Desktop / claude.ai"
@@ -104,16 +104,16 @@ flowchart LR
 
     Dans le dossier de votre script (l'agent le lit automatiquement) :
 
-    === "macOS / Linux"
-
-        ```sh
-        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -OutFile AGENTS.md
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
         ```
 
     Ou, pour tous vos projets, enregistrez-le sous `~/.codex/AGENTS.md`.

@@ -14,7 +14,7 @@ remplissez un petit formulaire et cliquez sur OK. Le code Python s'exécute,
 et les résultats reviennent dans le visualiseur sous forme de nouvelles
 images, de tableaux ou de contours.
 
-![L'analogie du restaurant : le visualiseur est le serveur, le worker est la cuisine, chaque recette a son propre garde-manger](../assets/img/restaurant.svg){ width="720" }
+![L'analogie du restaurant : le visualiseur est le serveur, le worker est la cuisine, chaque recette a sa propre batterie de cuisine](../assets/img/restaurant.svg){ width="720" }
 
 L'image du restaurant aide :
 
@@ -24,11 +24,12 @@ L'image du restaurant aide :
 | La carte | **PARAMS** | une courte liste en haut du script Python |
 | La cuisine | **le worker** | un petit programme Python qui tourne sur *votre* ordinateur |
 | Une recette | **votre script** | un fichier `.py` avec une fonction `run` |
-| Le garde-manger de chaque recette | **l'environnement** | un dossier avec exactement les paquets dont ce script a besoin |
+| Les ingrédients | **vos images** | les données que le visualiseur envoie au script |
+| La batterie de cuisine de chaque recette | **l'environnement** | un dossier avec exactement les paquets (les outils) dont ce script a besoin |
 
-Comme chaque recette a son propre garde-manger, installer PyTorch pour un
-script ne peut jamais casser un autre script. Personne ne partage son
-garde-manger, donc rien ne se gâte.
+Comme chaque recette a sa propre batterie de cuisine, installer PyTorch pour
+un script ne peut jamais casser un autre script. Personne ne partage ses
+casseroles et ses couteaux, donc rien ne se gâte.
 
 ## Une cuisine, deux serveurs { #one-kitchen-two-waiters }
 
@@ -44,7 +45,7 @@ flowchart LR
     N["wavu-napari<br/>(napari)"]:::fiji
     W["worker"]:::worker
     S["votre script.py"]:::script
-    E[("son propre garde-manger")]:::env
+    E[("sa propre batterie de cuisine")]:::env
     F --> W
     N --> W
     W --> S
@@ -95,8 +96,8 @@ l'utiliser, ou la faire utiliser par vos collègues, depuis leur visualiseur.
 4. Des messages défilent dans le log et une barre de progression avance.
 5. Les résultats s'ouvrent dans le visualiseur.
 
-La toute première exécution d'un script est lente, car on remplit son
-garde-manger (l'environnement) : les paquets se téléchargent une seule fois.
+La toute première exécution d'un script est lente, car on installe sa
+batterie de cuisine (l'environnement) : les paquets se téléchargent une seule fois.
 Ensuite, il démarre vite.
 
 ## En une phrase { #in-one-sentence }

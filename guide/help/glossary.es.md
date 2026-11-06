@@ -5,7 +5,7 @@
 Cada campo tiene su jerga. Aquí tienes cada palabra de Wavu en una línea
 sencilla, con la imagen del restaurante cuando ayuda.
 
-![La analogía del restaurante: Fiji es el camarero, el worker es la cocina, cada receta tiene su propia despensa](../assets/img/restaurant.svg){ width="560" }
+![La analogía del restaurante: Fiji es el camarero, el worker es la cocina, cada receta tiene sus propios utensilios de cocina](../assets/img/restaurant.svg){ width="560" }
 
 ## Palabras
 
@@ -43,18 +43,20 @@ sencilla, con la imagen del restaurante cuando ayuda.
 
 **Entorno**
 :   Una carpeta privada con un Python concreto más los paquetes que necesita
-    un script, guardada en `.pixi` dentro de la carpeta del script. La
-    *despensa*.
+    un script, guardada en `.pixi` dentro de la carpeta del script. Los
+    *utensilios de cocina* de la receta: sus propias ollas, cuchillos y
+    hornos.
 
 **pixi**
 :   La herramienta gratuita que construye entornos y descarga paquetes, una
     alternativa moderna a conda. Wavu la descarga por ti.
 
 **`pixi.toml`**
-:   La *lista de la compra*: qué paquetes necesita el script.
+:   La *lista de utensilios de cocina*: qué paquetes necesita el script.
 
 **Archivo de bloqueo (`pixi.lock`)**
-:   El *tique de compra*: la versión exacta de cada paquete. Compartirlo
+:   El *tique de compra* de los utensilios de cocina: la versión exacta de
+    cada paquete. Compartirlo
     significa que todos obtienen el mismo entorno.
 
 **conda-forge / PyPI**
@@ -96,5 +98,6 @@ sencilla, con la imagen del restaurante cuando ayuda.
 
 ## En una frase
 
-Fiji es el camarero, el worker la cocina, tu script la receta, su entorno
-pixi la despensa y `pixi.lock` el tique de compra.
+Fiji es el camarero, el worker la cocina, tu script la receta, tus imágenes
+los ingredientes, su entorno pixi los utensilios de cocina y `pixi.lock` el
+tique de compra.

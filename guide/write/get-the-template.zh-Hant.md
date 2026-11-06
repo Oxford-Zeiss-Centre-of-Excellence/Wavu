@@ -43,7 +43,7 @@ flowchart LR
 | 檔案 | 是什麼 |
 |---|---|
 | `script.py` | **你的食譜。** `PARAMS`（對話框）和 `run`（實際工作）。 |
-| `pixi.toml` | 這個腳本食材櫃的購物清單。 |
+| `pixi.toml` | 這個腳本的廚具清單：它需要的套件。 |
 | `test_script.py` | 不用 Fiji 就能執行的檢查。**從這裡開始**（[先寫測試](test-without-fiji.md)）。 |
 | `.vscode/` | 讓[在 VS Code 中除錯](../help/debug-in-vscode.md)只要按一下。 |
 | `README.md`、`.github/` | 說明文件，以及自動發布（[進階](../fiji/with-the-world.md)）。 |
@@ -62,7 +62,7 @@ flowchart LR
 !!! warning "為什麼要 Stop Worker？"
     worker（廚房）在開門時讀一次食譜。如果它從上次執行後還開著，
     就會繼續照*舊*食譜做菜。**Stop Worker** 把它關掉，下次執行時才會讀到你儲存的修改。
-    這只要一秒鐘；食材櫃裡的東西都還在。
+    這只要一秒鐘；廚具依然準備就緒。
 
 ## 加入套件 { #adding-a-package }
 

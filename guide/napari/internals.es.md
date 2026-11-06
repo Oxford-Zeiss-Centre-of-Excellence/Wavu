@@ -121,7 +121,7 @@ un error: el log solo dice `Cancelled.`, sin notificación.
 ## Conversión de capas
 
 `_convert.py` contiene las reglas de
-[Lo que recibes en napari](layers.md):
+[Qué puedes devolver](../write/outputs.md) (pestaña napari):
 
 - `layer_input(layer)`: los datos (nivel de resolución completa, dask
   calculado), el título, `pixel_um` a partir de los dos últimos valores de

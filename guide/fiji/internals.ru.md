@@ -35,6 +35,7 @@ flowchart LR
 | Файл | Пункт меню |
 |---|---|
 | `Run_Python_Script.groovy` | **Run Python Script** |
+| `Run_Script_(Macro).groovy` | **Run Script (Macro)**: записывается рекордером, без диалогов, для макросов и пакетных рабочих процессов |
 | `Setup_Python_(pixi).groovy` | **Setup Python (pixi)** |
 | `Connect_to_Running_Worker.groovy` | **Connect to Running Worker** |
 | `Stop_Worker.groovy` | **Stop Worker** |

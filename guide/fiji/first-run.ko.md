@@ -13,7 +13,7 @@ sequenceDiagram
     participant Fiji as Fiji (웨이터)
     participant W as 워커 (주방)
     You->>Fiji: Run Python Script, 폴더 선택
-    Fiji->>W: 시작 (처음에는 창고 채우기)
+    Fiji->>W: 시작 (처음에는 주방 도구 갖추기)
     W-->>Fiji: 내 메뉴판이에요 (PARAMS)
     Fiji->>You: 대화상자
     You->>Fiji: OK
@@ -29,7 +29,7 @@ sequenceDiagram
 [ZIP 내려받기](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
 
 `Wavu-Script-Template-main`이라는 폴더가 생겨요. 안에는 `script.py`(레시피)와
-`pixi.toml`(창고를 위한 장보기 목록)이 있어요. *스크립트 폴더*는 이게 전부예요.
+`pixi.toml`(그 주방 도구 목록)이 있어요. *스크립트 폴더*는 이게 전부예요.
 
 !!! tip "폴더가 한 단계 더 깊나요?"
     Windows의 *Extract All*(압축 풀기)은 같은 이름의 폴더 안에 폴더를 하나
@@ -54,7 +54,7 @@ Fiji에서 **File › Open Samples › Blobs (25K)**를 고르세요.
     Log 창에
     *First start of '…': downloading its Python packages. This happens once
     and can take several minutes…*라고 나오고, 상태 표시줄에서 초를 세요.
-    pixi가 창고를 채우는 중이에요. 끝날 때까지 기다리세요. 다음부터는 몇 초
+    pixi가 주방 도구를 갖추는 중이에요. 끝날 때까지 기다리세요. 다음부터는 몇 초
     만에 시작해요.
 
 3. **Wavu: script** 대화상자가 나타나요. 첫 줄은 스크립트 설명인
@@ -78,7 +78,7 @@ Blurring a (254, 256) uint8 image with sigma=2.0
 ```
 
 **Sigma (pixels)**를 `8`로 바꿔 다시 해 보세요. 이번에는 바로 시작해요.
-주방이 아직 열려 있고 창고도 가득 차 있으니까요.
+주방이 아직 열려 있고 주방 도구도 준비되어 있으니까요.
 
 ## 방금 무슨 일이 있었나요?
 

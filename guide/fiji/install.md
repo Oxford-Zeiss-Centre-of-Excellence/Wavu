@@ -4,7 +4,7 @@
 
 Installing Wavu is like hiring the waiter. You copy a few small files into
 Fiji, which adds a **Plugins › Wavu** menu. Then you ask Wavu to fetch
-**pixi**, the tool that stocks each script's pantry (it downloads Python and
+**pixi**, the tool that sets up each script's kitchenware (it downloads Python and
 the packages a script needs). You do *not* install Python, conda or anything
 else yourself.
 

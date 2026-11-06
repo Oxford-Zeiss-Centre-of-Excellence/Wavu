@@ -12,45 +12,45 @@ Sie sich Ihre Bilder ansehen, **Fiji** oder **napari**, mit Python, wo
 Werkzeuge wie Cellpose und scikit-image zu Hause sind.
 
 Stellen Sie sich ein Restaurant vor. **Der Betrachter ist der Kellner**: Er
-nimmt Ihre Bestellung auf (ein Dialog mit ein paar Feldern) und bringt den
-Teller an Ihren Tisch (neue Bilder, Tabellen, Umrisse). **Der Worker ist die
-Küche** hinter der Tür, und jedes Rezept hat **seine eigene
-Vorratskammer**: Das Cellpose-Rezept leiht sich also nie die Zutaten des
-Weichzeichner-Rezepts aus (und macht sie auch nicht kaputt). Dasselbe Rezept
-kann von beiden Kellnern serviert werden.
+nimmt Ihre Bestellung auf (ein Dialog mit ein paar Feldern), trägt Ihre
+Bilder als **Zutaten** hinein und bringt den Teller an Ihren Tisch (neue
+Bilder, Tabellen, Umrisse). **Der Worker ist die Küche** hinter der Tür, und
+jedes Rezept hat **seine eigenen Küchengeräte**, eigene Töpfe, Messer und
+Öfen (die Python-Pakete): Das Cellpose-Rezept leiht sich also nie die
+Werkzeuge des Weichzeichner-Rezepts aus (und macht sie auch nicht kaputt).
+Dasselbe Rezept kann von beiden Kellnern serviert werden.
 
-```mermaid
-flowchart LR
-    subgraph FE["Die Kellner (Frontends)"]
-        F["wavu-fiji<br/>Plugins › Wavu"]:::fiji
-        N["wavu-napari<br/>Run Python Script (Wavu)"]:::fiji
-    end
-    subgraph BE["Die Küche (Backend)"]
-        W["wavu-Worker"]:::worker
-        S["Ihr script.py<br/>PARAMS + run()"]:::script
-        E[("eigene pixi-Umgebung<br/>(die Vorratskammer)")]:::env
-    end
-    C["optional: die ganze Küche<br/>in einem Container<br/>(Docker / Apptainer)"]:::box
-    BE -.- C
-
-    F -- "Ihre Bestellung" --> W
-    N -- "Ihre Bestellung" --> W
-    W --> S
-    S -.- E
-    W -- "der Teller + Live-Log" --> FE
-
-    classDef fiji   fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
-    classDef worker fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
-    classDef script fill:#fff3e0,stroke:#ef6c00,color:#e65100
-    classDef env    fill:#f3e5f5,stroke:#6a1b9a,color:#4a148c
-    style FE fill:#f5f9ff,stroke:#90caf9
-    style BE fill:#f6fbf6,stroke:#a5d6a7
-    classDef box    fill:#ffffff,stroke:#78909c,stroke-dasharray: 6 4,color:#455a64
-```
+![Die Kellner (Frontends): wavu-fiji, wavu-napari → Die Küche (Backend): wavu-Worker, Ihr script.py PARAMS + run(), eigene pixi-Umgebung (die Küchengeräte) — optional: die ganze Küche in einem Container (Docker / Apptainer)](assets/img/home-model.svg){ width="1000" }
 
 **Ein Skriptordner, zwei Betrachter.** Sie schreiben `script.py` einmal;
 Fiji-Nutzer und napari-Nutzer führen es beide aus, jedes Mal in der eigenen
 Umgebung des Ordners.
+
+## Warum es Wavu gibt { #why-this-exists }
+
+- **Eine Umgebung für alles geht kaputt.** Installieren Sie mit `pip` ein
+  Cellpose-Plugin in die Umgebung von napari, kann es eine andere PyTorch-,
+  NumPy- oder Qt-Version mitbringen; das nächste Plugin verlangt wieder andere
+  Versionen, und napari oder das Werkzeug einer Kollegin startet nicht mehr.
+  `conda` und `pip` in einer Umgebung zu mischen, macht es schlimmer.
+- **Python in Fiji ist noch mühsamer.** Fijis eigene Skriptsprache ist Jython
+  (Python 2.7, ohne NumPy). Brücken wie PyImageJ verlangen, dass Sie Java-,
+  conda- und Paketversionen auf jedem Rechner von Hand abstimmen.
+- **Die Antwort von Wavu:** Der Betrachter bleibt klein und sauber, und jedes
+  Skript läuft in **seiner eigenen pixi-Umgebung**, gebaut aus seiner eigenen
+  `pixi.lock`. Skripte teilen keine Pakete, können also weder einander noch
+  napari oder Fiji beschädigen, und derselbe Ordner wird auf jedem Rechner
+  identisch installiert.
+
+## Mehr als eine Brücke: ganze Analysen, per Skript
+
+Wavu ist auch ein **Funktionsaufruf**, den Ihre eigenen Skripte machen
+können. Ein Groovy-Skript, ein ImageJ-Makro oder ein Python-Notebook läuft
+über einen Ordner, erledigt die nativen Schritte selbst (öffnen,
+vorverarbeiten, messen, speichern) und gibt nur den schweren Schritt, etwa
+Cellpose, an Wavu ab, das ihn in seiner eigenen Umgebung ausführt und das
+Ergebnis an das Skript zurückgibt. Ein Skript, der ganze Ordner, jedes Mal
+gleich.
 
 ## Wo möchten Sie anfangen?
 
@@ -60,7 +60,7 @@ Umgebung des Ordners.
 
     ---
 
-    Kellner, Küche, Vorratskammer: Was läuft wo, und warum geraten sich Ihre
+    Kellner, Küche, Küchengeräte: Was läuft wo, und warum geraten sich Ihre
     Pakete nie in die Quere?
 
     [:octicons-arrow-right-24: So funktioniert es](model/what-is-wavu.md)
@@ -99,9 +99,14 @@ Umgebung des Ordners.
 
 ## Gut zu wissen
 
-- **Kleine, interaktive Daten.** Ein Bild, das in den Arbeitsspeicher passt,
-  bis etwa 1–2 GB. Für riesige Datenmengen nehmen Sie besser einen
-  Batch-Workflow oder einen Rechencluster (HPC).
+- **Wie viele Daten?** Interaktiv heißt: ein Bild, das in den Speicher
+  passt, etwa 1–2 GB. Mit blockweiser, gestreamter Verarbeitung (OME-Zarr)
+  schafft Wavu auf einem lokalen Rechner Daten bis etwa 50 GB – **mit einer
+  wichtigen Einschränkung**: Fiji und napari sind Canvas-basierte Betrachter
+  für Daten im Speicher; während eines Streams sehen sie nur eine kleine
+  Vorschau oder das Endergebnis, bleiben langsam und sind nicht der empfohlene
+  Ort, um ihn zu steuern. Über etwa 50 GB nehmen Sie eine Batch- oder
+  HPC-Pipeline.
 - **Jedes Skript hat seine eigene Umgebung**, deshalb kommen sich ein
   PyTorch-Skript und ein reines NumPy-Skript nie in die Quere.
 - **Neugierig, wie es gebaut ist?** Die Seite

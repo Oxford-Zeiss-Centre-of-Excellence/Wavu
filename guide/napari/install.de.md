@@ -1,21 +1,5 @@
 # wavu-napari installieren
 
-## Warum es Wavu gibt { #why-this-exists }
-
-- **Eine Umgebung für alles geht kaputt.** Installieren Sie mit `pip` ein
-  Cellpose-Plugin in die Umgebung von napari, kann es eine andere PyTorch-,
-  NumPy- oder Qt-Version mitbringen; das nächste Plugin verlangt wieder andere
-  Versionen, und napari oder das Werkzeug einer Kollegin startet nicht mehr.
-  `conda` und `pip` in einer Umgebung zu mischen, macht es schlimmer.
-- **Python in Fiji ist noch mühsamer.** Fijis eigene Skriptsprache ist Jython
-  (Python 2.7, ohne NumPy). Brücken wie PyImageJ verlangen, dass Sie Java-,
-  conda- und Paketversionen auf jedem Rechner von Hand abstimmen.
-- **Die Antwort von Wavu:** Der Betrachter bleibt klein und sauber, und jedes
-  Skript läuft in **seiner eigenen pixi-Umgebung**, gebaut aus seiner eigenen
-  `pixi.lock`. Skripte teilen keine Pakete, können also weder einander noch
-  napari oder Fiji beschädigen, und derselbe Ordner wird auf jedem Rechner
-  identisch installiert.
-
 ## Die Idee in einfachen Worten
 
 In napari ist Wavu ein **zweiter Kellner** für dieselbe Küche. Es ist ein
@@ -23,13 +7,13 @@ Panel, das seitlich am napari-Fenster angedockt ist: Sie wählen einen
 Skriptordner, füllen ein Formular aus, drücken **Run** (ausführen), und die
 Ergebnisse erscheinen als Layer (Ebenen).
 
-Hier gibt es **zwei Vorratskammern**, und sie getrennt zu halten, ist der
-ganze Trick:
+Hier gibt es **zwei Sätze Küchengeräte**, und sie getrennt zu halten, ist
+der ganze Trick:
 
-- **Die Vorratskammer von napari** enthält napari selbst, Qt und das
-  Wavu-Panel. Sie ist klein und ändert sich nie, wenn Sie ein Skript
+- **Die Küchengeräte von napari** umfassen napari selbst, Qt und das
+  Wavu-Panel. Sie sind klein und ändern sich nie, wenn Sie ein Skript
   hinzufügen.
-- **Die Vorratskammer jedes Skripts** enthält, was *dieses* Skript braucht
+- **Die Küchengeräte jedes Skripts** umfassen, was *dieses* Skript braucht
   (Cellpose, PyTorch, scikit-image…), gebaut aus der `pixi.toml` in seinem
   Ordner.
 
@@ -117,7 +101,7 @@ Fiji wird anders installiert (eine ZIP-Datei, kein Terminal): siehe
 ## In einem Satz
 
 Wavu klonen, `pixi run -e napari napari` ausführen und
-**Plugins › Run Python Script (Wavu)** öffnen: napari behält seine eigene
-kleine Vorratskammer, und jedes Skript bringt seine eigene mit.
+**Plugins › Run Python Script (Wavu)** öffnen: napari behält seine eigenen
+kleinen Küchengeräte, und jedes Skript bringt seine eigenen mit.
 
 [Weiter: Ihr erster Durchlauf in napari :material-arrow-right:](first-run.md){ .md-button }

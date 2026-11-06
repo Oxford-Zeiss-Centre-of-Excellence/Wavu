@@ -12,7 +12,7 @@ sequenceDiagram
     participant Fiji as Fiji（服务员）
     participant W as Worker（厨房）
     You->>Fiji: Run Python Script，选择文件夹
-    Fiji->>W: 启动（第一次：备齐食材柜）
+    Fiji->>W: 启动（第一次：备齐厨具）
     W-->>Fiji: 这是我的菜单（PARAMS）
     Fiji->>You: 对话框
     You->>Fiji: OK
@@ -28,7 +28,7 @@ sequenceDiagram
 [下载 ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
 
 你会得到一个名为 `Wavu-Script-Template-main` 的文件夹。里面有
-`script.py`（食谱）和 `pixi.toml`（它的食材柜的购物清单）。所谓
+`script.py`（食谱）和 `pixi.toml`（它的厨具清单）。所谓
 *脚本文件夹*，就这么简单。
 
 !!! tip "多套了一层文件夹？"
@@ -54,7 +54,7 @@ sequenceDiagram
     Log 窗口会显示
     *First start of '…': downloading its Python packages. This happens once
     and can take several minutes…*，状态栏也会显示已用的秒数。这是 pixi
-    在备齐食材柜。让它跑完；下次这个脚本几秒内就能启动。
+    在备齐厨具。让它跑完；下次这个脚本几秒内就能启动。
 
 3. 弹出 **Wavu: script** 对话框。第一行是脚本的说明
    *Gaussian blur -- the Wavu example script.*，接着是
@@ -76,7 +76,7 @@ Blurring a (254, 256) uint8 image with sigma=2.0
 ```
 
 把 **Sigma (pixels)** 改成 `8` 再试一次。这次会立刻开始，因为厨房还开着，
-食材柜也是满的。
+厨具也都备齐了。
 
 ## 刚才发生了什么？
 

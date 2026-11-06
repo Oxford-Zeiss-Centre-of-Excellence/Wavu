@@ -77,7 +77,7 @@ jobs:
       - name: Download Fiji
         run: bash tools/get_fiji.sh .fiji
       - name: Smoke test
-        run: WAVU_FIJI="$(cat .fiji/FIJI_DIR)" WAVU_FIJI_LAUNCHER="$(cat .fiji/FIJI_LAUNCHER)" pixi run test-fiji
+        run: WAVU_FIJI_INSTALL=1 WAVU_FIJI="$(cat .fiji/FIJI_DIR)" WAVU_FIJI_LAUNCHER="$(cat .fiji/FIJI_LAUNCHER)" pixi run test-fiji
 
   container:
     runs-on: ubuntu-latest

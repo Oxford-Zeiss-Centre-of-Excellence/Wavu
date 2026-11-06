@@ -15,7 +15,7 @@ sequenceDiagram
     participant N as napari-Panel (Kellner)
     participant W as Worker (Küche)
     You->>N: Ordner wählen, Start worker
-    N->>W: Start (beim ersten Mal: Vorratskammer füllen)
+    N->>W: Start (beim ersten Mal: Küchengeräte einrichten)
     W-->>N: hier meine Speisekarte (PARAMS)
     N->>You: das Formular
     You->>N: Run
@@ -32,7 +32,7 @@ Ort, an dem Sie sie wiederfinden, zum Beispiel in *Dokumente*:
 [ZIP herunterladen](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
 
 Sie erhalten einen Ordner namens `Wavu-Script-Template-main` mit `script.py`
-(dem Rezept) und `pixi.toml` (der Einkaufsliste für seine Vorratskammer).
+(dem Rezept) und `pixi.toml` (der Liste seiner Küchengeräte).
 Der richtige Ordner ist der, der `pixi.toml` **direkt** enthält.
 
 ## Schritt 2: ein Bild öffnen
@@ -52,8 +52,8 @@ nächsten Schritt, damit das Formular es anbieten kann.
 !!! info "Der erste Start dauert einmalig einige Minuten"
     Das Log des Panels zeigt `Starting worker: …` und
     *(the first start installs the script's environment; this can take a few
-    minutes)*, gefolgt vom Fortschritt von pixi. Hier füllt pixi die
-    Vorratskammer des Skripts. Wenn Sie `Worker ready (wavu …, port …)`
+    minutes)*, gefolgt vom Fortschritt von pixi. Hier richtet pixi die
+    Küchengeräte des Skripts ein. Wenn Sie `Worker ready (wavu …, port …)`
     sehen, ist es fertig. Beim nächsten Mal startet der Worker in Sekunden.
     Zum Aufgeben drücken Sie **Cancel**.
 
@@ -85,7 +85,7 @@ Done.
 ```
 
 Versuchen Sie es noch einmal mit **Sigma (pixels)** auf `8`. Diesmal geht es
-sofort los, weil die Küche noch läuft und die Vorratskammer voll ist.
+sofort los, weil die Küche noch läuft und die Küchengeräte bereitstehen.
 
 ## Abbrechen und stoppen
 
@@ -111,8 +111,8 @@ sofort los, weil die Küche noch läuft und die Vorratskammer voll ist.
 
 ## Ein Worker woanders
 
-Der Worker kann auch in einem Container oder auf einem Server laufen, ein
-Foodtruck statt einer Küche nebenan. Haken Sie **Remote / container** an;
+Der Worker kann auch in einem Container oder auf einem Server laufen: die
+ganze Küche, samt Küchengeräten verpackt und anderswo aufgebaut. Haken Sie **Remote / container** an;
 vier Felder erscheinen: **Handshake file** (Handshake-Datei, Standard
 `~/.wavu/worker.json`), **Host** (leer: die Adresse aus der Handshake-Datei),
 **Host folder** und **Container folder** (die zwei Namen Ihres
@@ -125,8 +125,8 @@ Sie nutzen stattdessen Fiji? Dieselben Schritte dort:
 
 ## In einem Satz
 
-Skriptordner wählen, **Start worker** drücken (einmal auf die Vorratskammer
+Skriptordner wählen, **Start worker** drücken (einmal auf seine Küchengeräte
 warten), das Formular ausfüllen, **Run** drücken, und das Ergebnis erscheint
 als neuer Layer.
 
-[Weiter: was Sie in napari zurückbekommen :material-arrow-right:](layers.md){ .md-button }
+[Weiter: Interna von wavu-napari (für Fortgeschrittene) :material-arrow-right:](internals.md){ .md-button }

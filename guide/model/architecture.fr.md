@@ -213,8 +213,8 @@ Chaque sortie a un `kind` (type) :
 | `value` | `value` | nombre, texte, booléen ou `None` |
 
 Chaque frontend décide comment *afficher* un type : voir
-[Ce que vous pouvez renvoyer](../write/outputs.md) pour Fiji et
-[Ce que vous récupérez dans napari](../napari/layers.md).
+[Ce que vous pouvez renvoyer](../write/outputs.md), qui a un onglet pour
+Fiji et un pour napari.
 
 ## L'annulation est coopérative { #cancellation-is-cooperative }
 

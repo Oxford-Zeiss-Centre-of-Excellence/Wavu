@@ -12,7 +12,7 @@ necesitas Python, eliges tu script, rellenas un pequeño formulario y pulsas
 OK. El código de Python se ejecuta y los resultados vuelven al visor como
 imágenes, tablas o contornos nuevos.
 
-![La analogía del restaurante: el visor es el camarero, el worker es la cocina, cada receta tiene su propia despensa](../assets/img/restaurant.svg){ width="720" }
+![La analogía del restaurante: el visor es el camarero, el worker es la cocina, cada receta tiene sus propios utensilios de cocina](../assets/img/restaurant.svg){ width="720" }
 
 La imagen del restaurante ayuda:
 
@@ -22,10 +22,12 @@ La imagen del restaurante ayuda:
 | La carta | **PARAMS** | una lista corta al principio del script de Python |
 | La cocina | **el worker** | un pequeño programa de Python que se ejecuta en *tu* ordenador |
 | Una receta | **tu script** | un archivo `.py` con una función `run` |
-| La despensa de cada receta | **el entorno** | una carpeta con exactamente los paquetes que necesita ese script |
+| Los ingredientes | **tus imágenes** | los datos que el visor envía al script |
+| Los utensilios de cocina de cada receta | **el entorno** | una carpeta con exactamente los paquetes (las herramientas) que necesita ese script |
 
-Como cada receta tiene su propia despensa, instalar PyTorch para un script
-nunca puede romper otro. Nadie comparte despensa, así que nada se estropea.
+Como cada receta tiene sus propios utensilios de cocina, instalar PyTorch
+para un script nunca puede romper otro. Nadie comparte ollas ni cuchillos,
+así que nada se estropea.
 
 ## Una cocina, dos camareros
 
@@ -41,7 +43,7 @@ flowchart LR
     N["wavu-napari<br/>(napari)"]:::fiji
     W["worker"]:::worker
     S["tu script.py"]:::script
-    E[("su propia despensa")]:::env
+    E[("sus propios utensilios<br/>de cocina")]:::env
     F --> W
     N --> W
     W --> S
@@ -91,8 +93,8 @@ usarla, o que la usen tus colegas, desde su visor.
 4. Los mensajes van apareciendo en el log y una barra de progreso avanza.
 5. Los resultados se abren en el visor.
 
-La primera ejecución de un script es lenta, porque se está llenando su
-despensa (el entorno): los paquetes se descargan una sola vez. Después,
+La primera ejecución de un script es lenta, porque se están preparando sus
+utensilios de cocina (el entorno): los paquetes se descargan una sola vez. Después,
 arranca rápido.
 
 ## En una frase

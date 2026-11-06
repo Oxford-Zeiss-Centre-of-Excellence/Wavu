@@ -1,30 +1,16 @@
 # Install wavu-napari
 
-## Why this exists { #why-this-exists }
-
-- **One environment for everything breaks.** `pip install` a Cellpose plugin
-  into napari's environment and it can pull in a different PyTorch, NumPy or
-  Qt; the next plugin pins other versions, and napari or a colleague's tool
-  stops starting. Mixing `conda` and `pip` in one environment makes it worse.
-- **Python inside Fiji is harder still.** Fiji's own scripting is Jython
-  (Python 2.7, no NumPy). Bridges such as PyImageJ mean matching Java,
-  conda and package versions by hand on every machine.
-- **Wavu's answer:** the viewer stays small and clean, and every script runs
-  in **its own pixi environment**, built from its own `pixi.lock`. Scripts
-  never share packages, so they cannot break each other, napari or Fiji, and
-  the same folder installs identically on every computer.
-
 ## The idea in plain words
 
 In napari, Wavu is a **second waiter** for the same kitchen. It is a panel
 docked at the side of the napari window: you pick a script folder, fill in a
 form, press **Run**, and the results appear as layers.
 
-There are **two pantries** here, and keeping them apart is the whole trick:
+There are **two sets of kitchenware** here, and keeping them apart is the whole trick:
 
-- **napari's pantry** holds napari itself, Qt and the Wavu panel. It is
+- **napari's kitchenware** holds napari itself, Qt and the Wavu panel. It is
   small and never changes when you add a script.
-- **Each script's pantry** holds what *that* script needs (Cellpose,
+- **Each script's kitchenware** holds what *that* script needs (Cellpose,
   PyTorch, scikit-image…), built from the `pixi.toml` in its folder.
 
 So installing PyTorch for one script can never break napari, and a napari
@@ -104,7 +90,7 @@ differently (one zip, no terminal): see
 ## In one sentence
 
 Clone Wavu, run `pixi run -e napari napari`, and open
-**Plugins › Run Python Script (Wavu)**: napari keeps its own small pantry,
-and every script brings its own.
+**Plugins › Run Python Script (Wavu)**: napari keeps its own small set of
+kitchenware, and every script brings its own.
 
 [Next: your first run in napari :material-arrow-right:](first-run.md){ .md-button }

@@ -206,8 +206,8 @@ Cada salida tiene un `kind`:
 | `value` | `value` | número, texto, bool o `None` |
 
 Cada frontend decide cómo *mostrar* cada kind: mira
-[Qué puedes devolver](../write/outputs.md) para Fiji y
-[Qué recibes en napari](../napari/layers.md).
+[Qué puedes devolver](../write/outputs.md), que tiene una pestaña para Fiji
+y otra para napari.
 
 ## Cancelar es cooperativo
 

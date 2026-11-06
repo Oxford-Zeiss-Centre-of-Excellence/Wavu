@@ -119,11 +119,19 @@ def test_start_reports_an_early_exit(tmp_path):
 
 def test_worker_command_uses_the_folder_manifest(tmp_path):
     (tmp_path / "pixi.toml").write_text("")
+    (tmp_path / ".pixi" / "envs").mkdir(parents=True)  # already installed
     cmd = worker_command(tmp_path, pixi="pixi", frozen=True)
     assert cmd[:4] == ["pixi", "run", "--manifest-path", str(tmp_path / "pixi.toml")]
     assert "--frozen" in cmd and cmd[-2:] == ["--script-dir", str(tmp_path)]
     with pytest.raises(WorkerError, match="no pixi.toml"):
         worker_command(tmp_path / "elsewhere", pixi="pixi")
+
+
+def test_first_start_asks_pixi_for_progress_lines(tmp_path):
+    (tmp_path / "pixi.toml").write_text("")
+    assert worker_command(tmp_path, pixi="pixi")[:3] == ["pixi", "run", "-v"]   # no environment yet
+    (tmp_path / ".pixi" / "envs").mkdir(parents=True)
+    assert "-v" not in worker_command(tmp_path, pixi="pixi")                  # installed: stay quiet
 
 
 def test_child_env_drops_the_host_pixi_environment(monkeypatch):

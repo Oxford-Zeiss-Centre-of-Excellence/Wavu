@@ -33,6 +33,7 @@ flowchart LR
 | 檔案 | 選單項目 |
 |---|---|
 | `Run_Python_Script.groovy` | **Run Python Script** |
+| `Run_Script_(Macro).groovy` | **Run Script (Macro)**：可錄製、不跳出對話框，給巨集和批次工作流程用 |
 | `Setup_Python_(pixi).groovy` | **Setup Python (pixi)** |
 | `Connect_to_Running_Worker.groovy` | **Connect to Running Worker** |
 | `Stop_Worker.groovy` | **Stop Worker** |

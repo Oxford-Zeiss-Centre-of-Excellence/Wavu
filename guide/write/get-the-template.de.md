@@ -50,7 +50,7 @@ Online-Kopie an; das ist später praktisch, wenn Sie
 | Datei | Was sie ist |
 |---|---|
 | `script.py` | **Ihr Rezept.** `PARAMS` (der Dialog) und `run` (die Arbeit). |
-| `pixi.toml` | Die Einkaufsliste für die Vorratskammer dieses Skripts. |
+| `pixi.toml` | Die Liste der Küchengeräte dieses Skripts: die Pakete, die es braucht. |
 | `test_script.py` | Prüfungen, die ohne Fiji laufen. **Hier beginnen** ([zuerst testen](test-without-fiji.md)). |
 | `.vscode/` | Macht das [Debuggen in VS Code](../help/debug-in-vscode.md) zu einem Klick. |
 | `README.md`, `.github/` | Notizen und automatische Veröffentlichungen ([für Fortgeschrittene](../fiji/with-the-world.md)). |
@@ -72,7 +72,7 @@ Online-Kopie an; das ist später praktisch, wenn Sie
     Durchlauf noch geöffnet, kocht sie weiter nach dem *alten* Rezept.
     **Stop Worker** schließt sie, damit der nächste Durchlauf Ihre
     gespeicherten Änderungen liest. Das dauert nur eine Sekunde; die
-    Vorratskammer bleibt gefüllt.
+    Küchengeräte bleiben eingerichtet.
 
 ## Ein Paket hinzufügen { #adding-a-package }
 

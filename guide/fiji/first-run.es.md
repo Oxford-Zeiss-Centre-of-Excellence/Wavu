@@ -13,7 +13,7 @@ sequenceDiagram
     participant Fiji as Fiji (camarero)
     participant W as Worker (cocina)
     You->>Fiji: Run Python Script, elegir carpeta
-    Fiji->>W: arrancar (la primera vez: llenar la despensa)
+    Fiji->>W: arrancar (la primera vez: preparar los utensilios de cocina)
     W-->>Fiji: esta es mi carta (PARAMS)
     Fiji->>You: diálogo
     You->>Fiji: OK
@@ -30,7 +30,7 @@ encontrar, por ejemplo en *Documentos*:
 [Descargar ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
 
 Obtienes una carpeta llamada `Wavu-Script-Template-main`. Dentro están
-`script.py` (la receta) y `pixi.toml` (la lista de la compra de su despensa).
+`script.py` (la receta) y `pixi.toml` (la lista de sus utensilios de cocina).
 Eso es todo lo que es una *carpeta de script*.
 
 !!! tip "¿Una carpeta de más?"
@@ -57,7 +57,7 @@ En Fiji: **File › Open Samples › Blobs (25K)**.
     La ventana Log dice
     *First start of '…': downloading its Python packages. This happens once
     and can take several minutes…*, y la barra de estado cuenta los
-    segundos. Es pixi llenando la despensa. Deja que termine; la próxima vez
+    segundos. Es pixi preparando los utensilios de cocina. Deja que termine; la próxima vez
     el script arranca en segundos.
 
 3. Aparece el diálogo **Wavu: script**. Su primera línea es la descripción
@@ -81,7 +81,7 @@ Blurring a (254, 256) uint8 image with sigma=2.0
 ```
 
 Prueba otra vez con **Sigma (pixels)** en `8`. Esta vez arranca al instante,
-porque la cocina sigue abierta y la despensa está llena.
+porque la cocina sigue abierta y los utensilios de cocina están listos.
 
 ## ¿Qué acaba de pasar?
 

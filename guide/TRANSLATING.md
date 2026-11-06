@@ -53,8 +53,10 @@ names (*Start here*, *Write a script*, *Share*, *Help*) can be translated with
    `{ .md-button }`) as they are; translate only their visible titles/text.
    Content-tab titles *Windows / macOS / Linux* stay in English.
 6. **Keep the tone**: plain words, short sentences, the restaurant analogy
-   first (Fiji = waiter, worker = kitchen, environment = pantry,
-   `pixi.lock` = receipt), then the steps, then the *In one sentence* recap.
+   first (Fiji = waiter, worker = kitchen, script = recipe, images =
+   ingredients, environment = the recipe's own kitchenware, `pixi.toml` =
+   kitchenware list, `pixi.lock` = receipt, container = the whole kitchen
+   packed up with its kitchenware), then the steps, then the *In one sentence* recap.
    Explain any technical word the first time it appears. Use the informal
    "you" where your language allows it for friendly technical writing.
 7. **Keep pages short**: a page must be readable in under five minutes,

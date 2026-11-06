@@ -199,9 +199,9 @@ Wavu는 **작은 데이터**를 위한 다리예요(메모리에 들어가는 �
 | `file` | `path` | `pathlib.Path` |
 | `value` | `value` | 숫자, 텍스트, bool 또는 `None` |
 
-각 kind를 어떻게 *보여 줄지*는 프론트엔드가 정해요. Fiji는
-[돌려줄 수 있는 것](../write/outputs.md), napari는
-[napari에서 돌려받는 것](../napari/layers.md)을 보세요.
+각 kind를 어떻게 *보여 줄지*는 프론트엔드가 정해요.
+[돌려줄 수 있는 것](../write/outputs.md)을 보세요. Fiji 탭과 napari 탭이
+있어요.
 
 ## 취소는 협조해서 해요
 

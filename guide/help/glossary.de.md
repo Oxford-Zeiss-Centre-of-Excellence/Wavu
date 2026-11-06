@@ -5,7 +5,7 @@
 Jedes Fach hat seinen Jargon. Hier steht jedes Wavu-Wort in einer einfachen
 Zeile, mit dem Restaurant-Bild, wo es hilft.
 
-![Das Restaurant-Bild: Fiji ist der Kellner, der Worker ist die Küche, jedes Rezept hat seine eigene Vorratskammer](../assets/img/restaurant.svg){ width="560" }
+![Das Restaurant-Bild: Fiji ist der Kellner, der Worker ist die Küche, jedes Rezept hat seine eigenen Küchengeräte](../assets/img/restaurant.svg){ width="560" }
 
 ## Die Wörter
 
@@ -44,17 +44,17 @@ Zeile, mit dem Restaurant-Bild, wo es hilft.
 **Umgebung (Environment)**
 :   Ein privater Ordner mit genau einem Python und den Paketen, die ein
     Skript braucht, abgelegt in `.pixi` im Skriptordner. Die
-    *Vorratskammer*.
+    *Küchengeräte* des Rezepts: eigene Töpfe, Messer und Öfen.
 
 **pixi**
 :   Das kostenlose Werkzeug, das Umgebungen baut und Pakete herunterlädt,
     eine moderne Alternative zu conda. Wavu holt es für Sie.
 
 **`pixi.toml`**
-:   Die *Einkaufsliste*: welche Pakete das Skript braucht.
+:   Die *Liste der Küchengeräte*: welche Pakete das Skript braucht.
 
 **Lock-Datei (`pixi.lock`)**
-:   Der *Kassenbon*: die genaue Version jedes Pakets. Wer sie weitergibt,
+:   Der *Kassenbon* für die Küchengeräte: die genaue Version jedes Pakets. Wer sie weitergibt,
     sorgt dafür, dass alle dieselbe Umgebung bekommen.
 
 **conda-forge / PyPI**
@@ -95,5 +95,6 @@ Zeile, mit dem Restaurant-Bild, wo es hilft.
 
 ## In einem Satz
 
-Fiji ist der Kellner, der Worker die Küche, Ihr Skript das Rezept, seine
-pixi-Umgebung die Vorratskammer und `pixi.lock` der Kassenbon.
+Fiji ist der Kellner, der Worker die Küche, Ihr Skript das Rezept, Ihre
+Bilder die Zutaten, seine pixi-Umgebung die Küchengeräte und `pixi.lock`
+der Kassenbon.

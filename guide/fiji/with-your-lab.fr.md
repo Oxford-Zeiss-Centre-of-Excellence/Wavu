@@ -5,7 +5,8 @@
 Votre recette fonctionne. Maintenant, vous voulez que vos collègues
 l'utilisent **sans** choisir de dossier ni rien connaître à Python. Wavu peut
 emballer votre dossier de script dans **un seul fichier zip**, comme un
-panier-repas : la recette, la liste de courses exacte et une entrée de menu.
+coffret de recette : la recette, la liste exacte de la batterie de cuisine
+et une entrée de menu.
 Un collègue le décompresse dans Fiji, redémarre, et trouve votre outil dans
 le menu **Plugins**, sous le nom que vous avez choisi.
 
@@ -30,7 +31,7 @@ flowchart LR
 
 ## Qu'est-ce que `pixi.lock` ? { #what-is-pixilock }
 
-`pixi.toml` est la liste de courses (« du scikit-image »). `pixi.lock` est le
+`pixi.toml` est la liste de la batterie de cuisine (« du scikit-image »). `pixi.lock` est le
 **ticket de caisse** : la version exacte de chaque paquet réellement acheté.
 Fournir le ticket veut dire que vos collègues obtiennent *exactement* les
 mêmes paquets que vous, donc l'outil se comporte pareil sur leurs

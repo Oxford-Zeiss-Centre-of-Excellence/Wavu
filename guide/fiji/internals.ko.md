@@ -35,6 +35,7 @@ flowchart LR
 | 파일 | 메뉴 항목 |
 |---|---|
 | `Run_Python_Script.groovy` | **Run Python Script** |
+| `Run_Script_(Macro).groovy` | **Run Script (Macro)**: 기록할 수 있고 대화상자가 없어요. 매크로와 배치 워크플로용 |
 | `Setup_Python_(pixi).groovy` | **Setup Python (pixi)** |
 | `Connect_to_Running_Worker.groovy` | **Connect to Running Worker** |
 | `Stop_Worker.groovy` | **Stop Worker** |

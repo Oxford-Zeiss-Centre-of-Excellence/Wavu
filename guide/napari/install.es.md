@@ -1,21 +1,5 @@
 # Instalar wavu-napari
 
-## Por qué existe Wavu { #why-this-exists }
-
-- **Un solo entorno para todo acaba rompiéndose.** Instala con `pip` un plugin
-  de Cellpose en el entorno de napari y puede traer otra versión de PyTorch,
-  NumPy o Qt; el siguiente plugin fija otras, y napari o la herramienta de un
-  colega deja de arrancar. Mezclar `conda` y `pip` en un mismo entorno lo
-  empeora.
-- **Python dentro de Fiji es aún más difícil.** El lenguaje de scripts propio
-  de Fiji es Jython (Python 2.7, sin NumPy). Puentes como PyImageJ obligan a
-  ajustar a mano las versiones de Java, conda y paquetes en cada máquina.
-- **La respuesta de Wavu:** el visor se mantiene pequeño y limpio, y cada
-  script se ejecuta en **su propio entorno pixi**, construido a partir de su
-  propio `pixi.lock`. Los scripts no comparten paquetes, así que no pueden
-  romperse entre sí ni romper napari o Fiji, y la misma carpeta se instala
-  igual en todos los ordenadores.
-
 ## La idea en palabras sencillas
 
 En napari, Wavu es un **segundo camarero** para la misma cocina. Es un panel
@@ -23,12 +7,12 @@ acoplado al lado de la ventana de napari: eliges una carpeta de script,
 rellenas un formulario, pulsas **Run** (Ejecutar) y los resultados aparecen
 como capas.
 
-Aquí hay **dos despensas**, y mantenerlas separadas es todo el truco:
+Aquí hay **dos juegos de utensilios de cocina**, y mantenerlos separados es todo el truco:
 
-- **La despensa de napari** contiene napari, Qt y el panel de Wavu. Es
-  pequeña y no cambia nunca cuando añades un script.
-- **La despensa de cada script** contiene lo que necesita *ese* script
-  (Cellpose, PyTorch, scikit-image…), construida a partir del `pixi.toml` de
+- **Los utensilios de cocina de napari** contienen napari, Qt y el panel de
+  Wavu. Son pocos y no cambian nunca cuando añades un script.
+- **Los utensilios de cocina de cada script** contienen lo que necesita
+  *ese* script (Cellpose, PyTorch, scikit-image…), construidos a partir del `pixi.toml` de
   su carpeta.
 
 Así, instalar PyTorch para un script nunca puede romper napari, y una
@@ -112,7 +96,7 @@ Fiji se instala de otra forma (un zip, sin terminal): mira
 ## En una frase
 
 Clona Wavu, ejecuta `pixi run -e napari napari` y abre
-**Plugins › Run Python Script (Wavu)**: napari tiene su propia despensa
-pequeña, y cada script trae la suya.
+**Plugins › Run Python Script (Wavu)**: napari tiene su propio juego
+pequeño de utensilios de cocina, y cada script trae el suyo.
 
 [Siguiente: tu primera ejecución en napari :material-arrow-right:](first-run.md){ .md-button }

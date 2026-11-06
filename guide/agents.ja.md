@@ -10,7 +10,7 @@ Wavu のやり方に沿って作業します。
 
 厨房に入った新しい料理人は腕はいいけれど、店のルールを知りません。スキル
 ファイルは、厨房のドアの内側に貼られた **店のルールブック** です。まず味見を
-する、注文は伝票に書く、うちの食材庫を使う、うちのやり方で盛り付ける。
+する、注文は伝票に書く、うちの調理器具を使う、うちのやり方で盛り付ける。
 エージェントは料理を始める前にこれを読みます。
 
 ```mermaid
@@ -73,16 +73,16 @@ flowchart LR
 
     または、プラグインを使わずに個人用のスキルファイルとして：
 
-    === "macOS / Linux"
-
-        ```sh
-        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         New-Item -ItemType Directory -Force "$HOME\.claude\skills\wavu" | Out-Null; irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -OutFile "$HOME\.claude\skills\wavu\SKILL.md"
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
         ```
 
 === "Claude Desktop / claude.ai"
@@ -101,16 +101,16 @@ flowchart LR
 
     スクリプトのフォルダーで（エージェントが自動で読み込みます）：
 
-    === "macOS / Linux"
-
-        ```sh
-        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -OutFile AGENTS.md
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
         ```
 
     すべてのプロジェクトで使うなら、`~/.codex/AGENTS.md` として保存します。

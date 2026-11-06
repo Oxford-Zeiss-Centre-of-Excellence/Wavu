@@ -8,11 +8,11 @@
 
 ## The idea in plain words
 
-Sharing with your lab is handing a meal kit to a neighbour. Sharing with the
+Sharing with your lab is handing a recipe box to a neighbour. Sharing with the
 world is putting it **on a shop shelf**: it needs a permanent address, a
 version number on the box, and ideally a robot that packs a fresh box every
-time you change the recipe, so you never pack one by hand and forget an
-ingredient.
+time you change the recipe, so you never pack one by hand and forget a
+part.
 
 That robot is **CI** ("continuous integration"): a free GitHub service that
 runs steps for you on GitHub's computers. The template already contains the

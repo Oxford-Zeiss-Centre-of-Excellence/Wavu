@@ -202,8 +202,8 @@ Every output has a `kind`:
 | `value` | `value` | number, text, bool or `None` |
 
 Each frontend decides how to *show* a kind: see
-[What you can return](../write/outputs.md) for Fiji and
-[What you get back in napari](../napari/layers.md).
+[What you can return](../write/outputs.md), which has a tab for Fiji and
+one for napari.
 
 ## Cancellation is cooperative
 

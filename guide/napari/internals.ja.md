@@ -118,8 +118,8 @@ Qt はシグナルを GUI スレッドで届け、そこでログ欄と進捗バ
 
 ## レイヤーの変換
 
-`_convert.py` は、[napari で戻ってくるもの](layers.md) のルールを持って
-います。
+`_convert.py` は、[返せるもの](../write/outputs.md)（napari タブ）のルールを
+持っています。
 
 - `layer_input(layer)`：データ（最高解像度のレベル。dask は計算済み）、
   タイトル、`scale` の最後の 2 つの値が等しく単位がマイクロメートルか

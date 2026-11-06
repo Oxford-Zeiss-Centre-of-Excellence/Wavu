@@ -123,7 +123,7 @@ notification.
 ## Conversion des calques
 
 `_convert.py` contient les règles de
-[Ce que vous récupérez dans napari](layers.md) :
+[Ce que vous pouvez renvoyer](../write/outputs.md) (onglet napari) :
 
 - `layer_input(layer)` : les données (niveau en pleine résolution, dask
   calculé), le titre, `pixel_um` à partir de deux dernières valeurs `scale`

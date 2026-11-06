@@ -2,17 +2,18 @@
 
 ## 用白話說
 
-到目前為止，每位客人的服務生（Fiji 或 napari）都是在客人自己電腦上的廚房裡
-做菜，食材櫃也是由 pixi 在那裡備好的。**容器**（container）就像一輛
-**餐車**：整個廚房連同備好料的食材櫃，全部裝進一輛車，你想停在哪裡都行。
-Fiji/napari 一樣負責點餐，只是改成走到餐車那邊去。
+到目前為止，每位客人的服務生（Fiji 或 napari）都是把點單送到客人自己電腦上的
+廚房，由 pixi 在那裡為每道食譜備好廚具。**容器**（container）就是**把整個廚房
+連同廚具打包**，隨時可以在任何地方架起來：你的電腦、實驗室伺服器或叢集都行。
+Fiji/napari 一樣負責點餐，也負責把食材（你的影像）送過去；只是改成走到那個
+廚房所在的地方。
 
 ```mermaid
 flowchart LR
     V["Fiji 或 napari<br/>（服務生）"]:::fiji
-    T["容器<br/>（餐車）"]:::box
+    T["容器<br/>（把整個廚房<br/>連同廚具打包）"]:::box
     W["wavu worker<br/>+ 你的腳本"]:::worker
-    E[("食材櫃來自<br/>pixi.lock")]:::env
+    E[("廚具來自<br/>pixi.lock")]:::env
     D[("/my/data<br/>= /data")]:::script
     V -- "點餐（連接埠 8765）" --> W
     T -.- W
@@ -40,16 +41,6 @@ flowchart LR
 映像檔，所以下面任何一個都能用；以下指令寫的是 `docker`，其他工具也用同樣的
 `build`/`run` 字眼：
 
-=== "macOS"
-
-    - **Apple 的 [`container`](https://github.com/apple/container)**（Apple
-      出品，免費開源；Apple 晶片，建議 macOS 26）：把每個容器放在自己的小型
-      虛擬機器裡執行。`container build -t my-tool .` 和 `container run …`；
-      連接埠和資料夾選項請看 `container run --help`。
-    - [OrbStack](https://orbstack.dev)、[Colima](https://github.com/abiosoft/colima)
-      或 [Podman Desktop](https://podman-desktop.io)：Docker Desktop 的輕量
-      替代品，接受同樣的 `docker` 指令。
-
 === "Windows"
 
     Linux 映像檔在 Windows 上透過 **WSL 2**（Windows 內建的 Linux）執行：
@@ -60,6 +51,16 @@ flowchart LR
       [Rancher Desktop](https://rancherdesktop.io)，它們會幫你設定好 WSL 2。
 
     在 WSL 裡，你的 `D:\data` 資料夾是 `/mnt/d/data`。
+
+=== "macOS"
+
+    - **Apple 的 [`container`](https://github.com/apple/container)**（Apple
+      出品，免費開源；Apple 晶片，建議 macOS 26）：把每個容器放在自己的小型
+      虛擬機器裡執行。`container build -t my-tool .` 和 `container run …`；
+      連接埠和資料夾選項請看 `container run --help`。
+    - [OrbStack](https://orbstack.dev)、[Colima](https://github.com/abiosoft/colima)
+      或 [Podman Desktop](https://podman-desktop.io)：Docker Desktop 的輕量
+      替代品，接受同樣的 `docker` 指令。
 
 === "Linux"
 
@@ -124,7 +125,7 @@ worker 會把交握檔案（位址、連接埠和 token）寫到
 
 ## 另一台機器
 
-要讓餐車停在實驗室伺服器上，就在那台伺服器上用 `-p 8765:8765` 啟動它
+要把廚房架在實驗室伺服器上，就在那台伺服器上用 `-p 8765:8765` 啟動它
 （開放所有網路位址，而不只是 `127.0.0.1`）。把它的 `.wavu/worker.json` 複製到
 你的電腦上。在 napari 裡，把伺服器的位址填進 **Host**（Fiji 和 napari 都有這個
 欄位）。如果是大型影像，兩台電腦都必須用你填的名字看得到資料資料夾（例如
@@ -201,7 +202,7 @@ apptainer run --bind /my/data:/data --env WAVU_TOKEN=pick-one my-tool_1.0.0.sif
 ## 一句話總結
 
 先 `docker build`，再帶著連接埠、token 和你的資料資料夾 `docker run`，然後
-從 Fiji 或 napari 用交握檔案和資料夾的兩個名字連上去：整個廚房，停在你需要的
-任何地方。
+從 Fiji 或 napari 用交握檔案和資料夾的兩個名字連上去：把整個廚房連同廚具打包，
+架在你需要的任何地方。
 
 [下一步：分享給實驗室 :material-arrow-right:](../fiji/with-your-lab.md){ .md-button }

@@ -50,7 +50,7 @@ c'est pratique plus tard, quand vous voudrez
 | Fichier | Ce que c'est |
 |---|---|
 | `script.py` | **Votre recette.** `PARAMS` (la boîte de dialogue) et `run` (le travail). |
-| `pixi.toml` | La liste de courses pour le garde-manger de ce script. |
+| `pixi.toml` | La liste de la batterie de cuisine de ce script : les paquets dont il a besoin. |
 | `test_script.py` | Des vérifications qui tournent sans Fiji. **Commencez ici** ([d'abord le test](test-without-fiji.md)). |
 | `.vscode/` | Permet de [déboguer dans VS Code](../help/debug-in-vscode.md) en un clic. |
 | `README.md`, `.github/` | Des notes, et les publications automatiques ([avancé](../fiji/with-the-world.md)). |
@@ -72,8 +72,8 @@ c'est pratique plus tard, quand vous voudrez
     La cuisine lit la recette à l'ouverture. Si elle est encore ouverte
     depuis la dernière exécution, elle continue de cuisiner l'*ancienne*
     recette. **Stop Worker** la ferme, pour que l'exécution suivante lise vos
-    modifications enregistrées. Cela ne prend qu'une seconde ; le
-    garde-manger reste plein.
+    modifications enregistrées. Cela ne prend qu'une seconde ; la
+    batterie de cuisine reste installée.
 
 ## Ajouter un paquet { #adding-a-package }
 

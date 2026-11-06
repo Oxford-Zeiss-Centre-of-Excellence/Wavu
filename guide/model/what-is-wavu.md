@@ -12,7 +12,7 @@ you need Python, you pick your script, fill in a small form and press OK.
 The Python code runs, and the results land back in the viewer as new
 images, tables or outlines.
 
-![The restaurant analogy: the viewer is the waiter, the worker is the kitchen, every recipe has its own pantry](../assets/img/restaurant.svg){ width="720" }
+![The restaurant analogy: the viewer is the waiter, the worker is the kitchen, every recipe has its own kitchenware](../assets/img/restaurant.svg){ width="720" }
 
 The restaurant picture helps:
 
@@ -22,11 +22,12 @@ The restaurant picture helps:
 | The menu card | **PARAMS** | a short list at the top of the Python script |
 | The kitchen | **the worker** | a small Python program running on *your* computer |
 | A recipe | **your script** | a `.py` file with a `run` function |
-| Each recipe's own pantry | **the environment** | a folder with exactly the packages that script needs |
+| The ingredients | **your images** | the data the viewer sends to the script |
+| Each recipe's own kitchenware | **the environment** | a folder with exactly the packages (the tools) that script needs |
 
-Because every recipe has its own pantry, installing PyTorch for one script
-can never break another script. Nobody shares a pantry, so nothing gets
-spoiled.
+Because every recipe has its own kitchenware, installing PyTorch for one
+script can never break another script. Nobody shares pots and knives, so
+nothing gets spoiled.
 
 ## One kitchen, two waiters
 
@@ -41,7 +42,7 @@ flowchart LR
     N["wavu-napari<br/>(napari)"]:::fiji
     W["worker"]:::worker
     S["your script.py"]:::script
-    E[("its own pantry")]:::env
+    E[("its own kitchenware")]:::env
     F --> W
     N --> W
     W --> S
@@ -88,8 +89,8 @@ colleagues use it, from their viewer.
 4. Messages scroll in the log and a progress bar moves.
 5. The results open in the viewer.
 
-The very first run of a script is slow, because its pantry (environment) is
-being stocked: the packages download once. After that, it starts quickly.
+The very first run of a script is slow, because its kitchenware
+(environment) is being set up: the packages download once. After that, it starts quickly.
 
 ## In one sentence
 

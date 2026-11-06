@@ -10,7 +10,7 @@ Copilot…) могут писать скрипты Wavu за вас. Один **
 
 Новый повар на кухне талантлив, но не знает правил заведения. Файл навыка —
 это **свод правил кухни**, приклеенный изнутри к кухонной двери: сначала
-пробовать, записывать заказ в чек, брать продукты из нашей кладовой,
+пробовать, записывать заказ в чек, пользоваться нашей кухонной утварью,
 подавать блюдо по-нашему. Агент читает его, прежде чем начать готовить.
 
 ```mermaid
@@ -73,16 +73,16 @@ flowchart LR
 
     Или как личный файл навыка, без плагина:
 
-    === "macOS / Linux"
-
-        ```sh
-        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         New-Item -ItemType Directory -Force "$HOME\.claude\skills\wavu" | Out-Null; irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -OutFile "$HOME\.claude\skills\wavu\SKILL.md"
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
         ```
 
 === "Claude Desktop / claude.ai"
@@ -101,16 +101,16 @@ flowchart LR
 
     В папке вашего скрипта (агент прочитает файл автоматически):
 
-    === "macOS / Linux"
-
-        ```sh
-        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -OutFile AGENTS.md
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
         ```
 
     Или, чтобы он действовал во всех проектах, сохраните его как

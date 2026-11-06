@@ -15,7 +15,7 @@ sequenceDiagram
     participant N as panneau napari (serveur)
     participant W as Worker (cuisine)
     You->>N: choisir le dossier, Start worker
-    N->>W: démarre (1re fois : remplir le garde-manger)
+    N->>W: démarre (1re fois : installer la batterie de cuisine)
     W-->>N: voici ma carte (PARAMS)
     N->>You: le formulaire
     You->>N: Run
@@ -32,7 +32,7 @@ vous le retrouverez, par exemple dans *Documents* :
 [Télécharger le ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
 
 Vous obtenez un dossier nommé `Wavu-Script-Template-main` avec `script.py`
-(la recette) et `pixi.toml` (la liste de courses de son garde-manger). Le
+(la recette) et `pixi.toml` (la liste de sa batterie de cuisine). Le
 bon dossier est celui qui contient `pixi.toml` **directement**.
 
 ## Étape 2 : ouvrir une image
@@ -54,7 +54,7 @@ l'étape suivante, pour que le formulaire puisse la proposer.
     *(the first start installs the script's environment; this can take a few
     minutes)* (le premier démarrage installe l'environnement du script ;
     cela peut prendre quelques minutes), suivi de la progression de pixi.
-    C'est pixi qui remplit le garde-manger du script. Quand vous voyez
+    C'est pixi qui installe la batterie de cuisine du script. Quand vous voyez
     `Worker ready (wavu …, port …)`, c'est terminé. La fois suivante, le
     worker démarre en quelques secondes. Pour abandonner, appuyez sur
     **Cancel** (annuler).
@@ -89,7 +89,7 @@ Done.
 ```
 
 Recommencez avec **Sigma (pixels)** réglé sur `8`. Cette fois, ça démarre
-tout de suite, car la cuisine tourne encore et le garde-manger est plein.
+tout de suite, car la cuisine tourne encore et la batterie de cuisine est prête.
 
 ## Annuler et arrêter
 
@@ -115,8 +115,8 @@ tout de suite, car la cuisine tourne encore et le garde-manger est plein.
 
 ## Un worker ailleurs
 
-Le worker peut aussi tourner dans un conteneur ou sur un serveur : un food
-truck au lieu d'une cuisine d'à côté. Cochez **Remote / container**
+Le worker peut aussi tourner dans un conteneur ou sur un serveur : toute la
+cuisine, emballée avec sa batterie de cuisine et installée ailleurs. Cochez **Remote / container**
 (distant / conteneur) ; quatre champs apparaissent : **Handshake file**
 (fichier de poignée de main, par défaut `~/.wavu/worker.json`), **Host**
 (hôte ; vide : l'adresse du fichier de poignée de main), **Host folder** et
@@ -131,7 +131,7 @@ Vous utilisez plutôt Fiji ? Les mêmes étapes là-bas :
 ## En une phrase
 
 Choisissez un dossier de script, appuyez sur **Start worker** (attendez une
-fois que son garde-manger se remplisse), remplissez le formulaire, appuyez
+fois que sa batterie de cuisine s'installe), remplissez le formulaire, appuyez
 sur **Run**, et le résultat apparaît comme nouveau calque.
 
-[Suite : ce que vous récupérez dans napari :material-arrow-right:](layers.md){ .md-button }
+[Suite : fonctionnement interne de wavu-napari (avancé) :material-arrow-right:](internals.md){ .md-button }

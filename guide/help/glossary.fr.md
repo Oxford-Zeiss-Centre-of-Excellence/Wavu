@@ -5,7 +5,7 @@
 Chaque domaine a son jargon. Voici chaque mot de Wavu en une ligne simple,
 avec l'image du restaurant quand elle aide.
 
-![L'analogie du restaurant : Fiji est le serveur, le worker est la cuisine, chaque recette a son propre garde-manger](../assets/img/restaurant.svg){ width="560" }
+![L'analogie du restaurant : Fiji est le serveur, le worker est la cuisine, chaque recette a sa propre batterie de cuisine](../assets/img/restaurant.svg){ width="560" }
 
 ## Les mots
 
@@ -45,17 +45,20 @@ avec l'image du restaurant quand elle aide.
 **Environnement**
 :   Un dossier privé qui contient une version exacte de Python plus les
     paquets dont un script a besoin, rangé dans `.pixi` à l'intérieur du
-    dossier de script. Le *garde-manger*.
+    dossier de script. La *batterie de cuisine* de la recette : ses
+    propres casseroles, couteaux et fours.
 
 **pixi**
 :   L'outil gratuit qui construit les environnements et télécharge les
     paquets, une alternative moderne à conda. Wavu le récupère pour vous.
 
 **`pixi.toml`**
-:   La *liste de courses* : les paquets dont le script a besoin.
+:   La *liste de la batterie de cuisine* : les paquets dont le script a
+    besoin.
 
 **Fichier de verrouillage (`pixi.lock`)**
-:   Le *ticket de caisse* : la version exacte de chaque paquet. Le partager
+:   Le *ticket de caisse* de la batterie de cuisine : la version exacte de
+    chaque paquet. Le partager
     veut dire que tout le monde obtient le même environnement.
 
 **conda-forge / PyPI**
@@ -96,5 +99,6 @@ avec l'image du restaurant quand elle aide.
 
 ## En une phrase
 
-Fiji est le serveur, le worker la cuisine, votre script la recette, son
-environnement pixi le garde-manger et `pixi.lock` le ticket de caisse.
+Fiji est le serveur, le worker la cuisine, votre script la recette, vos
+images les ingrédients, son environnement pixi la batterie de cuisine et
+`pixi.lock` le ticket de caisse.

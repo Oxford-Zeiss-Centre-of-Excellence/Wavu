@@ -14,7 +14,7 @@ kleines Formular aus und klicken auf OK. Der Python-Code läuft, und die
 Ergebnisse landen wieder im Betrachter, als neue Bilder, Tabellen oder
 Umrisse.
 
-![Das Restaurant-Bild: der Betrachter ist der Kellner, der Worker ist die Küche, jedes Rezept hat seine eigene Vorratskammer](../assets/img/restaurant.svg){ width="720" }
+![Das Restaurant-Bild: der Betrachter ist der Kellner, der Worker ist die Küche, jedes Rezept hat seine eigenen Küchengeräte](../assets/img/restaurant.svg){ width="720" }
 
 Das Bild vom Restaurant hilft:
 
@@ -24,11 +24,12 @@ Das Bild vom Restaurant hilft:
 | Die Speisekarte | **PARAMS** | eine kurze Liste oben im Python-Skript |
 | Die Küche | **der Worker** | ein kleines Python-Programm, das auf *Ihrem* Computer läuft |
 | Ein Rezept | **Ihr Skript** | eine `.py`-Datei mit einer Funktion `run` |
-| Die eigene Vorratskammer jedes Rezepts | **die Umgebung** | ein Ordner mit genau den Paketen, die dieses Skript braucht |
+| Die Zutaten | **Ihre Bilder** | die Daten, die der Betrachter an das Skript schickt |
+| Die eigenen Küchengeräte jedes Rezepts | **die Umgebung** | ein Ordner mit genau den Paketen (den Werkzeugen), die dieses Skript braucht |
 
-Weil jedes Rezept seine eigene Vorratskammer hat, kann die Installation von
+Weil jedes Rezept seine eigenen Küchengeräte hat, kann die Installation von
 PyTorch für ein Skript niemals ein anderes Skript kaputt machen. Niemand
-teilt sich eine Vorratskammer, also verdirbt auch nichts.
+teilt sich Töpfe und Messer, also verdirbt auch nichts.
 
 ## Eine Küche, zwei Kellner
 
@@ -44,7 +45,7 @@ flowchart LR
     N["wavu-napari<br/>(napari)"]:::fiji
     W["Worker"]:::worker
     S["Ihr script.py"]:::script
-    E[("eigene Vorratskammer")]:::env
+    E[("eigene Küchengeräte")]:::env
     F --> W
     N --> W
     W --> S
@@ -98,7 +99,7 @@ ihrem benutzen lassen möchten.
 5. Die Ergebnisse öffnen sich im Betrachter.
 
 Der allererste Durchlauf eines Skripts ist langsam, weil seine
-Vorratskammer (die Umgebung) gefüllt wird: Die Pakete werden einmal
+Küchengeräte (die Umgebung) eingerichtet werden: Die Pakete werden einmal
 heruntergeladen. Danach startet es schnell.
 
 ## In einem Satz

@@ -206,8 +206,8 @@ Jede Ausgabe hat eine Art (`kind`):
 | `value` | `value` | Zahl, Text, bool oder `None` |
 
 Jedes Frontend entscheidet, wie es eine Art *anzeigt*: siehe
-[Was Sie zurückgeben können](../write/outputs.md) für Fiji und
-[Was Sie in napari zurückbekommen](../napari/layers.md).
+[Was Sie zurückgeben können](../write/outputs.md), mit einem Tab für Fiji
+und einem für napari.
 
 ## Abbrechen ist kooperativ { #cancellation-is-cooperative }
 

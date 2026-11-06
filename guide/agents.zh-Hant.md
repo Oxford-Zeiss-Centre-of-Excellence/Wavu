@@ -7,7 +7,7 @@ AI 程式設計助理（Claude Code、Codex、Gemini CLI、Cursor、Copilot…�
 ## 用白話說
 
 新來的廚師很有天分，但不懂店裡的規矩。skill 檔案就是貼在廚房門內側的
-**店規手冊**：先試味道、把點餐寫在單子上、用我們的食材櫃、照我們的方式
+**店規手冊**：先試味道、把點餐寫在單子上、用我們的廚具、照我們的方式
 擺盤。代理在開始下廚之前會先讀它。
 
 ```mermaid
@@ -66,16 +66,16 @@ flowchart LR
 
     或者不用外掛，當成個人的 skill 檔案：
 
-    === "macOS / Linux"
-
-        ```sh
-        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         New-Item -ItemType Directory -Force "$HOME\.claude\skills\wavu" | Out-Null; irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -OutFile "$HOME\.claude\skills\wavu\SKILL.md"
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
         ```
 
 === "Claude Desktop / claude.ai"
@@ -92,16 +92,16 @@ flowchart LR
 
     在你的腳本資料夾裡（代理會自動讀取）：
 
-    === "macOS / Linux"
-
-        ```sh
-        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -OutFile AGENTS.md
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
         ```
 
     若要用在所有專案，就存成 `~/.codex/AGENTS.md`。

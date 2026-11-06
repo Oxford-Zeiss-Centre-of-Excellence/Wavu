@@ -2,19 +2,20 @@
 
 ## L'idée en mots simples
 
-Jusqu'ici, le serveur de chaque client (Fiji ou napari) cuisine dans une
-cuisine sur l'ordinateur du client lui-même, avec un garde-manger que pixi
-remplit sur place. Un **conteneur** est un **food truck** : toute la
-cuisine, garde-manger déjà rempli, tient dans un seul véhicule que vous
-pouvez garer n'importe où. Votre visualiseur prend toujours la commande ; il
-va simplement jusqu'au camion.
+Jusqu'ici, le serveur de chaque client (Fiji ou napari) porte la commande à
+une cuisine sur l'ordinateur du client lui-même, où pixi installe la
+batterie de cuisine de chaque recette. Un **conteneur**, c'est **toute la
+cuisine, emballée avec sa batterie de cuisine**, prête à être installée
+n'importe où : sur votre ordinateur, un serveur du labo ou un cluster. Votre
+visualiseur prend toujours la commande et apporte les ingrédients (vos
+images) ; il va simplement jusqu'à l'endroit où se trouve cette cuisine.
 
 ```mermaid
 flowchart LR
     V["Fiji ou napari<br/>(le serveur)"]:::fiji
-    T["conteneur<br/>(le food truck)"]:::box
+    T["conteneur<br/>(toute la cuisine,<br/>emballée avec sa batterie de cuisine)"]:::box
     W["worker wavu<br/>+ votre script"]:::worker
-    E[("garde-manger<br/>de pixi.lock")]:::env
+    E[("batterie de cuisine<br/>de pixi.lock")]:::env
     D[("/my/data<br/>= /data")]:::script
     V -- "commande (port 8765)" --> W
     T -.- W
@@ -46,17 +47,6 @@ lance l'image. L'image est une image Linux (OCI) ordinaire, donc chacun de
 ces outils convient ; les commandes ci-dessous disent `docker`, et les
 autres acceptent les mêmes mots `build`/`run` :
 
-=== "macOS"
-
-    - **[`container`](https://github.com/apple/container) d'Apple** (gratuit et
-      open source, par Apple ; Apple silicon, macOS 26 recommandé) : lance
-      chaque conteneur dans sa propre petite machine virtuelle.
-      `container build -t my-tool .` et `container run …` ; consultez
-      `container run --help` pour ses options de port et de dossier.
-    - [OrbStack](https://orbstack.dev), [Colima](https://github.com/abiosoft/colima)
-      ou [Podman Desktop](https://podman-desktop.io) : des alternatives légères
-      à Docker Desktop qui acceptent les mêmes commandes `docker`.
-
 === "Windows"
 
     Les images Linux tournent sous Windows grâce à **WSL 2**, le Linux
@@ -69,6 +59,17 @@ autres acceptent les mêmes mots `build`/`run` :
       pour vous.
 
     Dans WSL, votre dossier `D:\data` est `/mnt/d/data`.
+
+=== "macOS"
+
+    - **[`container`](https://github.com/apple/container) d'Apple** (gratuit et
+      open source, par Apple ; Apple silicon, macOS 26 recommandé) : lance
+      chaque conteneur dans sa propre petite machine virtuelle.
+      `container build -t my-tool .` et `container run …` ; consultez
+      `container run --help` pour ses options de port et de dossier.
+    - [OrbStack](https://orbstack.dev), [Colima](https://github.com/abiosoft/colima)
+      ou [Podman Desktop](https://podman-desktop.io) : des alternatives légères
+      à Docker Desktop qui acceptent les mêmes commandes `docker`.
 
 === "Linux"
 
@@ -142,7 +143,7 @@ c'est pourquoi le visualiseur doit connaître ses deux noms.
 
 ## Une autre machine
 
-Pour faire tourner le camion sur un serveur du labo, démarrez-le là-bas
+Pour installer la cuisine sur un serveur du labo, démarrez-la là-bas
 avec `-p 8765:8765` (toutes les adresses réseau, pas seulement
 `127.0.0.1`). Copiez son `.wavu/worker.json` sur votre ordinateur. Dans
 napari, mettez l'adresse du serveur dans **Host** (Fiji et napari ont tous
@@ -225,7 +226,7 @@ de calcul lui-même ; joignez-le par un tunnel SSH, comme ci-dessus.
 
 `docker build`, puis `docker run` avec un port, un jeton et votre dossier de
 données, et connectez-vous depuis Fiji ou napari avec le fichier de poignée
-de main et les deux noms du dossier : toute la cuisine, garée là où vous en
-avez besoin.
+de main et les deux noms du dossier : toute la cuisine, emballée avec sa
+batterie de cuisine et installée là où vous en avez besoin.
 
 [Suite : partager avec votre labo :material-arrow-right:](../fiji/with-your-lab.md){ .md-button }

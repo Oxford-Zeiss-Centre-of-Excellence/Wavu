@@ -10,6 +10,12 @@ and the script runs in **its own isolated [pixi](https://pixi.sh)
 environment**. Logs and progress stream back, and the results open as
 images, tables or ROIs. The same script folder works in both viewers.
 
+**Not just a bridge:** your own Groovy script, ImageJ macro or Python notebook
+can call a Wavu script as one step of a scripted, end-to-end analysis (loop
+over a folder, native preprocessing and measurement, the heavy AI step in its
+own environment). A guide section on pipelines, batch processing and large data
+is coming soon.
+
 ```mermaid
 flowchart LR
     subgraph FE["Frontends"]

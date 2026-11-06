@@ -3,15 +3,15 @@
 ## Die Idee in einfachen Worten
 
 Wenn im Restaurant eine Bestellung schiefgeht, fragt man sich: Hat der
-Kellner die Bestellung aufgenommen, ist die Küche offen, ist die
-Vorratskammer gefüllt, hat der Koch etwas anbrennen lassen? Probleme mit
+Kellner die Bestellung aufgenommen, ist die Küche offen, sind die
+Küchengeräte bereit, hat der Koch etwas anbrennen lassen? Probleme mit
 Wavu stecken an denselben wenigen Stellen, und im **Log-Fenster**
 (**Window › Log**, falls es versteckt ist) schreibt Wavu auf, was es gerade
 tut. Zeilen von Wavu selbst beginnen mit `[Wavu]`.
 
 ```mermaid
 flowchart LR
-    A["Fiji: Menü<br/>und Dialog"]:::fiji --> B["pixi: Vorratskammer<br/>füllen"]:::env --> C["Worker:<br/>Start"]:::worker --> D["Ihr run():<br/>kochen"]:::script
+    A["Fiji: Menü<br/>und Dialog"]:::fiji --> B["pixi: Küchengeräte<br/>einrichten"]:::env --> C["Worker:<br/>Start"]:::worker --> D["Ihr run():<br/>kochen"]:::script
     A -. "Skript nicht aufgelistet?" .- A
     B -. "pixi nicht gefunden? langsam?" .- B
     D -. "Fehler im Log?" .- D

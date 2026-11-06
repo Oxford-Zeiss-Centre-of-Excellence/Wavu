@@ -35,6 +35,7 @@ Todo está en `Fiji.app/scripts/Plugins/Wavu/`:
 | Archivo | Entrada de menú |
 |---|---|
 | `Run_Python_Script.groovy` | **Run Python Script** |
+| `Run_Script_(Macro).groovy` | **Run Script (Macro)**: se puede grabar, sin diálogos, para macros y flujos de trabajo por lotes |
 | `Setup_Python_(pixi).groovy` | **Setup Python (pixi)** |
 | `Connect_to_Running_Worker.groovy` | **Connect to Running Worker** |
 | `Stop_Worker.groovy` | **Stop Worker** |

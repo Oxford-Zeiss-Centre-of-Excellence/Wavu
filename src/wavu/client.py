@@ -80,6 +80,10 @@ def worker_command(script_dir: Path, pixi: str | None = None, frozen: bool = Fal
     if pixi is None:
         raise WorkerError("pixi was not found. Install it from https://pixi.sh, or set WAVU_PIXI to its path.")
     cmd = [pixi, "run", "--manifest-path", str(manifest)]
+    if not (script_dir / ".pixi" / "envs").is_dir():
+        # First start: pixi installs the environment, and without a terminal it shows
+        # no progress at all. -v makes it log each stage; on_log forwards the lines.
+        cmd.insert(2, "-v")
     if frozen:
         cmd.append("--frozen")
     cmd += ["wavu-worker", "--script-dir", str(script_dir)]

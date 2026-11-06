@@ -114,7 +114,7 @@ with no notification.
 
 ## Layer conversion
 
-`_convert.py` holds the rules from [What you get back in napari](layers.md):
+`_convert.py` holds the rules from [What you can return](../write/outputs.md) (napari tab):
 
 - `layer_input(layer)`: data (full-resolution level, dask computed), the
   title, `pixel_um` from equal last-two `scale` values in micrometres or

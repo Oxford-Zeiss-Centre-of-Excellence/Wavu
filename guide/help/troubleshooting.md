@@ -3,14 +3,14 @@
 ## The idea in plain words
 
 When a restaurant order goes wrong, you ask: did the waiter get the order,
-is the kitchen open, is the pantry stocked, did the cook burn something?
+is the kitchen open, is the kitchenware ready, did the cook burn something?
 Wavu problems fall into the same few places, and the **Log window**
 (**Window › Log** if it is hidden) is where Wavu writes what it is doing.
 Lines from Wavu itself start with `[Wavu]`.
 
 ```mermaid
 flowchart LR
-    A["Fiji: menu<br/>& dialog"]:::fiji --> B["pixi: stock<br/>the pantry"]:::env --> C["worker:<br/>start"]:::worker --> D["your run():<br/>cook"]:::script
+    A["Fiji: menu<br/>& dialog"]:::fiji --> B["pixi: set up<br/>the kitchenware"]:::env --> C["worker:<br/>start"]:::worker --> D["your run():<br/>cook"]:::script
     A -. "script not listed?" .- A
     B -. "pixi not found? slow?" .- B
     D -. "error in the Log?" .- D

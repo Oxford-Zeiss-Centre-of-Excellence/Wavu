@@ -4,8 +4,8 @@
 
 Instalar Wavu es como contratar al camarero. Copias unos pocos archivos
 pequeños en Fiji, y eso añade un menú **Plugins › Wavu**. Después le pides a
-Wavu que traiga **pixi**, la herramienta que llena la despensa de cada script
-(descarga Python y los paquetes que necesita un script). *No* tienes que
+Wavu que traiga **pixi**, la herramienta que prepara los utensilios de cocina de
+cada script (descarga Python y los paquetes que necesita un script). *No* tienes que
 instalar Python, conda ni nada más por tu cuenta.
 
 ```mermaid

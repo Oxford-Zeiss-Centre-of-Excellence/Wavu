@@ -14,7 +14,7 @@ sequenceDiagram
     participant N as napari panel (waiter)
     participant W as Worker (kitchen)
     You->>N: pick folder, Start worker
-    N->>W: start (first time: stock the pantry)
+    N->>W: start (first time: set up the kitchenware)
     W-->>N: here is my menu (PARAMS)
     N->>You: the form
     You->>N: Run
@@ -31,7 +31,7 @@ for example in *Documents*:
 [Download ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
 
 You get a folder called `Wavu-Script-Template-main` with `script.py` (the
-recipe) and `pixi.toml` (the shopping list for its pantry). The right folder
+recipe) and `pixi.toml` (the list of its kitchenware). The right folder
 is the one that **directly** contains `pixi.toml`.
 
 ## Step 2: open an image
@@ -49,8 +49,8 @@ for example **File › Open Sample › napari builtins › Camera**. Open it
 !!! info "The first start takes a few minutes, once"
     The panel's log shows `Starting worker: …` and
     *(the first start installs the script's environment; this can take a few
-    minutes)*, followed by pixi's progress. This is pixi stocking the
-    script's pantry. When you see `Worker ready (wavu …, port …)`, it is
+    minutes)*, followed by pixi's progress. This is pixi setting up the
+    script's kitchenware. When you see `Worker ready (wavu …, port …)`, it is
     done. Next time the worker starts in seconds. To give up, press
     **Cancel**.
 
@@ -80,7 +80,7 @@ Done.
 ```
 
 Try again with **Sigma (pixels)** set to `8`. This time it starts at once,
-because the kitchen is still running and the pantry is full.
+because the kitchen is still running and the kitchenware is ready.
 
 ## Cancel and stop
 
@@ -104,8 +104,8 @@ because the kitchen is still running and the pantry is full.
 
 ## A worker somewhere else
 
-The worker can also run in a container or on a server, a food truck
-instead of a kitchen next door. Tick **Remote / container**; four fields
+The worker can also run in a container or on a server: the whole kitchen,
+packed up with its kitchenware and set up somewhere else. Tick **Remote / container**; four fields
 appear: **Handshake file** (default `~/.wavu/worker.json`), **Host**
 (empty: the address in the handshake file), **Host folder** and
 **Container folder** (your data folder's two names). Then press
@@ -117,7 +117,7 @@ Using Fiji instead? The same steps there:
 
 ## In one sentence
 
-Pick a script folder, press **Start worker** (wait once for its pantry),
+Pick a script folder, press **Start worker** (wait once for its kitchenware),
 fill in the form, press **Run**, and the result appears as a new layer.
 
-[Next: what you get back in napari :material-arrow-right:](layers.md){ .md-button }
+[Next: wavu-napari internals (advanced) :material-arrow-right:](internals.md){ .md-button }

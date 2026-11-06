@@ -114,7 +114,7 @@ create_worker`로 감싸요. 감싼 작업은 예외를 던지는 대신 `(ok, v
 
 ## 레이어 변환
 
-`_convert.py`에는 [napari에서 돌려받는 것](layers.md)의 규칙이 들어 있어요.
+`_convert.py`에는 [돌려줄 수 있는 것](../write/outputs.md)(napari 탭)의 규칙이 들어 있어요.
 
 - `layer_input(layer)`: 데이터(최고 해상도 단계, dask는 계산해서), 제목,
   마지막 두 `scale` 값이 같고 단위가 마이크로미터나 픽셀이면 `pixel_um`,

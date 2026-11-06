@@ -105,7 +105,7 @@ magicgui 小工具：
 
 ## 圖層轉換
 
-`_convert.py` 實作了[在 napari 中會拿回什麼](layers.md)裡的規則：
+`_convert.py` 實作了[可以回傳什麼](../write/outputs.md)（napari 分頁）裡的規則：
 
 - `layer_input(layer)`：資料（最高解析度那一層，dask 會先計算出來）、標題、
   `pixel_um`（取自最後兩個相等的 `scale` 值，單位為微米或像素），RGB 則為

@@ -2,18 +2,19 @@
 
 ## The idea in plain words
 
-So far, every customer's waiter (Fiji or napari) cooks in a kitchen on the
-customer's own computer, with a pantry that pixi stocks there. A
-**container** is a **food truck**: the whole kitchen, with its pantry
-already stocked, packed into one vehicle that you can park anywhere. Your
-viewer still takes the order; it simply walks over to the truck.
+So far, every customer's waiter (Fiji or napari) brings the order to a
+kitchen on the customer's own computer, where pixi sets up each recipe's
+kitchenware. A **container** is **the whole kitchen, packed up with its
+kitchenware**, ready to be set up anywhere: on your computer, a lab server
+or a cluster. Your viewer still takes the order and carries the ingredients
+(your images); it simply walks over to wherever that kitchen stands.
 
 ```mermaid
 flowchart LR
     V["Fiji or napari<br/>(the waiter)"]:::fiji
-    T["container<br/>(the food truck)"]:::box
+    T["container<br/>(the whole kitchen,<br/>packed up with its kitchenware)"]:::box
     W["wavu worker<br/>+ your script"]:::worker
-    E[("pantry from<br/>pixi.lock")]:::env
+    E[("kitchenware from<br/>pixi.lock")]:::env
     D[("/my/data<br/>= /data")]:::script
     V -- "order (port 8765)" --> W
     T -.- W
@@ -42,17 +43,6 @@ The image is an ordinary Linux (OCI) image, so any of these work; the
 commands below say `docker`, and the others take the same `build`/`run`
 words:
 
-=== "macOS"
-
-    - **Apple's [`container`](https://github.com/apple/container)** (free and
-      open source, from Apple; Apple silicon, macOS 26 recommended): runs each
-      container in its own tiny virtual machine. `container build -t my-tool .`
-      and `container run …`; check `container run --help` for its port and
-      folder options.
-    - [OrbStack](https://orbstack.dev), [Colima](https://github.com/abiosoft/colima)
-      or [Podman Desktop](https://podman-desktop.io): light alternatives to
-      Docker Desktop that accept the same `docker` commands.
-
 === "Windows"
 
     Linux images run on Windows through **WSL 2**, Windows' built-in Linux:
@@ -63,6 +53,17 @@ words:
       [Rancher Desktop](https://rancherdesktop.io), which set WSL 2 up for you.
 
     Inside WSL, your `D:\data` folder is `/mnt/d/data`.
+
+=== "macOS"
+
+    - **Apple's [`container`](https://github.com/apple/container)** (free and
+      open source, from Apple; Apple silicon, macOS 26 recommended): runs each
+      container in its own tiny virtual machine. `container build -t my-tool .`
+      and `container run …`; check `container run --help` for its port and
+      folder options.
+    - [OrbStack](https://orbstack.dev), [Colima](https://github.com/abiosoft/colima)
+      or [Podman Desktop](https://podman-desktop.io): light alternatives to
+      Docker Desktop that accept the same `docker` commands.
 
 === "Linux"
 
@@ -132,7 +133,7 @@ know its two names.
 
 ## Another machine
 
-To run the truck on a lab server, start it there with `-p 8765:8765`
+To set the kitchen up on a lab server, start it there with `-p 8765:8765`
 (every network address, not only `127.0.0.1`). Copy its
 `.wavu/worker.json` to your computer. In napari, put the server's address
 in **Host** (Fiji and napari both have this field). For big
@@ -214,6 +215,7 @@ through an SSH tunnel, as above.
 
 `docker build`, then `docker run` with a port, a token and your data folder,
 and connect from Fiji or napari with the handshake file and the folder's
-two names: the whole kitchen, parked wherever you need it.
+two names: the whole kitchen, packed up with its kitchenware and set up
+wherever you need it.
 
 [Next: share with your lab :material-arrow-right:](../fiji/with-your-lab.md){ .md-button }

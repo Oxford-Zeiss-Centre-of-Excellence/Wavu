@@ -8,7 +8,7 @@
 
 ## La idea en palabras sencillas
 
-Compartir con tu laboratorio es darle un kit de comida a un vecino. Compartir
+Compartir con tu laboratorio es darle una caja con la receta a un vecino. Compartir
 con el mundo es ponerlo **en la estantería de una tienda**: necesita una
 dirección permanente, un número de versión en la caja y, a ser posible, un
 robot que empaquete una caja nueva cada vez que cambias la receta, para que

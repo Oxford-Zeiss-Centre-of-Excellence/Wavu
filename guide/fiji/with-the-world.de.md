@@ -9,10 +9,10 @@
 ## Die Idee in einfachen Worten
 
 Mit dem eigenen Labor zu teilen ist, als würden Sie der Nachbarin eine
-Kochbox reichen. Mit der Welt zu teilen heißt, sie **ins Ladenregal** zu
+Rezeptbox reichen. Mit der Welt zu teilen heißt, sie **ins Ladenregal** zu
 stellen: Sie braucht eine feste Adresse, eine Versionsnummer auf der
 Schachtel und am besten einen Roboter, der bei jeder Rezeptänderung eine
-frische Schachtel packt, damit Sie nie von Hand packen und eine Zutat
+frische Schachtel packt, damit Sie nie von Hand packen und ein Teil
 vergessen.
 
 Dieser Roboter heißt **CI** („Continuous Integration“, fortlaufende

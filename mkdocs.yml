@@ -14,6 +14,8 @@ copyright: Wavu is GPL-3.0-or-later · Oxford-Zeiss Centre of Excellence
 docs_dir: guide
 exclude_docs: |
   TRANSLATING.md
+  # Workflows: being reworked (pipelines, batch, large data); hidden until tested
+  workflows/
 
 theme:
   name: material
@@ -67,6 +69,7 @@ plugins:
             Home: Accueil
             How it works: Comment ça marche
             Write a script: Écrire un script
+            Workflows: Flux de travail
             AI agents: Agents IA
             Help: Aide
         - locale: de
@@ -76,6 +79,7 @@ plugins:
             Home: Startseite
             How it works: So funktioniert es
             Write a script: Skript schreiben
+            Workflows: Workflows
             AI agents: KI-Agenten
             Help: Hilfe
         - locale: es
@@ -85,6 +89,7 @@ plugins:
             Home: Inicio
             How it works: Cómo funciona
             Write a script: Escribir un script
+            Workflows: Flujos de trabajo
             AI agents: Agentes de IA
             Help: Ayuda
         - locale: ru
@@ -94,6 +99,7 @@ plugins:
             Home: Главная
             How it works: Как это устроено
             Write a script: Написать скрипт
+            Workflows: Рабочие процессы
             AI agents: ИИ-агенты
             Help: Помощь
         - locale: ja
@@ -103,6 +109,7 @@ plugins:
             Home: ホーム
             How it works: しくみ
             Write a script: スクリプトを書く
+            Workflows: ワークフロー
             AI agents: AI エージェント
             Help: ヘルプ
         - locale: ko
@@ -112,6 +119,7 @@ plugins:
             Home: 홈
             How it works: 작동 방식
             Write a script: 스크립트 작성
+            Workflows: 워크플로
             AI agents: AI 에이전트
             Help: 도움말
         - locale: zh-Hant
@@ -121,8 +129,9 @@ plugins:
             Home: 首頁
             How it works: 運作原理
             Write a script: 撰寫腳本
+            Workflows: 工作流程
             AI agents: AI 代理
-            Help: 說明
+            Help: 疑難排解
         - locale: zh-Hans
           name: 简体中文
           build: true
@@ -130,8 +139,9 @@ plugins:
             Home: 首页
             How it works: 工作原理
             Write a script: 编写脚本
+            Workflows: 工作流程
             AI agents: AI 智能体
-            Help: 帮助
+            Help: 疑难解答
           theme:
             language: zh  # Material calls Simplified Chinese "zh"
 
@@ -181,8 +191,8 @@ nav:
   - wavu-napari:
       - napari/install.md
       - napari/first-run.md
-      - napari/layers.md
       - napari/internals.md
+  - wavu-marketplace: marketplace.md
   - AI agents: agents.md
   - Help:
       - help/troubleshooting.md

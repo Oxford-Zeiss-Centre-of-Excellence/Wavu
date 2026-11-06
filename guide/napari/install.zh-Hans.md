@@ -1,30 +1,16 @@
 # 安装 wavu-napari
 
-## 为什么需要 Wavu { #why-this-exists }
-
-- **所有东西装在同一个环境里，迟早会出问题。** 用 `pip` 把一个 Cellpose 插件
-  装进 napari 的环境，它可能会带进另一个版本的 PyTorch、NumPy 或 Qt；下一个
-  插件又锁定别的版本，结果 napari 或同事的工具就启动不了。在同一个环境里混用
-  `conda` 和 `pip`，只会更糟。
-- **在 Fiji 里运行 Python 更麻烦。** Fiji 自带的脚本语言是 Jython（Python 2.7，
-  没有 NumPy）。改用 PyImageJ 这类桥接工具，就得在每台电脑上手动对齐 Java、
-  conda 和软件包的版本。
-- **Wavu 的做法：** Fiji/napari 本身保持小巧干净，每个脚本都在**它自己的
-  pixi 环境**里运行，由它自己的 `pixi.lock` 创建。脚本之间不共享软件包，所以
-  不会互相破坏，也不会破坏 napari 或 Fiji；同一个文件夹在每台电脑上都会装出
-  完全相同的环境。
-
 ## 用大白话说
 
 在 napari 里，Wavu 是同一个厨房的**第二位服务员**。它是一个停靠在 napari
 窗口侧边的面板：你选一个脚本文件夹、填好表单、按下 **Run**（运行），结果就会
 以图层的形式出现。
 
-这里有**两个食材柜**，把它们分开，就是全部的诀窍：
+这里有**两套厨具**，把它们分开，就是全部的诀窍：
 
-- **napari 的食材柜**里装的是 napari 本身、Qt 和 Wavu 面板。它很小，而且
+- **napari 的厨具**里装的是 napari 本身、Qt 和 Wavu 面板。它很小，而且
   不会因为你添加脚本而改变。
-- **每个脚本的食材柜**里装的是*那个*脚本需要的东西（Cellpose、PyTorch、
+- **每个脚本的厨具**里装的是*那个*脚本需要的东西（Cellpose、PyTorch、
   scikit-image……），按照它文件夹里的 `pixi.toml` 建立。
 
 所以给某个脚本安装 PyTorch，绝不会弄坏 napari；napari 升级，也绝不会弄坏
@@ -104,7 +90,7 @@ pixi 会更新 napari 的环境。
 ## 一句话总结
 
 clone Wavu、运行 `pixi run -e napari napari`，再打开
-**Plugins › Run Python Script (Wavu)**：napari 有自己的小食材柜，每个脚本
+**Plugins › Run Python Script (Wavu)**：napari 有自己的一小套厨具，每个脚本
 也各自带着自己的。
 
 [下一步：在 napari 中第一次运行 :material-arrow-right:](first-run.md){ .md-button }

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" aria-labelledby="t d" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
   <title id="t">The Wavu restaurant</title>
-  <desc id="d">The viewer (Fiji or napari) is the waiter that takes the order and serves the plate. The worker is the kitchen that cooks your script. Every recipe has its own pantry, the pixi environment.</desc>
+  <desc id="d">The viewer (Fiji or napari) is the waiter that takes the order and serves the plate. The worker is the kitchen that cooks your script. Your images are the ingredients. Every recipe has its own kitchenware (pots, knives and ovens): the pixi environment with the packages it needs.</desc>
   <defs>
     <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#546e7a"/>
@@ -29,14 +29,14 @@
   <text x="426" y="136" text-anchor="middle" font-size="14" font-weight="700" fill="#e65100">blur script.py</text>
   <text x="426" y="155" text-anchor="middle" font-size="12" fill="#e65100">the recipe</text>
   <rect x="346" y="180" width="160" height="56" rx="10" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="2"/>
-  <text x="426" y="204" text-anchor="middle" font-size="14" font-weight="700" fill="#4a148c">its own pantry</text>
+  <text x="426" y="204" text-anchor="middle" font-size="13" font-weight="700" fill="#4a148c">its own kitchenware</text>
   <text x="426" y="223" text-anchor="middle" font-size="12" fill="#4a148c">numpy, scipy</text>
   <!-- recipe 2 -->
   <rect x="518" y="112" width="160" height="56" rx="10" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
   <text x="598" y="136" text-anchor="middle" font-size="14" font-weight="700" fill="#e65100">cellpose script.py</text>
   <text x="598" y="155" text-anchor="middle" font-size="12" fill="#e65100">another recipe</text>
   <rect x="518" y="180" width="160" height="56" rx="10" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="2"/>
-  <text x="598" y="204" text-anchor="middle" font-size="14" font-weight="700" fill="#4a148c">its own pantry</text>
+  <text x="598" y="204" text-anchor="middle" font-size="13" font-weight="700" fill="#4a148c">its own kitchenware</text>
   <text x="598" y="223" text-anchor="middle" font-size="12" fill="#4a148c">pytorch, cellpose</text>
-  <text x="360" y="288" text-anchor="middle" font-size="12" fill="#546e7a">Pantries are never shared, so one recipe cannot spoil another.</text>
+  <text x="360" y="288" text-anchor="middle" font-size="12" fill="#546e7a">Kitchenware is never shared, so one recipe cannot spoil another.</text>
 </svg>

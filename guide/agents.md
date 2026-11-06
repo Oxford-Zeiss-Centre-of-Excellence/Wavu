@@ -9,7 +9,7 @@ works the Wavu way on your own computer.
 
 A new cook in the kitchen is talented but doesn't know the house rules. The
 skill file is the **house rulebook** taped inside the kitchen door: taste
-first, write the order on the ticket, use our pantry, plate it our way. The
+first, write the order on the ticket, use our kitchenware, plate it our way. The
 agent reads it before it starts cooking.
 
 ```mermaid
@@ -70,16 +70,16 @@ flowchart LR
 
     Or as a personal skill file, without the plugin:
 
-    === "macOS / Linux"
-
-        ```sh
-        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         New-Item -ItemType Directory -Force "$HOME\.claude\skills\wavu" | Out-Null; irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -OutFile "$HOME\.claude\skills\wavu\SKILL.md"
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
         ```
 
 === "Claude Desktop / claude.ai"
@@ -96,16 +96,16 @@ flowchart LR
 
     In your script folder (the agent reads it automatically):
 
-    === "macOS / Linux"
-
-        ```sh
-        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -OutFile AGENTS.md
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
         ```
 
     Or for every project, save it as `~/.codex/AGENTS.md`.

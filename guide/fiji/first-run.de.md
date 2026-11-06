@@ -14,7 +14,7 @@ sequenceDiagram
     participant Fiji as Fiji (Kellner)
     participant W as Worker (Küche)
     You->>Fiji: Run Python Script, Ordner wählen
-    Fiji->>W: starten (beim ersten Mal: Vorratskammer füllen)
+    Fiji->>W: starten (beim ersten Mal: Küchengeräte einrichten)
     W-->>Fiji: hier ist meine Speisekarte (PARAMS)
     Fiji->>You: Dialog
     You->>Fiji: OK
@@ -31,8 +31,8 @@ Ort, an dem Sie sie wiederfinden, zum Beispiel unter *Dokumente*:
 [ZIP herunterladen](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
 
 Sie erhalten einen Ordner namens `Wavu-Script-Template-main`. Darin liegen
-`script.py` (das Rezept) und `pixi.toml` (die Einkaufsliste für seine
-Vorratskammer). Mehr ist ein *Skriptordner* nicht.
+`script.py` (das Rezept) und `pixi.toml` (die Liste seiner
+Küchengeräte). Mehr ist ein *Skriptordner* nicht.
 
 !!! tip "Ein Ordner zu tief?"
     *Alle extrahieren* unter Windows legt manchmal einen Ordner in einem
@@ -60,7 +60,7 @@ In Fiji: **File › Open Samples › Blobs (25K)**.
     Im Log-Fenster steht
     *First start of '…': downloading its Python packages. This happens once
     and can take several minutes…*, und die Statusleiste zählt die Sekunden.
-    Das ist pixi, das die Vorratskammer füllt. Lassen Sie es fertig werden;
+    Das ist pixi, das die Küchengeräte einrichtet. Lassen Sie es fertig werden;
     beim nächsten Mal startet das Skript in Sekunden.
 
 3. Der Dialog **Wavu: script** erscheint. Seine erste Zeile ist die
@@ -84,7 +84,7 @@ Blurring a (254, 256) uint8 image with sigma=2.0
 ```
 
 Versuchen Sie es noch einmal mit **Sigma (pixels)** auf `8`. Diesmal geht es
-sofort los, weil die Küche noch läuft und die Vorratskammer voll ist.
+sofort los, weil die Küche noch läuft und die Küchengeräte bereitstehen.
 
 ## Was ist gerade passiert?
 

@@ -11,7 +11,7 @@ Ihrem eigenen Rechner nach Wavu-Art.
 Ein neuer Koch in der Küche ist talentiert, kennt aber die Hausregeln nicht.
 Die Skill-Datei ist die **Hausordnung**, die innen an der Küchentür klebt:
 zuerst abschmecken, die Bestellung auf den Bon schreiben, unsere
-Vorratskammer benutzen, so anrichten, wie wir es tun. Der Agent liest sie,
+Küchengeräte benutzen, so anrichten, wie wir es tun. Der Agent liest sie,
 bevor er zu kochen beginnt.
 
 ```mermaid
@@ -74,16 +74,16 @@ flowchart LR
 
     Oder als persönliche Skill-Datei, ohne das Plugin:
 
-    === "macOS / Linux"
-
-        ```sh
-        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         New-Item -ItemType Directory -Force "$HOME\.claude\skills\wavu" | Out-Null; irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -OutFile "$HOME\.claude\skills\wavu\SKILL.md"
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
         ```
 
 === "Claude Desktop / claude.ai"
@@ -103,16 +103,16 @@ flowchart LR
 
     In Ihrem Skriptordner (der Agent liest die Datei automatisch):
 
-    === "macOS / Linux"
-
-        ```sh
-        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -OutFile AGENTS.md
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
         ```
 
     Oder, für alle Projekte, speichern Sie sie als `~/.codex/AGENTS.md`.

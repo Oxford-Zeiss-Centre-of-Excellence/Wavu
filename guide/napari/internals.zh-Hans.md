@@ -105,7 +105,7 @@ magicgui 部件：
 
 ## 图层转换
 
-`_convert.py` 实现了[在 napari 中会得到什么](layers.md)里的规则：
+`_convert.py` 实现了[可以返回什么](../write/outputs.md)（napari 标签页）里的规则：
 
 - `layer_input(layer)`：数据（全分辨率那一层，dask 会先计算出来）、标题、
   `pixel_um`（取自最后两个相等的 `scale` 值，单位为微米或像素），RGB 则为

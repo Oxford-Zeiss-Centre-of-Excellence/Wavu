@@ -13,7 +13,7 @@ sequenceDiagram
     participant N as napari 패널 (웨이터)
     participant W as 워커 (주방)
     You->>N: 폴더 고르기, Start worker
-    N->>W: 시작 (처음: 창고 채우기)
+    N->>W: 시작 (처음: 주방 도구 갖추기)
     W-->>N: 메뉴 (PARAMS)
     N->>You: 양식
     You->>N: Run
@@ -30,7 +30,7 @@ sequenceDiagram
 [ZIP 내려받기](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
 
 `Wavu-Script-Template-main`이라는 폴더가 생기고, 그 안에 `script.py`(레시피)와
-`pixi.toml`(식료품 창고의 장보기 목록)이 있어요. 올바른 폴더는
+`pixi.toml`(그 주방 도구 목록)이 있어요. 올바른 폴더는
 `pixi.toml`을 **바로** 담고 있는 폴더예요.
 
 ## 2단계: 이미지 열기
@@ -49,7 +49,7 @@ sequenceDiagram
     패널 로그에 `Starting worker: …`와
     *(the first start installs the script's environment; this can take a few
     minutes)*가 나오고, 이어서 pixi의 진행 상황이 나와요. pixi가 스크립트의
-    식료품 창고를 채우는 중이에요. `Worker ready (wavu …, port …)`가 보이면
+    주방 도구를 갖추는 중이에요. `Worker ready (wavu …, port …)`가 보이면
     끝난 거예요. 다음부터는 워커가 몇 초 만에 시작해요. 그만두려면
     **Cancel**을 누르세요.
 
@@ -79,7 +79,7 @@ Done.
 ```
 
 **Sigma (pixels)**를 `8`로 바꿔 다시 해 보세요. 이번에는 바로 시작해요.
-주방이 아직 돌고 있고 식료품 창고도 가득 차 있으니까요.
+주방이 아직 돌고 있고 주방 도구도 준비되어 있으니까요.
 
 ## 취소와 중지
 
@@ -101,8 +101,8 @@ Done.
 
 ## 다른 곳에 있는 워커
 
-워커는 컨테이너나 서버에서도 실행할 수 있어요. 옆집 주방 대신 푸드 트럭인
-셈이에요. **Remote / container**를 체크하면 입력란 네 개가 나타나요.
+워커는 컨테이너나 서버에서도 실행할 수 있어요. 주방 도구까지 꾸려 넣은
+주방 전체를 다른 곳에 차린 셈이에요. **Remote / container**를 체크하면 입력란 네 개가 나타나요.
 **Handshake file**(핸드셰이크 파일, 기본값 `~/.wavu/worker.json`),
 **Host**(호스트, 비워 두면 핸드셰이크 파일의 주소), **Host folder**(호스트
 폴더)와 **Container folder**(컨테이너 폴더, 데이터 폴더의 두 이름)예요.
@@ -114,7 +114,7 @@ Fiji를 쓰나요? 같은 단계를 Fiji에서:
 
 ## 한 문장으로
 
-스크립트 폴더를 고르고, **Start worker**를 누르고(식료품 창고를 위해 한 번만
-기다리고), 양식을 채우고, **Run**을 누르면 결과가 새 레이어로 나타나요.
+스크립트 폴더를 고르고, **Start worker**를 누르고(주방 도구를 갖추는 동안 한
+번만 기다리고), 양식을 채우고, **Run**을 누르면 결과가 새 레이어로 나타나요.
 
-[다음: napari에서 돌려받는 것 :material-arrow-right:](layers.md){ .md-button }
+[다음: wavu-napari 내부 구조 (고급) :material-arrow-right:](internals.md){ .md-button }

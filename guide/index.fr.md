@@ -12,45 +12,45 @@ regardez vos images, **Fiji** ou **napari**, à Python, où vivent des outils
 comme Cellpose et scikit-image.
 
 Imaginez un restaurant. **Le visualiseur est le serveur** : il prend votre
-commande (une boîte de dialogue avec quelques champs) et rapporte l'assiette
-à votre table (nouvelles images, tableaux, contours). **Le worker est la
-cuisine** derrière la porte, et chaque recette a **son propre garde-manger** :
-la recette Cellpose n'emprunte (et ne casse) jamais les ingrédients de la
-recette de flou. La même recette peut être servie par l'un ou l'autre
-serveur.
+commande (une boîte de dialogue avec quelques champs), apporte vos images en
+cuisine comme **ingrédients**, et rapporte l'assiette à votre table
+(nouvelles images, tableaux, contours). **Le worker est la cuisine** derrière
+la porte, et chaque recette a **sa propre batterie de cuisine**, ses propres
+casseroles, couteaux et fours (les paquets Python) : la recette Cellpose
+n'emprunte (et ne casse) jamais les ustensiles de la recette de flou. La même
+recette peut être servie par l'un ou l'autre serveur.
 
-```mermaid
-flowchart LR
-    subgraph FE["Les serveurs (frontends)"]
-        F["wavu-fiji<br/>Plugins › Wavu"]:::fiji
-        N["wavu-napari<br/>Run Python Script (Wavu)"]:::fiji
-    end
-    subgraph BE["La cuisine (backend)"]
-        W["worker wavu"]:::worker
-        S["votre script.py<br/>PARAMS + run()"]:::script
-        E[("son propre environnement pixi<br/>(le garde-manger)")]:::env
-    end
-    C["optionnel : toute la cuisine<br/>dans un conteneur<br/>(Docker / Apptainer)"]:::box
-    BE -.- C
-
-    F -- "votre commande" --> W
-    N -- "votre commande" --> W
-    W --> S
-    S -.- E
-    W -- "l'assiette + Log en direct" --> FE
-
-    classDef fiji   fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
-    classDef worker fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
-    classDef script fill:#fff3e0,stroke:#ef6c00,color:#e65100
-    classDef env    fill:#f3e5f5,stroke:#6a1b9a,color:#4a148c
-    style FE fill:#f5f9ff,stroke:#90caf9
-    style BE fill:#f6fbf6,stroke:#a5d6a7
-    classDef box    fill:#ffffff,stroke:#78909c,stroke-dasharray: 6 4,color:#455a64
-```
+![Les serveurs (frontends): wavu-fiji, wavu-napari → La cuisine (backend): worker wavu, votre script.py PARAMS + run(), son propre env. pixi (la batterie de cuisine) — optionnel : toute la cuisine dans un conteneur (Docker / Apptainer)](assets/img/home-model.svg){ width="1000" }
 
 **Un dossier de script, deux visualiseurs.** Vous écrivez `script.py` une
 seule fois ; les utilisateurs de Fiji comme ceux de napari le lancent, à
 chaque fois dans l'environnement propre au dossier.
+
+## Pourquoi Wavu existe { #why-this-exists }
+
+- **Un seul environnement pour tout finit par casser.** Installez avec `pip`
+  un plugin Cellpose dans l'environnement de napari : il peut amener une autre
+  version de PyTorch, NumPy ou Qt ; le plugin suivant en impose d'autres, et
+  napari ou l'outil d'un collègue ne démarre plus. Mélanger `conda` et `pip`
+  dans un même environnement aggrave les choses.
+- **Python dans Fiji, c'est encore plus dur.** Le langage de script de Fiji
+  est Jython (Python 2.7, sans NumPy). Les passerelles comme PyImageJ obligent
+  à accorder à la main les versions de Java, de conda et des paquets sur
+  chaque machine.
+- **La réponse de Wavu :** le visualiseur reste petit et propre, et chaque
+  script tourne dans **son propre environnement pixi**, construit à partir de
+  son propre `pixi.lock`. Les scripts ne partagent aucun paquet : ils ne
+  peuvent casser ni les autres, ni napari, ni Fiji, et le même dossier
+  s'installe à l'identique sur chaque ordinateur.
+
+## Plus qu'un pont : des analyses entières, en script
+
+Wavu est aussi un **appel de fonction** que vos propres scripts peuvent
+faire. Un script Groovy, une macro ImageJ ou un notebook Python parcourt un
+dossier, fait lui-même les étapes natives (ouvrir, prétraiter, mesurer,
+enregistrer) et ne confie à Wavu que l'étape lourde, comme Cellpose ; Wavu
+l'exécute dans son propre environnement et renvoie le résultat au script. Un
+seul script, tout le dossier, à chaque fois de la même façon.
 
 ## Par où voulez-vous commencer ? { #where-do-you-want-to-start }
 
@@ -60,8 +60,8 @@ chaque fois dans l'environnement propre au dossier.
 
     ---
 
-    Serveur, cuisine, garde-manger : ce qui tourne où, et pourquoi vos
-    paquets n'entrent jamais en conflit.
+    Serveur, cuisine, batterie de cuisine : ce qui tourne où, et pourquoi
+    vos paquets n'entrent jamais en conflit.
 
     [:octicons-arrow-right-24: Comment ça marche](model/what-is-wavu.md)
 
@@ -99,9 +99,14 @@ chaque fois dans l'environnement propre au dossier.
 
 ## Bon à savoir { #good-to-know }
 
-- **Données petites et interactives.** Une image qui tient en mémoire,
-  jusqu'à environ 1–2 Go. Pour de très gros volumes, utilisez plutôt un
-  traitement par lots ou un cluster de calcul (HPC).
+- **Quelle taille de données ?** L'usage interactif, c'est une image qui
+  tient en mémoire, environ 1–2 Go. Avec un traitement par blocs, en flux
+  (OME-Zarr), Wavu peut traiter jusqu'à environ 50 Go sur un ordinateur local,
+  **avec une réserve importante** : Fiji et napari sont des visualiseurs à
+  canevas, conçus pour des données en mémoire ; pendant un flux, ils ne voient
+  qu'un petit aperçu ou le résultat final, restent lents et ne sont pas
+  l'endroit recommandé pour le piloter. Au-delà d'environ 50 Go, utilisez un
+  pipeline par lots ou HPC.
 - **Chaque script a son propre environnement** : un script PyTorch et un
   script qui n'utilise que NumPy ne se gênent jamais.
 - **Curieux de savoir comment c'est construit ?** La page

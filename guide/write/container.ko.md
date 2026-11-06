@@ -2,17 +2,18 @@
 
 ## 쉬운 말로 설명하면
 
-지금까지는 손님마다 웨이터(Fiji나 napari)가 손님 컴퓨터에 있는 주방에서
-요리했고, 식료품 창고도 pixi가 거기서 채웠어요. **컨테이너**는 **푸드
-트럭**이에요. 식료품 창고까지 다 채운 주방 전체를 차 한 대에 실어서, 어디든
-세울 수 있어요. 주문은 여전히 뷰어가 받고, 트럭까지 걸어갈 뿐이에요.
+지금까지는 손님마다 웨이터(Fiji나 napari)가 손님 컴퓨터에 있는 주방으로
+주문을 가져갔고, pixi가 거기서 레시피마다 주방 도구를 갖춰 줬어요.
+**컨테이너**는 **주방 도구까지 통째로 꾸려 넣은 주방 전체**예요. 내 컴퓨터든
+연구실 서버든 클러스터든 어디에나 차릴 수 있어요. 주문은 여전히 뷰어가 받고
+재료(이미지)도 뷰어가 날라요. 그 주방이 있는 곳까지 걸어갈 뿐이에요.
 
 ```mermaid
 flowchart LR
     V["Fiji 또는 napari<br/>(웨이터)"]:::fiji
-    T["컨테이너<br/>(푸드 트럭)"]:::box
+    T["컨테이너<br/>(주방 도구까지 꾸려 넣은<br/>주방 전체)"]:::box
     W["wavu 워커<br/>+ 나의 스크립트"]:::worker
-    E[("pixi.lock으로<br/>채운 창고")]:::env
+    E[("pixi.lock대로<br/>갖춘 주방 도구")]:::env
     D[("/my/data<br/>= /data")]:::script
     V -- "주문 (포트 8765)" --> W
     T -.- W
@@ -41,17 +42,6 @@ flowchart LR
 아래 명령은 `docker`라고 쓰지만, 다른 도구도 같은 `build`/`run` 단어를
 써요.
 
-=== "macOS"
-
-    - **Apple의 [`container`](https://github.com/apple/container)**(Apple이
-      만든 무료 오픈 소스, Apple 실리콘, macOS 26 권장): 컨테이너마다 작은
-      전용 가상 머신에서 실행해요. `container build -t my-tool .`과
-      `container run …`을 쓰고, 포트와 폴더 옵션은 `container run --help`에서
-      확인하세요.
-    - [OrbStack](https://orbstack.dev), [Colima](https://github.com/abiosoft/colima),
-      [Podman Desktop](https://podman-desktop.io): 같은 `docker` 명령을 받는
-      Docker Desktop의 가벼운 대안이에요.
-
 === "Windows"
 
     Windows에서는 Windows에 내장된 Linux인 **WSL 2**를 통해 Linux 이미지를
@@ -64,6 +54,17 @@ flowchart LR
       설정을 대신 해 줘요.
 
     WSL 안에서는 `D:\data` 폴더가 `/mnt/d/data`예요.
+
+=== "macOS"
+
+    - **Apple의 [`container`](https://github.com/apple/container)**(Apple이
+      만든 무료 오픈 소스, Apple 실리콘, macOS 26 권장): 컨테이너마다 작은
+      전용 가상 머신에서 실행해요. `container build -t my-tool .`과
+      `container run …`을 쓰고, 포트와 폴더 옵션은 `container run --help`에서
+      확인하세요.
+    - [OrbStack](https://orbstack.dev), [Colima](https://github.com/abiosoft/colima),
+      [Podman Desktop](https://podman-desktop.io): 같은 `docker` 명령을 받는
+      Docker Desktop의 가벼운 대안이에요.
 
 === "Linux"
 
@@ -130,7 +131,7 @@ docker run --rm -p 127.0.0.1:8765:8765 -e WAVU_TOKEN=pick-one -v /my/data:/data 
 
 ## 다른 컴퓨터에서
 
-트럭을 연구실 서버에서 돌리려면, 거기서 `-p 8765:8765`(`127.0.0.1`만이
+주방을 연구실 서버에 차리려면, 거기서 `-p 8765:8765`(`127.0.0.1`만이
 아니라 모든 네트워크 주소)로 시작하세요. 그 서버의 `.wavu/worker.json`을 내
 컴퓨터로 복사하세요. napari에서는 서버 주소를 **Host**에 넣으세요(Fiji와
 napari 모두 이 입력란이 있어요). 큰 이미지를 쓰려면 두 컴퓨터가 데이터
@@ -210,6 +211,6 @@ apptainer run --bind /my/data:/data --env WAVU_TOKEN=pick-one my-tool_1.0.0.sif
 
 `docker build`, 그다음 포트와 토큰과 데이터 폴더를 붙여 `docker run`을 하고,
 Fiji나 napari에서 핸드셰이크 파일과 폴더의 두 이름으로 연결하면 돼요. 주방
-전체를 필요한 곳 어디든 세워 둘 수 있어요.
+도구까지 꾸려 넣은 주방 전체를 필요한 곳 어디에나 차릴 수 있어요.
 
 [다음: 연구실과 공유하기 :material-arrow-right:](../fiji/with-your-lab.md){ .md-button }

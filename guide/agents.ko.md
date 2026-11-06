@@ -9,7 +9,7 @@ Wavu 스크립트를 대신 써 줄 수 있어요. **스킬 파일** 하나에 �
 
 주방에 새로 온 요리사는 실력은 좋지만 이 집의 규칙은 몰라요. 스킬 파일은
 주방 문 안쪽에 붙여 둔 **우리 집 규칙집**이에요. 먼저 맛보기, 주문은
-주문서에 적기, 우리 식료품 창고 쓰기, 우리 방식대로 담기. 에이전트는 요리를
+주문서에 적기, 우리 주방 도구 쓰기, 우리 방식대로 담기. 에이전트는 요리를
 시작하기 전에 이걸 읽어요.
 
 ```mermaid
@@ -72,16 +72,16 @@ flowchart LR
 
     또는 플러그인 없이 개인 스킬 파일로:
 
-    === "macOS / Linux"
-
-        ```sh
-        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         New-Item -ItemType Directory -Force "$HOME\.claude\skills\wavu" | Out-Null; irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -OutFile "$HOME\.claude\skills\wavu\SKILL.md"
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
         ```
 
 === "Claude Desktop / claude.ai"
@@ -99,16 +99,16 @@ flowchart LR
 
     스크립트 폴더에서(에이전트가 자동으로 읽어요):
 
-    === "macOS / Linux"
-
-        ```sh
-        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -OutFile AGENTS.md
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
         ```
 
     모든 프로젝트에 쓰려면 `~/.codex/AGENTS.md`로 저장하세요.

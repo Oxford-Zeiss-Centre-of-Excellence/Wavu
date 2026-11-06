@@ -4,7 +4,7 @@
 
 Your recipe works. Now you want colleagues to use it **without** picking
 folders or knowing anything about Python. Wavu can pack your script folder
-into **one zip file**, like a meal kit: the recipe, the exact shopping list,
+into **one zip file**, like a recipe box: the recipe, the exact kitchenware list,
 and a menu entry. A colleague unzips it into Fiji, restarts, and finds your
 tool in the **Plugins** menu, under a name you choose.
 
@@ -28,8 +28,9 @@ flowchart LR
 
 ## What is `pixi.lock`?
 
-`pixi.toml` is the shopping list ("some scikit-image"). `pixi.lock` is the
-**receipt**: the exact version of every package that was actually bought.
+`pixi.toml` is the kitchenware list ("some scikit-image"). `pixi.lock` is
+the **receipt**: the exact version of every package that was actually
+bought.
 Shipping the receipt means your colleagues get *exactly* the same packages
 as you, so the tool behaves the same on their computers. pixi writes it for
 you when it builds the environment, so after your first run from Fiji it is

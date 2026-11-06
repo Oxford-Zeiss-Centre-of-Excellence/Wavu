@@ -2,18 +2,20 @@
 
 ## La idea en palabras sencillas
 
-Hasta ahora, el camarero de cada cliente (Fiji o napari) cocina en una cocina
-del propio ordenador del cliente, con una despensa que pixi llena allí. Un
-**contenedor** es un **food truck**: la cocina entera, con la despensa ya
-llena, metida en un solo vehículo que puedes aparcar donde quieras. Tu visor
-sigue tomando el pedido; simplemente se acerca hasta el camión.
+Hasta ahora, el camarero de cada cliente (Fiji o napari) lleva el pedido a
+una cocina del propio ordenador del cliente, donde pixi prepara los utensilios
+de cocina de cada receta. Un **contenedor** es **la cocina entera, empaquetada
+con sus utensilios**, lista para montarse en cualquier sitio: en tu
+ordenador, en un servidor del laboratorio o en un clúster. Tu visor sigue
+tomando el pedido y llevando los ingredientes (tus imágenes); simplemente va
+hasta donde esté esa cocina.
 
 ```mermaid
 flowchart LR
     V["Fiji o napari<br/>(el camarero)"]:::fiji
-    T["contenedor<br/>(el food truck)"]:::box
+    T["contenedor<br/>(la cocina entera,<br/>empaquetada con sus utensilios)"]:::box
     W["worker de wavu<br/>+ tu script"]:::worker
-    E[("despensa de<br/>pixi.lock")]:::env
+    E[("utensilios de cocina<br/>de pixi.lock")]:::env
     D[("/my/data<br/>= /data")]:::script
     V -- "pedido (puerto 8765)" --> W
     T -.- W
@@ -42,17 +44,6 @@ o ejecuta la imagen. La imagen es una imagen Linux (OCI) normal, así que
 cualquiera de estas sirve; los comandos de abajo dicen `docker`, y las
 demás usan las mismas palabras `build`/`run`:
 
-=== "macOS"
-
-    - **[`container`](https://github.com/apple/container) de Apple** (gratis
-      y de código abierto, de Apple; Apple silicon, se recomienda macOS 26):
-      ejecuta cada contenedor en su propia máquina virtual diminuta.
-      `container build -t my-tool .` y `container run …`; mira
-      `container run --help` para sus opciones de puerto y carpeta.
-    - [OrbStack](https://orbstack.dev), [Colima](https://github.com/abiosoft/colima)
-      o [Podman Desktop](https://podman-desktop.io): alternativas ligeras a
-      Docker Desktop que aceptan los mismos comandos `docker`.
-
 === "Windows"
 
     Las imágenes Linux funcionan en Windows a través de **WSL 2**, el Linux
@@ -65,6 +56,17 @@ demás usan las mismas palabras `build`/`run`:
       ti.
 
     Dentro de WSL, tu carpeta `D:\data` es `/mnt/d/data`.
+
+=== "macOS"
+
+    - **[`container`](https://github.com/apple/container) de Apple** (gratis
+      y de código abierto, de Apple; Apple silicon, se recomienda macOS 26):
+      ejecuta cada contenedor en su propia máquina virtual diminuta.
+      `container build -t my-tool .` y `container run …`; mira
+      `container run --help` para sus opciones de puerto y carpeta.
+    - [OrbStack](https://orbstack.dev), [Colima](https://github.com/abiosoft/colima)
+      o [Podman Desktop](https://podman-desktop.io): alternativas ligeras a
+      Docker Desktop que aceptan los mismos comandos `docker`.
 
 === "Linux"
 
@@ -136,7 +138,7 @@ por eso el visor tiene que conocer sus dos nombres.
 
 ## Otra máquina
 
-Para ejecutar el camión en un servidor del laboratorio, arráncalo allí con
+Para montar la cocina en un servidor del laboratorio, arráncala allí con
 `-p 8765:8765` (todas las direcciones de red, no solo `127.0.0.1`). Copia su
 `.wavu/worker.json` a tu ordenador. En napari, pon la dirección del servidor
 en **Host** (Fiji y napari tienen los dos este campo). Para imágenes grandes,
@@ -218,6 +220,7 @@ llega a él mediante un túnel SSH, como arriba.
 
 `docker build`, después `docker run` con un puerto, un token y tu carpeta de
 datos, y conéctate desde Fiji o napari con el archivo de saludo y los dos
-nombres de la carpeta: la cocina entera, aparcada donde la necesites.
+nombres de la carpeta: la cocina entera, empaquetada con sus utensilios y
+montada donde la necesites.
 
 [Siguiente: compartir con tu laboratorio :material-arrow-right:](../fiji/with-your-lab.md){ .md-button }

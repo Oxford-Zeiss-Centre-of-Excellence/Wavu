@@ -4,8 +4,8 @@
 
 Wavu zu installieren ist wie einen Kellner einzustellen. Sie kopieren ein
 paar kleine Dateien in Fiji, wodurch ein Menü **Plugins › Wavu** dazukommt.
-Dann lassen Sie Wavu **pixi** holen, das Werkzeug, das die Vorratskammer
-jedes Skripts füllt (es lädt Python und die Pakete herunter, die ein Skript
+Dann lassen Sie Wavu **pixi** holen, das Werkzeug, das die Küchengeräte
+jedes Skripts einrichtet (es lädt Python und die Pakete herunter, die ein Skript
 braucht). Python, conda oder sonst etwas installieren Sie *nicht* selbst.
 
 ```mermaid

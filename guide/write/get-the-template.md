@@ -45,7 +45,7 @@ handy later, when you want to [share with the world](../fiji/with-the-world.md).
 | File | What it is |
 |---|---|
 | `script.py` | **Your recipe.** `PARAMS` (the dialog) and `run` (the work). |
-| `pixi.toml` | The shopping list for this script's pantry. |
+| `pixi.toml` | The kitchenware list for this script: the packages it needs. |
 | `test_script.py` | Checks that run without Fiji. **Start here** ([test first](test-without-fiji.md)). |
 | `.vscode/` | Makes [debugging in VS Code](../help/debug-in-vscode.md) one click. |
 | `README.md`, `.github/` | Notes, and automatic releases ([advanced](../fiji/with-the-world.md)). |
@@ -65,7 +65,7 @@ handy later, when you want to [share with the world](../fiji/with-the-world.md).
     The kitchen reads the recipe when it opens. If it is still open from the
     last run, it keeps cooking the *old* recipe. **Stop Worker** closes it, so
     the next run reads your saved changes. This only takes a second; the
-    pantry stays stocked.
+    kitchenware stays set up.
 
 ## Adding a package
 

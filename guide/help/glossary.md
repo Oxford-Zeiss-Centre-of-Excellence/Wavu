@@ -5,7 +5,7 @@
 Every field has its jargon. Here is each Wavu word in one plain line, with
 the restaurant picture where it helps.
 
-![The restaurant analogy: Fiji is the waiter, the worker is the kitchen, every recipe has its own pantry](../assets/img/restaurant.svg){ width="560" }
+![The restaurant analogy: Fiji is the waiter, the worker is the kitchen, every recipe has its own kitchenware](../assets/img/restaurant.svg){ width="560" }
 
 ## Words
 
@@ -42,18 +42,19 @@ the restaurant picture where it helps.
 
 **Environment**
 :   A private folder holding one exact Python plus the packages one script
-    needs, kept in `.pixi` inside the script folder. The *pantry*.
+    needs, kept in `.pixi` inside the script folder. The recipe's
+    *kitchenware*: its own pots, knives and ovens.
 
 **pixi**
 :   The free tool that builds environments and downloads packages, a modern
     alternative to conda. Wavu fetches it for you.
 
 **`pixi.toml`**
-:   The *shopping list*: which packages the script needs.
+:   The *kitchenware list*: which packages the script needs.
 
 **Lock file (`pixi.lock`)**
-:   The *receipt*: the exact version of every package. Sharing it means
-    everyone gets the same environment.
+:   The *receipt* for the kitchenware: the exact version of every
+    package. Sharing it means everyone gets the same environment.
 
 **conda-forge / PyPI**
 :   The two big online "shops" for Python packages. pixi uses conda-forge
@@ -90,5 +91,6 @@ the restaurant picture where it helps.
 
 ## In one sentence
 
-Fiji is the waiter, the worker the kitchen, your script the recipe, its
-pixi environment the pantry and `pixi.lock` the receipt.
+Fiji is the waiter, the worker the kitchen, your script the recipe, your
+images the ingredients, its pixi environment the kitchenware and `pixi.lock`
+the receipt.

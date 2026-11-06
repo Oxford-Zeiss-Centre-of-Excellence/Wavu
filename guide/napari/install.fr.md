@@ -1,22 +1,5 @@
 # Installer wavu-napari
 
-## Pourquoi Wavu existe { #why-this-exists }
-
-- **Un seul environnement pour tout finit par casser.** Installez avec `pip`
-  un plugin Cellpose dans l'environnement de napari : il peut amener une autre
-  version de PyTorch, NumPy ou Qt ; le plugin suivant en impose d'autres, et
-  napari ou l'outil d'un collègue ne démarre plus. Mélanger `conda` et `pip`
-  dans un même environnement aggrave les choses.
-- **Python dans Fiji, c'est encore plus dur.** Le langage de script de Fiji
-  est Jython (Python 2.7, sans NumPy). Les passerelles comme PyImageJ obligent
-  à accorder à la main les versions de Java, de conda et des paquets sur
-  chaque machine.
-- **La réponse de Wavu :** le visualiseur reste petit et propre, et chaque
-  script tourne dans **son propre environnement pixi**, construit à partir de
-  son propre `pixi.lock`. Les scripts ne partagent aucun paquet : ils ne
-  peuvent casser ni les autres, ni napari, ni Fiji, et le même dossier
-  s'installe à l'identique sur chaque ordinateur.
-
 ## L'idée en mots simples
 
 Dans napari, Wavu est un **second serveur** pour la même cuisine. C'est un
@@ -24,12 +7,13 @@ panneau ancré sur le côté de la fenêtre napari : vous choisissez un dossier
 de script, remplissez un formulaire, appuyez sur **Run** (lancer), et les
 résultats apparaissent sous forme de calques.
 
-Il y a ici **deux garde-manger**, et les garder séparés, c'est tout le
-secret :
+Il y a ici **deux batteries de cuisine**, et les garder séparées, c'est
+tout le secret :
 
-- **Le garde-manger de napari** contient napari lui-même, Qt et le panneau
-  Wavu. Il est petit et ne change jamais quand vous ajoutez un script.
-- **Le garde-manger de chaque script** contient ce dont *ce* script a besoin
+- **La batterie de cuisine de napari** contient napari lui-même, Qt et le
+  panneau Wavu. Elle est petite et ne change jamais quand vous ajoutez un
+  script.
+- **La batterie de cuisine de chaque script** contient ce dont *ce* script a besoin
   (Cellpose, PyTorch, scikit-image…), construit à partir du `pixi.toml` de
   son dossier.
 
@@ -115,7 +99,7 @@ serveur de Fiji s'installe autrement (un zip, pas de terminal) : voir
 ## En une phrase
 
 Clonez Wavu, lancez `pixi run -e napari napari` et ouvrez
-**Plugins › Run Python Script (Wavu)** : napari garde son petit
-garde-manger à lui, et chaque script apporte le sien.
+**Plugins › Run Python Script (Wavu)** : napari garde sa petite
+batterie de cuisine à lui, et chaque script apporte la sienne.
 
 [Suite : votre première exécution dans napari :material-arrow-right:](first-run.md){ .md-button }

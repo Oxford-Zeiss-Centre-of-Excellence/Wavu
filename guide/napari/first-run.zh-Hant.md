@@ -13,7 +13,7 @@ sequenceDiagram
     participant N as napari 面板（服務生）
     participant W as Worker（廚房）
     You->>N: 挑選資料夾，Start worker
-    N->>W: 啟動（第一次：補齊食材櫃）
+    N->>W: 啟動（第一次：備齊廚具）
     W-->>N: 這是我的菜單（PARAMS）
     N->>You: 表單
     You->>N: Run
@@ -29,7 +29,7 @@ sequenceDiagram
 [下載 ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
 
 你會得到一個叫 `Wavu-Script-Template-main` 的資料夾，裡面有 `script.py`
-（食譜）和 `pixi.toml`（它的食材櫃的購物清單）。正確的資料夾是**直接**
+（食譜）和 `pixi.toml`（它的廚具清單）。正確的資料夾是**直接**
 包含 `pixi.toml` 的那一層。
 
 ## 步驟 2：開啟一張影像
@@ -48,7 +48,7 @@ sequenceDiagram
 !!! info "第一次啟動要等幾分鐘，只有一次"
     面板的 log 會顯示 `Starting worker: …` 和
     *(the first start installs the script's environment; this can take a few
-    minutes)*，接著是 pixi 的進度。這是 pixi 在補齊腳本的食材櫃。看到
+    minutes)*，接著是 pixi 的進度。這是 pixi 在補齊腳本的廚具。看到
     `Worker ready (wavu …, port …)` 就代表完成了。下次 worker 幾秒內就能
     啟動。想放棄的話，按 **Cancel**（取消）。
 
@@ -78,7 +78,7 @@ Done.
 ```
 
 把 **Sigma (pixels)** 改成 `8` 再試一次。這次會馬上開始，因為廚房還開著，
-食材櫃也是滿的。
+廚具也都備齊了。
 
 ## 取消與停止
 
@@ -99,7 +99,7 @@ Done.
 
 ## 在別處的 worker
 
-worker 也可以在容器或伺服器上執行，就像一台餐車，而不是隔壁的廚房。勾選
+worker 也可以在容器或伺服器上執行，也就是把整個廚房連同廚具打包，搬到別處架起來。勾選
 **Remote / container**（遠端／容器），會出現四個欄位：**Handshake file**
 （交握檔案，預設 `~/.wavu/worker.json`）、**Host**（主機，留空：使用交握
 檔案裡的位址）、**Host folder**（主機資料夾）和 **Container folder**
@@ -112,7 +112,7 @@ worker 也可以在容器或伺服器上執行，就像一台餐車，而不是�
 
 ## 一句話總結
 
-挑一個腳本資料夾，按 **Start worker**（等它的食材櫃補齊一次），填好表單，
+挑一個腳本資料夾，按 **Start worker**（等它的廚具補齊一次），填好表單，
 按 **Run**，結果就會以新圖層出現。
 
-[下一步：在 napari 中會拿回什麼 :material-arrow-right:](layers.md){ .md-button }
+[下一步：wavu-napari 內部構造（進階） :material-arrow-right:](internals.md){ .md-button }

@@ -42,6 +42,24 @@ try {
         if (Math.abs(out.getCalibration().pixelWidth - 0.65) > 1e-6) fail(mode + ": calibration lost")
         println "WAVU_SMOKE_" + mode.toUpperCase() + " peak=" + peak + " edge=" + edge
     }
+    // Scripting API: one call, no dialogs, results returned (Workflows guide).
+    Map r = wavu.run(dir, "script", [sigma: "2"], [image: imp])
+    if (r.images.blurred == null) fail("run(): no 'blurred' in " + r)
+    if (r.images.blurred.getBitDepth() != 16) fail("run(): wrong type " + r.images.blurred)
+    if (wavu.parseParams("a=1 b=[two words] c=true") != [a: "1", b: "two words", c: "true"]) fail("parseParams")
+    println "WAVU_SMOKE_RUN"
+
+    // The recordable macro command, as a recorded ImageJ macro would call it.
+    if (System.getenv("WAVU_SMOKE_MACRO")) {
+        String folder = dir.getAbsolutePath().replace("\\", "/")
+        IJ.runMacro("""
+            setBatchMode(true);
+            newImage("macro-input", "16-bit black", 64, 48, 1);
+            makeRectangle(20, 20, 8, 8); run("Set...", "value=4000"); run("Select None");
+            run("Run Script (Macro)", "folder=[${folder}] script=script params=[sigma=2]");
+            print("WAVU_SMOKE_MACRO_DONE images=" + nImages);
+        """)
+    }
     wavu.stopAll()
     println "WAVU_SMOKE_OK"
 } catch (Throwable t) {

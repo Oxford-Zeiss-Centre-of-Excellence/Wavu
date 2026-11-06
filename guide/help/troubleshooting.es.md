@@ -3,14 +3,14 @@
 ## La idea en palabras sencillas
 
 Cuando un pedido sale mal en un restaurante, te preguntas: ¿el camarero tomó
-el pedido?, ¿la cocina está abierta?, ¿la despensa está llena?, ¿al cocinero
+el pedido?, ¿la cocina está abierta?, ¿los utensilios de cocina están listos?, ¿al cocinero
 se le quemó algo? Los problemas de Wavu caen en esos mismos pocos sitios, y
 la **ventana Log** (**Window › Log** si está oculta) es donde Wavu escribe lo
 que está haciendo. Las líneas del propio Wavu empiezan por `[Wavu]`.
 
 ```mermaid
 flowchart LR
-    A["Fiji: menú<br/>y diálogo"]:::fiji --> B["pixi: llenar<br/>la despensa"]:::env --> C["worker:<br/>arrancar"]:::worker --> D["tu run():<br/>cocinar"]:::script
+    A["Fiji: menú<br/>y diálogo"]:::fiji --> B["pixi: preparar los<br/>utensilios de cocina"]:::env --> C["worker:<br/>arrancar"]:::worker --> D["tu run():<br/>cocinar"]:::script
     A -. "¿el script no aparece?" .- A
     B -. "¿pixi no se encuentra? ¿lento?" .- B
     D -. "¿error en el Log?" .- D

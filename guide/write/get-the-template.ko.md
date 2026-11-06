@@ -45,7 +45,7 @@ flowchart LR
 | 파일 | 무엇인가요 |
 |---|---|
 | `script.py` | **나의 레시피.** `PARAMS`(대화상자)와 `run`(실제 작업). |
-| `pixi.toml` | 이 스크립트의 창고를 위한 장보기 목록. |
+| `pixi.toml` | 이 스크립트의 주방 도구 목록: 필요한 패키지들. |
 | `test_script.py` | Fiji 없이 돌아가는 검사. **여기서 시작하세요**([테스트 먼저](test-without-fiji.md)). |
 | `.vscode/` | [VS Code 디버깅](../help/debug-in-vscode.md)을 클릭 한 번으로 해 줘요. |
 | `README.md`, `.github/` | 메모와 자동 릴리스([고급](../fiji/with-the-world.md)). |
@@ -64,7 +64,7 @@ flowchart LR
 !!! warning "왜 Stop Worker를 하나요?"
     주방은 문을 열 때 레시피를 읽어요. 지난 실행 때부터 계속 열려 있으면
     *옛날* 레시피로 계속 요리해요. **Stop Worker**로 주방을 닫으면 다음
-    실행 때 저장한 변경 사항을 읽어요. 1초면 되고, 창고는 그대로 채워져
+    실행 때 저장한 변경 사항을 읽어요. 1초면 되고, 주방 도구는 그대로 갖춰져
     있어요.
 
 ## 패키지 추가하기 { #adding-a-package }

@@ -175,6 +175,24 @@ Turning a napari plugin, a notebook or a Fiji macro into a script folder:
 6. **Keep credit**: a comment at the top of `script.py` naming the original repository, its authors and its
    licence; respect that licence's terms.
 
+## Scripted workflows (batch, end to end)
+
+A Wavu script is also a function call. When the user wants a whole folder analysed, write a pipeline in their
+own tool that does the native steps itself and calls Wavu only for the heavy step (each call runs in that
+script folder's own environment; the worker starts once and is reused):
+
+- **Fiji Groovy:** `def wavu = new GroovyShell(this.class.classLoader).evaluate(new File(IJ.getDirectory("imagej"),
+  "scripts/Plugins/Wavu/lib/wavu_lib.groovy.txt"))`, then per image
+  `Map r = wavu.run(folder, "script", [diameter: 30], [image: imp])` → `r.images` (ImagePlus), `r.tables`
+  (ResultsTable), `r.rois` (RoiSet zip path), `r.values`; `wavu.stopAll()` at the end. Throws on failure.
+- **ImageJ macro:** `run("Run Script (Macro)", "folder=[/path/to/folder] script=script params=[diameter=30]");`
+  — image parameters get the current image (also under `setBatchMode(true)`); results open as
+  `<title>-<output>` windows, ROIs in the ROI Manager, numbers in the Log. Values have no spaces.
+- **Python / napari:** `with Worker.start(folder) as w:` then `res = w.run("script", params, {"image": img})`;
+  `res.outputs[name].value`. The notebook's own environment needs no heavy packages.
+
+Keep native steps native (Fiji filters and measurements, scikit-image, pandas) and write one CSV for the folder.
+
 ## Scope and limits
 
 - Small, interactive data: one image that fits in memory (about 1–2 GB at most). For larger data suggest a batch

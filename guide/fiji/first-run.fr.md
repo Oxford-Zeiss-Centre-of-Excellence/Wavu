@@ -14,7 +14,7 @@ sequenceDiagram
     participant Fiji as Fiji (serveur)
     participant W as Worker (cuisine)
     You->>Fiji: Run Python Script, choisir le dossier
-    Fiji->>W: démarrer (la 1re fois : remplir le garde-manger)
+    Fiji->>W: démarrer (la 1re fois : installer la batterie de cuisine)
     W-->>Fiji: voici ma carte (PARAMS)
     Fiji->>You: boîte de dialogue
     You->>Fiji: OK
@@ -31,8 +31,8 @@ vous le retrouverez, par exemple dans *Documents* :
 [Télécharger le ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
 
 Vous obtenez un dossier nommé `Wavu-Script-Template-main`. Il contient
-`script.py` (la recette) et `pixi.toml` (la liste de courses pour son
-garde-manger). Un *dossier de script*, ce n'est rien de plus.
+`script.py` (la recette) et `pixi.toml` (la liste de sa batterie de
+cuisine). Un *dossier de script*, ce n'est rien de plus.
 
 !!! tip "Un dossier de trop ?"
     *Extraire tout* de Windows crée parfois un dossier dans un dossier du
@@ -59,7 +59,7 @@ Dans Fiji : **File › Open Samples › Blobs (25K)**.
     La fenêtre Log affiche
     *First start of '…': downloading its Python packages. This happens once
     and can take several minutes…*, et la barre d'état compte les secondes.
-    C'est pixi qui remplit le garde-manger. Laissez-le terminer ; la fois
+    C'est pixi qui installe la batterie de cuisine. Laissez-le terminer ; la fois
     suivante, le script démarre en quelques secondes.
 
 3. La boîte de dialogue **Wavu: script** apparaît. Sa première ligne est la
@@ -83,8 +83,8 @@ Blurring a (254, 256) uint8 image with sigma=2.0
 ```
 
 Recommencez avec **Sigma (pixels)** réglé sur `8`. Cette fois, ça démarre
-tout de suite, parce que la cuisine tourne encore et que le garde-manger est
-plein.
+tout de suite, parce que la cuisine tourne encore et que la batterie de
+cuisine est prête.
 
 ## Que s'est-il passé ?
 

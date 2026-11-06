@@ -47,7 +47,7 @@ viene bien más adelante, cuando quieras
 | Archivo | Qué es |
 |---|---|
 | `script.py` | **Tu receta.** `PARAMS` (el diálogo) y `run` (el trabajo). |
-| `pixi.toml` | La lista de la compra de la despensa de este script. |
+| `pixi.toml` | La lista de utensilios de cocina de este script: los paquetes que necesita. |
 | `test_script.py` | Comprobaciones que se ejecutan sin Fiji. **Empieza aquí** ([primero el test](test-without-fiji.md)). |
 | `.vscode/` | Hace que [depurar en VS Code](../help/debug-in-vscode.md) sea un clic. |
 | `README.md`, `.github/` | Notas y publicaciones automáticas ([avanzado](../fiji/with-the-world.md)). |
@@ -67,7 +67,7 @@ viene bien más adelante, cuando quieras
     La cocina lee la receta al abrir. Si sigue abierta desde la última
     ejecución, sigue cocinando la receta *antigua*. **Stop Worker** la cierra,
     para que la siguiente ejecución lea tus cambios guardados. Solo tarda un
-    segundo; la despensa sigue llena.
+    segundo; los utensilios de cocina siguen listos.
 
 ## Añadir un paquete { #adding-a-package }
 

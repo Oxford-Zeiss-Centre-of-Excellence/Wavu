@@ -324,12 +324,46 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def _watch_stdin(worker: Worker) -> None:
+    """Stop when the parent (Fiji, napari, a script) closes our stdin, i.e. when it exits."""
+    if sys.platform == "win32" and _watch_stdin_windows(worker):
+        return
     try:
         while sys.stdin.buffer.read(4096):
             pass
     except (OSError, ValueError):
         pass
     worker.stop()
+
+
+def _watch_stdin_windows(worker: Worker) -> bool:
+    """Poll the stdin pipe instead of blocking on it.
+
+    A pending blocking read on a Windows pipe stalls every other thread that
+    asks Windows about the standard handles -- and C extensions that bring their
+    own runtime do exactly that while they load (seen with scipy.special when a
+    script imports Cellpose): the job thread hangs forever in the DLL loader.
+    PeekNamedPipe never blocks, so imports proceed. Returns False if stdin is not
+    a pipe (e.g. a console), in which case the caller falls back to reading.
+    """
+    import ctypes
+    import msvcrt
+    from ctypes import wintypes
+
+    try:
+        handle = msvcrt.get_osfhandle(sys.stdin.fileno())
+    except (OSError, ValueError, AttributeError):
+        return False
+    peek = ctypes.windll.kernel32.PeekNamedPipe
+    peek.argtypes = [wintypes.HANDLE, ctypes.c_void_p, wintypes.DWORD, ctypes.c_void_p,
+                     ctypes.POINTER(wintypes.DWORD), ctypes.c_void_p]
+    peek.restype = wintypes.BOOL
+    avail = wintypes.DWORD(0)
+    if not peek(handle, None, 0, None, ctypes.byref(avail), None):
+        return False  # not a pipe
+    while peek(handle, None, 0, None, ctypes.byref(avail), None):
+        time.sleep(0.5)  # the pipe is open; whatever the parent writes is ignored
+    worker.stop()  # PeekNamedPipe fails once the writer has closed its end
+    return True
 
 
 def serve(

@@ -4,8 +4,8 @@
 
 Installer Wavu, c'est comme embaucher le serveur. Vous copiez quelques petits
 fichiers dans Fiji, ce qui ajoute un menu **Plugins › Wavu**. Ensuite, vous
-demandez à Wavu d'aller chercher **pixi**, l'outil qui remplit le
-garde-manger de chaque script (il télécharge Python et les paquets dont un
+demandez à Wavu d'aller chercher **pixi**, l'outil qui installe la
+batterie de cuisine de chaque script (il télécharge Python et les paquets dont un
 script a besoin). Vous n'installez *pas* vous-même Python, conda ni quoi que
 ce soit d'autre.
 

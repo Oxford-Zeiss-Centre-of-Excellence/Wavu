@@ -4,8 +4,8 @@
 
 Tu receta funciona. Ahora quieres que tus colegas la usen **sin** elegir
 carpetas ni saber nada de Python. Wavu puede empaquetar tu carpeta de script
-en **un solo archivo zip**, como un kit de comida: la receta, la lista de la
-compra exacta y una entrada de menú. Un colega lo descomprime en Fiji,
+en **un solo archivo zip**, como una caja con la receta: la receta, la lista
+exacta de utensilios de cocina y una entrada de menú. Un colega lo descomprime en Fiji,
 reinicia y encuentra tu herramienta en el menú **Plugins**, con el nombre que
 tú elijas.
 
@@ -30,7 +30,7 @@ flowchart LR
 
 ## ¿Qué es `pixi.lock`?
 
-`pixi.toml` es la lista de la compra ("algo de scikit-image"). `pixi.lock` es
+`pixi.toml` es la lista de utensilios de cocina ("algo de scikit-image"). `pixi.lock` es
 el **tique de compra**: la versión exacta de cada paquete que se compró de
 verdad. Enviar el tique significa que tus colegas reciben *exactamente* los
 mismos paquetes que tú, así que la herramienta se comporta igual en sus

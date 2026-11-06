@@ -2,18 +2,19 @@
 
 ## やさしく言うと
 
-ここまでは、お客さんのウェイター（Fiji または napari）は、お客さん自身の
-コンピューターにある厨房で料理をしていました。食材庫は pixi がその場で
-そろえます。**コンテナ** は **キッチンカー** です。食材庫をそろえ終えた
-厨房をまるごと 1 台の車に積み込み、どこにでも停められます。注文を受けるのは
-今までどおりビューアーで、ただ車まで歩いていくだけです。
+ここまでは、お客さんのウェイター（Fiji または napari）が、お客さん自身の
+コンピューターにある厨房へ注文を運んでいました。そこでは pixi がレシピごとの
+調理器具をそろえます。**コンテナ** は **調理器具ごとまるごと荷造りした厨房**
+で、自分のコンピューター、研究室のサーバー、クラスターなど、どこにでも
+設置できます。注文を受けて食材（あなたの画像）を運ぶのは今までどおり
+ビューアーで、ただその厨房のある場所まで歩いていくだけです。
 
 ```mermaid
 flowchart LR
     V["Fiji か napari<br/>（ウェイター）"]:::fiji
-    T["コンテナ<br/>（キッチンカー）"]:::box
+    T["コンテナ<br/>（調理器具ごと荷造り<br/>した厨房まるごと）"]:::box
     W["wavu ワーカー<br/>+ あなたのスクリプト"]:::worker
-    E[("pixi.lock から<br/>作った食材庫")]:::env
+    E[("pixi.lock から<br/>そろえた調理器具")]:::env
     D[("/my/data<br/>= /data")]:::script
     V -- "注文（ポート 8765）" --> W
     T -.- W
@@ -42,17 +43,6 @@ flowchart LR
 以下のコマンドは `docker` と書いていますが、ほかのツールも同じ
 `build`/`run` という言葉を使います。
 
-=== "macOS"
-
-    - **Apple の [`container`](https://github.com/apple/container)**（Apple
-      製の無料オープンソース。Apple シリコン、macOS 26 推奨）：コンテナを
-      1 つずつ専用の小さな仮想マシンで動かします。
-      `container build -t my-tool .` と `container run …` を使います。ポートや
-      フォルダーのオプションは `container run --help` で確認してください。
-    - [OrbStack](https://orbstack.dev)、[Colima](https://github.com/abiosoft/colima)、
-      [Podman Desktop](https://podman-desktop.io)：同じ `docker` コマンドが
-      使える、Docker Desktop の軽い代替です。
-
 === "Windows"
 
     Windows では、Windows に組み込まれた Linux である **WSL 2** を通して
@@ -65,6 +55,17 @@ flowchart LR
       WSL 2 の設定はこれらがやってくれます。
 
     WSL の中では、`D:\data` フォルダーは `/mnt/d/data` になります。
+
+=== "macOS"
+
+    - **Apple の [`container`](https://github.com/apple/container)**（Apple
+      製の無料オープンソース。Apple シリコン、macOS 26 推奨）：コンテナを
+      1 つずつ専用の小さな仮想マシンで動かします。
+      `container build -t my-tool .` と `container run …` を使います。ポートや
+      フォルダーのオプションは `container run --help` で確認してください。
+    - [OrbStack](https://orbstack.dev)、[Colima](https://github.com/abiosoft/colima)、
+      [Podman Desktop](https://podman-desktop.io)：同じ `docker` コマンドが
+      使える、Docker Desktop の軽い代替です。
 
 === "Linux"
 
@@ -137,7 +138,7 @@ docker run --rm -p 127.0.0.1:8765:8765 -e WAVU_TOKEN=pick-one -v /my/data:/data 
 
 ## 別のマシン
 
-キッチンカーを研究室のサーバーで動かすには、そこで `-p 8765:8765`
+厨房を研究室のサーバーに設置するには、そこで `-p 8765:8765`
 （`127.0.0.1` だけでなく、すべてのネットワークアドレス）を付けて起動します。
 サーバーの `.wavu/worker.json` を自分のコンピューターにコピーします。napari
 では、サーバーのアドレスを **Host** に入れます（この欄は Fiji にも napari
@@ -220,6 +221,7 @@ apptainer run --bind /my/data:/data --env WAVU_TOKEN=pick-one my-tool_1.0.0.sif
 
 `docker build` してから、ポート、トークン、データフォルダーを付けて
 `docker run` し、Fiji か napari からハンドシェイクファイルとフォルダーの
-2 つの名前で接続します。厨房をまるごと、必要な場所に停められます。
+2 つの名前で接続します。調理器具ごと荷造りした厨房まるごとを、必要な場所に
+設置できます。
 
 [次へ：研究室で共有する :material-arrow-right:](../fiji/with-your-lab.md){ .md-button }

@@ -7,7 +7,7 @@ Wavu 脚本。一个 **skill 文件**把这份指南教的所有内容，整理�
 ## 用大白话说
 
 新来的厨师很有天赋，但不懂店里的规矩。skill 文件就是贴在厨房门内侧的
-**店规手册**：先尝味道、把点的菜写在单子上、用我们的食材柜、按我们的方式
+**店规手册**：先尝味道、把点的菜写在单子上、用我们的厨具、按我们的方式
 装盘。智能体在开始做菜之前会先读它。
 
 ```mermaid
@@ -66,16 +66,16 @@ flowchart LR
 
     或者不用插件，作为个人 skill 文件：
 
-    === "macOS / Linux"
-
-        ```sh
-        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         New-Item -ItemType Directory -Force "$HOME\.claude\skills\wavu" | Out-Null; irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -OutFile "$HOME\.claude\skills\wavu\SKILL.md"
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
         ```
 
 === "Claude Desktop / claude.ai"
@@ -92,16 +92,16 @@ flowchart LR
 
     在你的脚本文件夹里（智能体会自动读取）：
 
-    === "macOS / Linux"
-
-        ```sh
-        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -OutFile AGENTS.md
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
         ```
 
     如果想用于所有项目，就保存为 `~/.codex/AGENTS.md`。

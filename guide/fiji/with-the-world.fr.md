@@ -8,12 +8,12 @@
 
 ## L'idée en mots simples
 
-Partager avec votre labo, c'est donner un panier-repas à un voisin.
+Partager avec votre labo, c'est donner un coffret de recette à un voisin.
 Partager avec le monde, c'est le mettre **en rayon dans un magasin** : il
 lui faut une adresse permanente, un numéro de version sur la boîte, et
 idéalement un robot qui emballe une boîte neuve à chaque fois que vous
 changez la recette, pour que vous n'en emballiez jamais une à la main en
-oubliant un ingrédient.
+oubliant une pièce.
 
 Ce robot, c'est la **CI** (« intégration continue ») : un service gratuit de
 GitHub qui exécute des étapes pour vous sur les ordinateurs de GitHub. Le

@@ -269,6 +269,9 @@ class WavuLib {
         File manifest = new File(scriptDir, "pixi.toml")
         if (!manifest.isFile()) throw new IOException("${scriptDir} has no pixi.toml -- not a Wavu script folder (see templates/wavu-script)")
         List<String> cmd = [pixi.getAbsolutePath(), "run", "--manifest-path", manifest.getAbsolutePath()]
+        // First start: pixi installs the environment. Without a terminal it prints no
+        // progress at all, so ask for its -v log lines; they stream into the Log window.
+        if (!new File(scriptDir, ".pixi/envs").isDirectory()) cmd.add(2, "-v")
         // Installed scripts (<Fiji>/wavu/scripts/*) install exactly their shipped pixi.lock.
         File installedRoot = new File(fijiDir(), "wavu/scripts").getCanonicalFile()
         if (new File(scriptDir, "pixi.lock").isFile() && scriptDir.getCanonicalPath().startsWith(installedRoot.getPath()))
@@ -509,6 +512,16 @@ class WavuLib {
         return imp
     }
 
+    /**
+     * The ROI Manager the user (or the running macro) sees: in a macro under
+     * setBatchMode(true) that is the hidden batch-mode manager, so roiManager("count")
+     * and roiManager("Measure") in the macro find the outlines Wavu loaded.
+     */
+    RoiManager roiManager() {
+        RoiManager batch = ij.macro.Interpreter.isBatchMode() ? ij.macro.Interpreter.getBatchModeRoiManager() : null
+        return batch ?: RoiManager.getRoiManager()
+    }
+
     /** Show every output of a finished job in Fiji. Returns the ImagePlus outputs by name. */
     Map openOutputs(Map w, Map outputs, ImagePlus ref, String prefix, boolean show = true) {
         Map images = [:]
@@ -532,7 +545,7 @@ class WavuLib {
                     break
                 case "rois":
                     if (show) {
-                        RoiManager rm = RoiManager.getRoiManager()
+                        RoiManager rm = roiManager()
                         rm.open(fromWorker(w, (String) spec.path))
                         if (ref != null && ref.getWindow() != null) rm.runCommand(ref, "Show All")
                     }
@@ -666,6 +679,76 @@ class WavuLib {
         } else if (result.status == "error") {
             IJ.error("Wavu", script + " failed:\n" + result.error.message + "\n\n(full traceback in the Log window)")
         }
+    }
+
+    // ----------------------------------------------------------- scripting --
+
+    /**
+     * Run one script of a script folder from your own Groovy script -- no dialogs.
+     *
+     *   def r = wavu.run("D:/scripts/cellpose", "script", [diameter: 30], [image: imp])
+     *   ImagePlus labels = r.images.labels;  ResultsTable t = r.tables.nuclei
+     *
+     * params: values for PARAMS (defaults fill in the rest; strings are converted
+     * to the declared types). images: name -> ImagePlus for the `image` PARAMS.
+     * The folder's worker starts on the first call and is reused afterwards;
+     * wavu.stopAll() ends it. Returns [images:, tables:, rois:, files:, values:]
+     * (name -> ImagePlus / ResultsTable / RoiSet path / path / value). show = true
+     * also opens the results as the Run Python Script command does.
+     * Throws if the script fails; Esc cancels.
+     */
+    Map run(Object folder, String script, Map params = [:], Map images = [:], boolean show = false) {
+        File dir = (folder instanceof File ? (File) folder : new File(folder.toString())).getCanonicalFile()
+        if (!new File(dir, "pixi.toml").isFile())
+            throw new IOException("${dir} has no pixi.toml, so it is not a Wavu script folder")
+        Map w = workerFor(dir)
+        if (w == null) throw new IOException("could not start a worker for ${dir} (is pixi installed? Plugins > Wavu > Setup Python)")
+        Map inputs = [:]
+        ImagePlus ref = null
+        (images ?: [:]).each { String name, ImagePlus imp ->
+            inputs[name] = encodeImage(imp, w)
+            if (ref == null) ref = imp
+        }
+        Map result = runJob(w, script, (Map) (params ?: [:]), inputs)
+        if (result.status == "error") throw new IOException("${script} failed: ${result.error?.message}")
+        if (result.status != "done") throw new InterruptedException("${script} ${result.status}")
+        return collectOutputs(w, (Map) result.outputs, ref, ref != null ? ref.getShortTitle() + "-" : "", show)
+    }
+
+    /** Every output of a finished job, by kind; with show, also opened in Fiji. */
+    Map collectOutputs(Map w, Map outputs, ImagePlus ref, String prefix, boolean show) {
+        Map res = [images: [:], tables: [:], rois: [:], files: [:], values: [:]]
+        res.images = openOutputs(w, outputs.findAll { it.value.kind == "image" }, ref, prefix, show)
+        outputs.each { String name, Map spec ->
+            switch (spec.kind) {
+                case "table":
+                    ResultsTable rt = ResultsTable.open(fromWorker(w, (String) spec.path))
+                    if (show) rt.show(prefix + name)
+                    res.tables[name] = rt
+                    break
+                case "rois":
+                    String p = fromWorker(w, (String) spec.path)
+                    if (show) {
+                        RoiManager rm = roiManager()
+                        rm.open(p)
+                        if (ref != null && ref.getWindow() != null) rm.runCommand(ref, "Show All")
+                    }
+                    res.rois[name] = p
+                    break
+                case "file": res.files[name] = fromWorker(w, (String) spec.path); break
+                case "image": break
+                default: res.values[name] = spec.value
+            }
+        }
+        return res
+    }
+
+    /** "sigma=2 method=otsu name=[two words]" -> [sigma: "2", method: "otsu", name: "two words"] */
+    Map parseParams(String text) {
+        Map out = [:]
+        def m = (text ?: "") =~ /(\w+)=(\[[^\]]*\]|\S+)/
+        m.each { all, k, v -> String s = (String) v; out[(String) k] = s.startsWith("[") ? s.substring(1, s.length() - 1) : s }
+        return out
     }
 
     // -------------------------------------------------------------- dialog --

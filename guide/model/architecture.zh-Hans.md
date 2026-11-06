@@ -188,9 +188,8 @@ Wavu 是为**小数据**搭的桥（一张在内存里的图像，大约 1–2 G
 | `file` | `path` | `pathlib.Path` |
 | `value` | `value` | 数字、文本、bool 或 `None` |
 
-每个前端自行决定如何*展示*各种 kind：Fiji 请看
-[可以返回什么](../write/outputs.md)，napari 请看
-[在 napari 中会得到什么](../napari/layers.md)。
+每个前端自行决定如何*展示*各种 kind：请看
+[可以返回什么](../write/outputs.md)，里面 Fiji 和 napari 各有一个标签页。
 
 ## 取消是协作式的
 

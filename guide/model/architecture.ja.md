@@ -207,9 +207,9 @@ Wavu は **小さなデータ** のための橋です（メモリ上の画像 1 
 | `file` | `path` | `pathlib.Path` |
 | `value` | `value` | 数値、テキスト、bool、または `None` |
 
-それぞれの kind をどう *見せる* かは、フロントエンドが決めます。Fiji に
-ついては [返せるもの](../write/outputs.md)、napari については
-[napari で戻ってくるもの](../napari/layers.md) を見てください。
+それぞれの kind をどう *見せる* かは、フロントエンドが決めます。
+[返せるもの](../write/outputs.md) を見てください。Fiji 用と napari 用の
+タブがあります。
 
 ## キャンセルは協力して行う
 

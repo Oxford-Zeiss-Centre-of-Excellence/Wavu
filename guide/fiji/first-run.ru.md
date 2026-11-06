@@ -13,7 +13,7 @@ sequenceDiagram
     participant Fiji as Fiji (официант)
     participant W as Воркер (кухня)
     You->>Fiji: Run Python Script, выбрать папку
-    Fiji->>W: старт (в первый раз: заполнить кладовую)
+    Fiji->>W: старт (в первый раз: подготовить кухонную утварь)
     W-->>Fiji: вот моё меню (PARAMS)
     Fiji->>You: диалог
     You->>Fiji: OK
@@ -30,7 +30,7 @@ sequenceDiagram
 [Скачать ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
 
 Получится папка `Wavu-Script-Template-main`. Внутри лежат `script.py`
-(рецепт) и `pixi.toml` (список покупок для кладовой). Это и есть вся
+(рецепт) и `pixi.toml` (список его кухонной утвари). Это и есть вся
 *папка скрипта*.
 
 !!! tip "Лишний уровень папок?"
@@ -57,7 +57,7 @@ sequenceDiagram
     В окне Log написано
     *First start of '…': downloading its Python packages. This happens once
     and can take several minutes…*, а строка состояния отсчитывает секунды.
-    Это pixi заполняет кладовую. Дождитесь окончания; в следующий раз скрипт
+    Это pixi готовит кухонную утварь. Дождитесь окончания; в следующий раз скрипт
     стартует за секунды.
 
 3. Появится диалог **Wavu: script**. В первой строке — описание скрипта,
@@ -80,7 +80,7 @@ Blurring a (254, 256) uint8 image with sigma=2.0
 ```
 
 Попробуйте ещё раз с **Sigma (pixels)** равным `8`. Теперь запуск мгновенный:
-кухня всё ещё работает, а кладовая полна.
+кухня всё ещё работает, а кухонная утварь готова.
 
 ## Что сейчас произошло?
 

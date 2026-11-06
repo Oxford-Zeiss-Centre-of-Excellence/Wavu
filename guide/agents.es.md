@@ -11,7 +11,7 @@ ordenador.
 Un cocinero nuevo tiene talento, pero no conoce las normas de la casa. El
 archivo de skill es el **reglamento de la casa** pegado por dentro de la
 puerta de la cocina: probar primero, apuntar el pedido en la comanda, usar
-nuestra despensa, emplatar a nuestra manera. El agente lo lee antes de
+nuestros utensilios de cocina, emplatar a nuestra manera. El agente lo lee antes de
 empezar a cocinar.
 
 ```mermaid
@@ -74,16 +74,16 @@ flowchart LR
 
     O como archivo de skill personal, sin el plugin:
 
-    === "macOS / Linux"
-
-        ```sh
-        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         New-Item -ItemType Directory -Force "$HOME\.claude\skills\wavu" | Out-Null; irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -OutFile "$HOME\.claude\skills\wavu\SKILL.md"
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        mkdir -p ~/.claude/skills/wavu && curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/skills/wavu/SKILL.md -o ~/.claude/skills/wavu/SKILL.md
         ```
 
 === "Claude Desktop / claude.ai"
@@ -103,16 +103,16 @@ flowchart LR
 
     En la carpeta de tu script (el agente lo lee automáticamente):
 
-    === "macOS / Linux"
-
-        ```sh
-        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
-        ```
-
     === "Windows (PowerShell)"
 
         ```powershell
         irm https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -OutFile AGENTS.md
+        ```
+
+    === "macOS / Linux"
+
+        ```sh
+        curl -fsSL https://raw.githubusercontent.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/main/agent/AGENTS.md -o AGENTS.md
         ```
 
     O, para todos tus proyectos, guárdalo como `~/.codex/AGENTS.md`.
