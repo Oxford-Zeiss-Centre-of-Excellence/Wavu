@@ -96,8 +96,31 @@
   --md-mermaid-node-fg-color: #263238;
 }
 
-/* -- footer: partner logos ---------------------------------------------- */
-.wavu-footer { display: flex; flex-direction: column; gap: .5rem; }
-.wavu-logos { display: flex; flex-wrap: wrap; align-items: center; gap: 1.6rem; margin: .6rem 0 .4rem; }
-.wavu-logos img { height: 2.2rem; width: auto; display: block; opacity: .95; }
+/* -- footer: one row = previous | logos + licence | next ----------------- */
+.md-footer .md-footer__inner.wavu-footer-row {
+  box-sizing: border-box;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 1.2rem;
+  padding: .8rem .8rem;
+}
+.wavu-footer-side { display: flex; min-width: 0; }
+.wavu-footer-side--next { justify-content: flex-end; }
+.wavu-footer-row .md-footer__link { padding-top: .4rem; padding-bottom: .4rem; }
+.wavu-footer-center { text-align: center; color: var(--md-footer-fg-color--light); font-size: .64rem; }
+.wavu-footer-center a { color: var(--md-footer-fg-color); }
+.wavu-logos { display: flex; justify-content: center; align-items: center; gap: 1.4rem; margin-bottom: .45rem; }
+.wavu-logos img { height: 2rem; width: auto; display: block; opacity: .95; }
 .wavu-logos a:hover img { opacity: 1; }
+.wavu-credits { white-space: normal; line-height: 1.5; }
+.wavu-dot { margin: 0 .4em; }
+@media screen and (max-width: 59.9375em) {
+  .md-footer .md-footer__inner.wavu-footer-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .6rem; }
+  .md-footer .wavu-footer-side { overflow: hidden; }
+  .md-footer .wavu-credits .wavu-made { display: inline-block; }
+  .md-footer .wavu-footer-center { grid-column: 1 / -1; order: 3; }
+  .md-footer .wavu-logos { flex-wrap: wrap; gap: .9rem; }
+  .md-footer .wavu-logos img { height: 1.6rem; }
+}

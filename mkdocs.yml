@@ -14,8 +14,11 @@ copyright: Wavu is GPL-3.0-or-later · Oxford-Zeiss Centre of Excellence
 docs_dir: guide
 exclude_docs: |
   TRANSLATING.md
-  # Workflows: being reworked (pipelines, batch, large data); hidden until tested
-  workflows/
+  # Workflows pages still being written (overview, batch) and the old drafts
+  workflows/index*.md
+  workflows/batch*.md
+  workflows/fiji*.md
+  workflows/python*.md
 
 theme:
   name: material
@@ -183,6 +186,10 @@ nav:
       - write/logs-progress-cancel.md
       - write/real-images.md
       - write/container.md
+  - Workflows:
+      - workflows/pipeline-fiji.md
+      - workflows/pipeline-python.md
+      - workflows/large-data.md
   - wavu-fiji:
       - fiji/install.md
       - fiji/first-run.md

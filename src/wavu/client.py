@@ -36,7 +36,7 @@ from typing import Any, Callable, Iterator, Sequence
 
 import numpy as np
 
-from wavu.codec import INLINE_LIMIT, decode_array, encode_array, read_table
+from wavu.codec import INLINE_LIMIT, _safe_name, _write_rows, decode_array, encode_array, read_table
 from wavu.types import RoiSet
 
 DEFAULT_HANDSHAKE = Path.home() / ".wavu" / "worker.json"
@@ -339,7 +339,15 @@ class Worker:
     # -- jobs --------------------------------------------------------------
     def encode_inputs(self, inputs: dict[str, Any], meta: dict[str, dict] | None = None,
                       inline_limit: int = INLINE_LIMIT) -> dict[str, Any]:
-        """Arrays travel inline when small (<= 3-D), otherwise through a temporary TIFF; paths pass through."""
+        """Turn host values into /run inputs.
+
+        - arrays travel inline when small (<= 3-D), otherwise through a temporary TIFF;
+        - a pandas DataFrame (anything with ``to_csv`` and ``columns``) or a list of
+          dicts becomes a temporary CSV, which the script receives as a table;
+        - a path (``str`` / ``os.PathLike``) passes through (mapped for a container).
+
+        Temporary files go to the same folder and are removed after ``run()``.
+        """
         out: dict[str, Any] = {}
         meta = meta or {}
         for name, value in inputs.items():
@@ -347,18 +355,33 @@ class Worker:
             if isinstance(value, (str, os.PathLike)):
                 out[name] = {"path": self.to_worker(value), "meta": m}
                 continue
+            if hasattr(value, "to_csv") and hasattr(value, "columns"):  # pandas DataFrame, duck-typed
+                path = self._tmp_file(name, ".csv")
+                value.to_csv(path, index=False)
+                out[name] = {"path": self.to_worker(path), "meta": m}
+                continue
+            if isinstance(value, list) and value and all(isinstance(r, dict) for r in value):
+                path = self._tmp_file(name, ".csv")
+                _write_rows(path, value)
+                out[name] = {"path": self.to_worker(path), "meta": m}
+                continue
             a = np.ascontiguousarray(value)
             if a.nbytes <= inline_limit and a.ndim <= 3:
                 out[name] = encode_array(a, m)
             else:
                 import tifffile
 
-                self._tmp.mkdir(parents=True, exist_ok=True)
-                path = self._tmp / f"{uuid.uuid4().hex}-{name}.tif"
+                path = self._tmp_file(name, ".tif")
                 tifffile.imwrite(path, a, photometric="minisblack")
-                self._made.append(path)
                 out[name] = {"path": self.to_worker(path), "meta": m}
         return out
+
+    def _tmp_file(self, name: str, suffix: str) -> Path:
+        """A new temporary input file, removed after the next ``run()``."""
+        self._tmp.mkdir(parents=True, exist_ok=True)
+        path = self._tmp / f"{uuid.uuid4().hex}-{_safe_name(name)}{suffix}"
+        self._made.append(path)
+        return path
 
     def submit(self, script: str, params: dict[str, Any] | None = None, inputs: dict[str, Any] | None = None,
                meta: dict[str, dict] | None = None) -> str:

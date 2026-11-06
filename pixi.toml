@@ -35,6 +35,8 @@ worker = "wavu-worker --script-dir templates/wavu-script --handshake-file --deta
 new-script = "wavu new-script"
 # Verify (or re-download) the committed BBBC039 image + mask in tests/data (docs/test-data.md).
 fetch-test-data = "python tools/fetch_test_data.py"
+# Regenerate examples/data/demo_timelapse.tif (synthetic nuclei time-lapse, CC0; deterministic).
+demo-data = "python tools/make_demo_timelapse.py"
 # The Fiji client as a zip that unzips straight into Fiji.app (release asset).
 fiji-zip = "python tools/make_fiji_zip.py"
 
@@ -68,6 +70,7 @@ docs-build = "python tools/make_agent_files.py && mkdocs build --strict"
 [feature.napari.dependencies]
 napari = "==0.7.1"
 pyqt = "*"
+matplotlib = ">=3.8"  # pipelines: plots docked in the viewer (examples/pipelines)
 numpy = ">=1.24"
 tifffile = ">=2023.1"
 roifile = ">=2023.1"

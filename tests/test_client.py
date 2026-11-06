@@ -176,3 +176,55 @@ def test_connect_with_a_shared_folder_runs_end_to_end(tmp_path):
         assert res.outputs["image"].value.shape == img.shape
     finally:
         proc.stop()
+
+
+# -- table / file inputs (scripted pipelines) -----------------------------------
+
+
+def test_a_dataframe_input_travels_as_a_temporary_csv(w):
+    pd = pytest.importorskip("pandas")
+    df = pd.DataFrame({"label": [1, 2, 3], "area": [10.0, 20.5, 7.0]})
+    enc = w.encode_inputs({"table": df})
+    path = Path(enc["table"]["path"])
+    assert path.suffix == ".csv" and path.parent == w._tmp and path.is_file()
+    assert "data" not in enc["table"]
+    w._made.remove(path)
+    path.unlink()
+
+    res = w.run("table_stats", {}, {"table": df})
+    assert res.outputs["n_rows"].value == 3
+    assert res.outputs["kind"].value == "DataFrame"
+    back = res.outputs["doubled"].value
+    assert list(back.columns) == ["label", "area", "double"]
+    assert back["double"].tolist() == [20.0, 41.0, 14.0]
+    assert not list(w._tmp.glob("*-table.csv"))  # temporary CSV removed after run()
+
+
+def test_a_list_of_dicts_input_travels_as_a_csv(w):
+    pytest.importorskip("pandas")
+    rows = [{"label": 1, "area": 4}, {"label": 2, "area": 5}]
+    res = w.run("table_stats", {}, {"table": rows})
+    assert res.outputs["n_rows"].value == 2
+    assert res.outputs["doubled"].value["double"].tolist() == [8, 10]
+    assert not list(w._tmp.glob("*-table.csv"))
+
+
+def test_a_csv_path_input_passes_through(w, tmp_path):
+    pytest.importorskip("pandas")
+    csv_path = tmp_path / "t.csv"
+    csv_path.write_text("label,area\n1,3\n", encoding="utf-8")
+    enc = w.encode_inputs({"table": csv_path})
+    assert enc["table"]["path"] == str(csv_path)
+    res = w.run("table_stats", {}, {"table": str(csv_path)})
+    assert res.outputs["n_rows"].value == 1
+    assert csv_path.is_file()  # the caller's own file is never removed
+
+
+def test_table_inputs_are_written_to_the_shared_folder(tmp_path):
+    pd = pytest.importorskip("pandas")
+    w = Worker("127.0.0.1", 1, "t", host_prefix=str(tmp_path), worker_prefix="/data")
+    enc = w.encode_inputs({"det": pd.DataFrame({"a": [1]}), "rows": [{"a": 1}]})
+    for name in ("det", "rows"):
+        p = enc[name]["path"]
+        assert p.startswith("/data/.wavu-tmp/") and p.endswith(f"-{name}.csv")
+        assert (tmp_path / ".wavu-tmp" / p.rsplit("/", 1)[1]).is_file()

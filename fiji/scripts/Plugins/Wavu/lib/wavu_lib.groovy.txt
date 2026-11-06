@@ -688,31 +688,89 @@ class WavuLib {
      *
      *   def r = wavu.run("D:/scripts/cellpose", "script", [diameter: 30], [image: imp])
      *   ImagePlus labels = r.images.labels;  ResultsTable t = r.tables.nuclei
+     *   def tracks = wavu.run("D:/scripts/track", "script", [:], [detections: t])  // chain steps
      *
      * params: values for PARAMS (defaults fill in the rest; strings are converted
-     * to the declared types). images: name -> ImagePlus for the `image` PARAMS.
+     * to the declared types). inputs: name -> value, where a value is
+     *   - an ImagePlus (inline when small, else a temporary TIFF),
+     *   - an ij.measure.ResultsTable (saved as a temporary CSV; the script gets a
+     *     pandas DataFrame, or a list of dicts without pandas),
+     *   - a java.io.File or String path (passed as is; .tif -> array, .csv -> table,
+     *     .zip -> RoiSet, anything else -> pathlib.Path).
+     * Temporary files are removed when the job ends.
      * The folder's worker starts on the first call and is reused afterwards;
      * wavu.stopAll() ends it. Returns [images:, tables:, rois:, files:, values:]
      * (name -> ImagePlus / ResultsTable / RoiSet path / path / value). show = true
      * also opens the results as the Run Python Script command does.
      * Throws if the script fails; Esc cancels.
      */
-    Map run(Object folder, String script, Map params = [:], Map images = [:], boolean show = false) {
+    Map run(Object folder, String script, Map params = [:], Map inputs = [:], boolean show = false) {
         File dir = (folder instanceof File ? (File) folder : new File(folder.toString())).getCanonicalFile()
         if (!new File(dir, "pixi.toml").isFile())
             throw new IOException("${dir} has no pixi.toml, so it is not a Wavu script folder")
         Map w = workerFor(dir)
         if (w == null) throw new IOException("could not start a worker for ${dir} (is pixi installed? Plugins > Wavu > Setup Python)")
-        Map inputs = [:]
+        Map encoded = [:]
+        List<File> made = []
         ImagePlus ref = null
-        (images ?: [:]).each { String name, ImagePlus imp ->
-            inputs[name] = encodeImage(imp, w)
-            if (ref == null) ref = imp
+        Map result
+        try {
+            (inputs ?: [:]).each { String name, Object value ->
+                if (value instanceof ImagePlus) {
+                    Map spec = encodeImage((ImagePlus) value, w)
+                    if (spec.path != null) made << new File(fromWorker(w, (String) spec.path))
+                    encoded[name] = spec
+                    if (ref == null) ref = (ImagePlus) value
+                } else if (value instanceof ResultsTable) {
+                    File f = new File(inputTmpDir(w), "input-" + UUID.randomUUID().toString().substring(0, 8) + "-" + name.replaceAll(/[^\w.-]/, "_") + ".csv")
+                    ResultsTable rt = (ResultsTable) value
+                    made << f
+                    saveTableCsv(rt, f)
+                    encoded[name] = [path: toWorker(w, f.getAbsolutePath()), meta: [title: rt.getTitle() ?: name]]
+                } else if (value instanceof File || value instanceof CharSequence) {
+                    String p = value instanceof File ? ((File) value).getAbsolutePath() : value.toString()
+                    encoded[name] = [path: toWorker(w, p), meta: [:]]
+                } else if (value != null) {
+                    throw new IllegalArgumentException("input '${name}': expected an ImagePlus, ResultsTable, File or path, got ${value.getClass().getName()}")
+                }
+            }
+            result = runJob(w, script, (Map) (params ?: [:]), encoded)
+        } finally {
+            made.each { it.delete() }
         }
-        Map result = runJob(w, script, (Map) (params ?: [:]), inputs)
         if (result.status == "error") throw new IOException("${script} failed: ${result.error?.message}")
         if (result.status != "done") throw new InterruptedException("${script} ${result.status}")
         return collectOutputs(w, (Map) result.outputs, ref, ref != null ? ref.getShortTitle() + "-" : "", show)
+    }
+
+    /**
+     * A ResultsTable as a plain CSV (header row, comma-separated, no row numbers),
+     * independent of the user's Edit > Options > Input/Output settings.
+     * Numbers keep full precision; text cells are quoted when needed.
+     */
+    void saveTableCsv(ResultsTable rt, File f) {
+        List<String> heads = (rt.getHeadings() as List<String>).findAll { it != null && it.trim() && it != "Label" }
+        boolean labels = rt.size() > 0 && (0..<rt.size()).any { rt.getLabel(it) != null }
+        def q = { String v ->
+            if (v == null) return ""
+            return (v.contains(",") || v.contains("\"") || v.contains("\n")) ? "\"" + v.replace("\"", "\"\"") + "\"" : v
+        }
+        f.withWriter("UTF-8") { out ->
+            out << ((labels ? ["Label"] : []) + heads).collect { q(it) }.join(",") << "\n"
+            for (int r = 0; r < rt.size(); r++) {
+                List<String> cells = []
+                if (labels) cells << q(rt.getLabel(r))
+                heads.each { String h ->
+                    double v = rt.getValue(h, r)
+                    if (Double.isNaN(v)) {
+                        String sv = rt.getStringValue(h, r)
+                        cells << ((sv == null || sv == "NaN") ? "" : q(sv))
+                    } else if (v == Math.rint(v) && Math.abs(v) < 1e15) cells << String.valueOf((long) v)
+                    else cells << String.valueOf(v)
+                }
+                out << cells.join(",") << "\n"
+            }
+        }
     }
 
     /** Every output of a finished job, by kind; with show, also opened in Fiji. */
@@ -737,7 +795,9 @@ class WavuLib {
                     break
                 case "file": res.files[name] = fromWorker(w, (String) spec.path); break
                 case "image": break
-                default: res.values[name] = spec.value
+                default:
+                    res.values[name] = spec.value
+                    if (show) log("${name} = ${spec.value}")
             }
         }
         return res

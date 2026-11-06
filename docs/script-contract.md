@@ -62,6 +62,27 @@ PARAMS = {
 - Any other path, such as an OME-Zarr folder, arrives as `pathlib.Path`. The
   script opens it itself.
 
+The Fiji dialog only offers images (the `image` PARAMS). When a script is
+called **from another script**, which is how steps are chained in a pipeline,
+an input may also be a table or a file. Such inputs need no `PARAMS` entry.
+The script reads them from `inputs` by name and should say in its docstring
+that it expects them.
+
+| caller passes | sent as | the script gets |
+|---|---|---|
+| Fiji `wavu.run(...)`: `ImagePlus` | inline, or a temporary TIFF | `numpy.ndarray` |
+| Fiji `wavu.run(...)`: `ij.measure.ResultsTable` | a temporary CSV (header row, no row numbers) | `DataFrame` (list of dicts without pandas) |
+| Fiji `wavu.run(...)`: `java.io.File` or `String` path | the path | as for paths above |
+| `wavu.client.Worker.run(...)`: numpy array | inline, or a temporary TIFF | `numpy.ndarray` |
+| `wavu.client.Worker.run(...)`: pandas `DataFrame` (anything with `to_csv` and `columns`) or a list of dicts | a temporary CSV | `DataFrame` (list of dicts without pandas) |
+| `wavu.client.Worker.run(...)`: `str` / `os.PathLike` | the path | as for paths above |
+
+Temporary files are written to the folder used for large images (in container
+mode, the shared folder), mapped to the worker's path, and removed when the job
+ends. The caller's own files are never removed. A table output of one step can
+therefore be the input of the next, as in
+`examples/segment_frames` → `examples/track_trackpy`.
+
 ### `ctx`
 
 | member | meaning |

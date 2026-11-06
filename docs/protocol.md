@@ -79,6 +79,7 @@ with Worker.start("path/to/script-folder", on_log=print) as w:   # pixi run ... 
   inside another pixi environment. The worker exits when the host process does.
 - `Worker.connect()` attaches through `~/.wavu/worker.json` (launch mode 2).
 - `run()` sends small arrays inline and larger or >3-D ones as a temporary
-  TIFF, streams logs and progress to callbacks, takes a `threading.Event` to
+  TIFF, DataFrames and lists of dicts as a temporary CSV, and paths as they
+  are (docs/script-contract.md). It streams logs and progress to callbacks, takes a `threading.Event` to
   cancel, and returns every output already loaded (array, table, `RoiSet`,
   `Path` or value). A failed script raises `WorkerError` with its traceback.

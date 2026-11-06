@@ -1,0 +1,43 @@
+{#- One footer row: previous page | partner logos + licence | next page.
+    Based on Material's partials/footer.html (same links, same i18n strings). -#}
+<footer class="md-footer">
+  {% set hidden = "" %}
+  {% if page.meta and page.meta.hide and "footer" in page.meta.hide %}
+    {% set hidden = "hidden" %}
+  {% endif %}
+  <div class="md-footer__inner md-grid wavu-footer-row">
+    <div class="wavu-footer-side">
+      {% if "navigation.footer" in features and page.previous_page and not hidden %}
+        {% set direction = lang.t("footer.previous") %}
+        <a href="{{ page.previous_page.url | url }}" class="md-footer__link md-footer__link--prev" aria-label="{{ direction }}: {{ page.previous_page.title | e }}">
+          <div class="md-footer__button md-icon">
+            {% set icon = config.theme.icon.previous or "material/arrow-left" %}
+            {% include ".icons/" ~ icon ~ ".svg" %}
+          </div>
+          <div class="md-footer__title">
+            <span class="md-footer__direction">{{ direction }}</span>
+            <div class="md-ellipsis">{{ page.previous_page.title }}</div>
+          </div>
+        </a>
+      {% endif %}
+    </div>
+    <div class="wavu-footer-center md-typeset">
+      {% include "partials/copyright.html" %}
+    </div>
+    <div class="wavu-footer-side wavu-footer-side--next">
+      {% if "navigation.footer" in features and page.next_page and not hidden %}
+        {% set direction = lang.t("footer.next") %}
+        <a href="{{ page.next_page.url | url }}" class="md-footer__link md-footer__link--next" aria-label="{{ direction }}: {{ page.next_page.title | e }}">
+          <div class="md-footer__title">
+            <span class="md-footer__direction">{{ direction }}</span>
+            <div class="md-ellipsis">{{ page.next_page.title }}</div>
+          </div>
+          <div class="md-footer__button md-icon">
+            {% set icon = config.theme.icon.next or "material/arrow-right" %}
+            {% include ".icons/" ~ icon ~ ".svg" %}
+          </div>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</footer>

@@ -1,6 +1,6 @@
 ---
 name: wavu
-description: Write, test and package Python image-analysis scripts that Fiji (wavu-fiji) or napari (wavu-napari) run through Wavu, each in its own pixi environment. Use when creating or editing a Wavu script folder (script.py with PARAMS and run(ctx, inputs, params), test_script.py, pixi.toml), turning notebook code, a napari plugin or a Fiji macro into a Fiji or napari tool, adding packages, debugging a script, packaging it for other Fiji users, or building it as a container.
+description: Write, test and package Python image-analysis scripts that Fiji (wavu-fiji) or napari (wavu-napari) run through Wavu, and chain them into scripted pipelines (DAG), batch runs and large-data streaming, each in its own pixi environment. Use when creating or editing a Wavu script folder (script.py with PARAMS and run(ctx, inputs, params), test_script.py, pixi.toml), turning notebook code, a napari plugin or a Fiji macro into a Fiji or napari tool, adding packages, debugging a script, packaging it for other Fiji users, or building it as a container.
 license: GPL-3.0-or-later
 ---
 
@@ -178,23 +178,58 @@ Turning a napari plugin, a notebook or a Fiji macro into a script folder:
 6. **Keep credit**: a comment at the top of `script.py` naming the original repository, its authors and its
    licence; respect that licence's terms.
 
-## Scripted workflows (batch, end to end)
+## Scripted workflows: pipelines (DAG), batch, large data
 
-A Wavu script is also a function call. When the user wants a whole folder analysed, write a pipeline in their
-own tool that does the native steps itself and calls Wavu only for the heavy step (each call runs in that
-script folder's own environment; the worker starts once and is reused):
+A Wavu script is also a function call. Teach and build these in this order.
+
+### 1. Pipelines (DAG): chain native steps and Wavu steps
+
+Each step is either native (a Fiji plugin such as TrackMate, an ImageJ command, scikit-image/pandas in the
+user's notebook, napari) or a Wavu step (a script folder, run in its own environment). Data flows between steps as
+images, label stacks, tables and ROIs, and the user's script also controls the rendering (overlays, LUTs, plots,
+napari layers). The worker of each folder starts once and is reused.
 
 - **Fiji Groovy:** `def wavu = new GroovyShell(this.class.classLoader).evaluate(new File(IJ.getDirectory("imagej"),
-  "scripts/Plugins/Wavu/lib/wavu_lib.groovy.txt"))`, then per image
-  `Map r = wavu.run(folder, "script", [diameter: 30], [image: imp])` → `r.images` (ImagePlus), `r.tables`
-  (ResultsTable), `r.rois` (RoiSet zip path), `r.values`; `wavu.stopAll()` at the end. Throws on failure.
-- **ImageJ macro:** `run("Run Script (Macro)", "folder=[/path/to/folder] script=script params=[diameter=30]");`
-  — image parameters get the current image (also under `setBatchMode(true)`); results open as
-  `<title>-<output>` windows, ROIs in the ROI Manager, numbers in the Log. Values have no spaces.
-- **Python / napari:** `with Worker.start(folder) as w:` then `res = w.run("script", params, {"image": img})`;
-  `res.outputs[name].value`. The notebook's own environment needs no heavy packages.
+  "scripts/Plugins/Wavu/lib/wavu_lib.groovy.txt"))`, then
+  `Map r = wavu.run(folder, "script", [sigma: 2], [image: imp, detections: someResultsTable])` → `r.images`
+  (ImagePlus), `r.tables` (ResultsTable), `r.rois` (RoiSet zip path), `r.files`, `r.values`; `wavu.stopAll()` at
+  the end. Inputs may be ImagePlus, ResultsTable (sent as CSV) or File/String paths. Throws on failure.
+- **ImageJ macro:** `run("Run Script (Macro)", "folder=[/path] script=script params=[sigma=2] tables=[detections=<table title>]");`
+  — image parameters get the current image (also under `setBatchMode(true)`); `tables` passes open tables by
+  window title; results open as `<title>-<output>` windows, ROIs in the ROI Manager, numbers in the Log. Values
+  have no spaces. TrackMate is not macro-scriptable: track with a Wavu step (e.g. trackpy) from macros.
+- **Python / napari:** `with Worker.start(seg) as s, Worker.start(trk) as t:` then
+  `res = s.run("script", params, {"image": img})`, pass `res.outputs["detections"].value` (a DataFrame) on to
+  `t.run(..., {"detections": df})`. DataFrames/lists of dicts travel as CSV, paths as they are. The notebook or
+  napari environment needs none of the steps' heavy packages.
+- Reference implementation in the Wavu repo: `examples/segment_frames` (per-frame labels + detections table +
+  counts), `examples/track_trackpy` (detections → tracks), `examples/pipelines/dag_counting.py` (Python/napari),
+  `tests/fiji/dag_counting.groovy` and `.ijm` (Fiji), demo data `examples/data/demo_timelapse.tif`.
 
-Keep native steps native (Fiji filters and measurements, scikit-image, pandas) and write one CSV for the folder.
+### 2. Batch processing
+
+Run the same pipeline over every file of a folder: start the workers once, loop, collect per-file rows (with the
+file name) and write one CSV for the folder. Keep native steps native.
+
+### 3. Large data: stream analysis (works, but not recommended inside Fiji/napari)
+
+For data larger than memory (about 2–50 GB on a local computer; beyond that use batch/HPC), the script receives a
+**path**, not pixels, and streams chunk by chunk. Say plainly that Fiji and napari are canvas viewers built around
+data in memory: during a stream they only get a small preview or the final result, and they are not the place to
+drive it. This is a pattern for the user's own script; Wavu only passes the path and parameters in and returns
+the output path.
+
+- PARAMS: `"store"` (str, path to the input OME-Zarr), processing parameters, and
+  `"output_format": {"type": "choice", "choices": ["ome-zarr", "tiff"], "default": "ome-zarr"}`.
+- In `run`: open lazily with `dask.array.from_zarr`; process with `map_blocks`, or `map_overlap(depth=…,
+  boundary="reflect")` when a filter needs neighbours; chunks of tens of MB; limit threads with
+  `dask.config.set(num_workers=…)`; report `ctx.progress` from a dask callback and call `ctx.check_cancelled()`;
+  write OME-Zarr with ome-zarr-py (`ome_zarr.writer.write_image`) or, for "tiff", with tifffile (BigTIFF, one
+  writer — the result must stream through a single file). Write the output next to the input (not in
+  `ctx.tmpdir`, which is deleted when the worker stops). Return `{"result": Path(output), "preview": small_array}`.
+- Script folder dependencies: `dask`, `zarr`, `ome-zarr` (conda-forge), `tifffile`.
+- Paths in text parameters are not translated for container workers (only inputs are): give the path as the
+  container sees it.
 
 ## Scope and limits
 

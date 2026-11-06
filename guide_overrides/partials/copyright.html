@@ -1,7 +1,8 @@
-{#- Footer: partner logos above the copyright line. Absolute URLs, because the
-    i18n plugin builds each language in its own folder (assets live at the root). -#}
+{#- Footer centre: partner logos, then one line with the licence and the
+    "Made with" credit. Absolute logo URLs, because the i18n plugin builds each
+    language in its own folder (assets live at the root). -#}
 {% set logos = "https://oxford-zeiss-centre-of-excellence.github.io/Wavu/assets/img/logos/" %}
-<div class="md-copyright wavu-footer">
+<div class="wavu-footer">
   <div class="wavu-logos">
     <a href="https://www.ox.ac.uk" title="University of Oxford" rel="noopener">
       <img src="{{ logos }}university-of-oxford.png" alt="University of Oxford" height="44">
@@ -13,8 +14,8 @@
       <img src="{{ logos }}oxford-zeiss-coe.png" alt="Oxford-Zeiss Centre of Excellence" height="40">
     </a>
   </div>
-  {% if config.copyright %}
-    <div class="md-copyright__highlight">{{ config.copyright }}</div>
-  {% endif %}
-  Made with <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">Material for MkDocs</a>
+  <div class="wavu-credits">
+    {% if config.copyright %}<span>{{ config.copyright }}</span><span class="wavu-dot">·</span>{% endif %}
+    <span class="wavu-made">Made with <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">Material for MkDocs</a></span>
+  </div>
 </div>

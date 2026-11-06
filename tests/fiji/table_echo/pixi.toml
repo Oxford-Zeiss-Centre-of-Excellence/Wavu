@@ -1,0 +1,15 @@
+# Tiny script folder for the headless Fiji smoke test (tests/fiji/smoke_test.groovy):
+# checks that a ResultsTable passed to wavu.run() arrives as a table.
+[workspace]
+name = "wavu-table-echo"
+channels = ["conda-forge"]
+platforms = ["win-64", "linux-64", "osx-64", "osx-arm64"]
+
+[dependencies]
+python = ">=3.10,<3.14"
+numpy = ">=1.24"
+tifffile = ">=2023.1"
+pandas = ">=2.0"
+
+[pypi-dependencies]
+wavu = { path = "../../..", editable = true }  # wavu-dependency
