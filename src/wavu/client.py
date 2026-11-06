@@ -143,12 +143,44 @@ class Worker:
 
     def __init__(self, host: str, port: int, token: str, *, version: str | None = None,
                  script_dir: str | None = None, process: subprocess.Popen | None = None,
-                 tmp_dir: Path | None = None):
+                 tmp_dir: Path | None = None, host_prefix: str | None = None,
+                 worker_prefix: str | None = None):
         self.host, self.port, self.token = host, int(port), token
         self.version, self.script_dir, self.process = version, script_dir, process
         self.base = f"http://{host}:{self.port}"
-        self._tmp = Path(tmp_dir) if tmp_dir else Path(tempfile.gettempdir()) / "wavu-inputs"
+        # Container / remote worker: a folder both sides see, under two names
+        # (e.g. host D:/data == container /data). Paths are translated both ways
+        # and large inputs are written inside it, as wavu-fiji does.
+        self.host_prefix = str(host_prefix) if host_prefix else None
+        self.worker_prefix = str(worker_prefix) if worker_prefix else None
+        if tmp_dir:
+            self._tmp = Path(tmp_dir)
+        elif self.host_prefix and self.worker_prefix:
+            self._tmp = Path(self.host_prefix) / ".wavu-tmp"
+        else:
+            self._tmp = Path(tempfile.gettempdir()) / "wavu-inputs"
         self._made: list[Path] = []  # temporary input files, removed after each run()
+
+    # -- path mapping (container / remote) -----------------------------------
+    def to_worker(self, path: str | os.PathLike) -> str:
+        """A path on this machine -> the same file as the worker sees it."""
+        p = str(path)
+        if self.host_prefix and self.worker_prefix:
+            norm, hp = p.replace("\\", "/"), self.host_prefix.replace("\\", "/").rstrip("/")
+            if norm.lower() == hp.lower() or norm.lower().startswith(hp.lower() + "/"):
+                return self.worker_prefix.rstrip("/") + norm[len(hp):]
+        return p
+
+    def from_worker(self, path: str) -> str:
+        """A path the worker reported -> the same file on this machine."""
+        if self.host_prefix and self.worker_prefix:
+            wp = self.worker_prefix.rstrip("/")
+            if path == wp or path.startswith(wp + "/"):
+                return str(Path(self.host_prefix) / path[len(wp):].lstrip("/"))
+        return path
+
+    def _map_spec(self, spec: dict[str, Any]) -> dict[str, Any]:
+        return {**spec, "path": self.from_worker(spec["path"])} if "path" in spec else spec
 
     # -- lifecycle ---------------------------------------------------------
     @classmethod
@@ -220,8 +252,15 @@ class Worker:
         return w
 
     @classmethod
-    def connect(cls, handshake: str | os.PathLike = DEFAULT_HANDSHAKE, host: str | None = None) -> "Worker":
-        """Attach to a worker started elsewhere (``pixi run worker``) through its handshake file."""
+    def connect(cls, handshake: str | os.PathLike = DEFAULT_HANDSHAKE, host: str | None = None,
+                host_prefix: str | os.PathLike | None = None,
+                worker_prefix: str | None = None) -> "Worker":
+        """Attach to a worker started elsewhere through its handshake file.
+
+        ``host`` overrides the address in the file (another machine). For a
+        container, give the shared folder's two names, e.g.
+        ``host_prefix="D:/data", worker_prefix="/data"`` for ``-v D:/data:/data``.
+        """
         path = Path(handshake).expanduser()
         if not path.is_file():
             raise WorkerError(f"no handshake file at {path}; start the worker with `pixi run worker` first")
@@ -229,7 +268,8 @@ class Worker:
         h = host or info.get("host") or "127.0.0.1"
         if h == "0.0.0.0":
             h = "127.0.0.1"
-        w = cls(h, info["port"], info["token"], version=info.get("wavu"), script_dir=info.get("script_dir"))
+        w = cls(h, info["port"], info["token"], version=info.get("wavu"), script_dir=info.get("script_dir"),
+                host_prefix=str(host_prefix) if host_prefix else None, worker_prefix=worker_prefix or None)
         if not w.alive():
             raise WorkerError(f"the worker at {h}:{info['port']} is not answering (stale {path}?)")
         return w
@@ -301,7 +341,7 @@ class Worker:
         for name, value in inputs.items():
             m = dict(meta.get(name) or {})
             if isinstance(value, (str, os.PathLike)):
-                out[name] = {"path": str(value), "meta": m}
+                out[name] = {"path": self.to_worker(value), "meta": m}
                 continue
             a = np.ascontiguousarray(value)
             if a.nbytes <= inline_limit and a.ndim <= 3:
@@ -313,7 +353,7 @@ class Worker:
                 path = self._tmp / f"{uuid.uuid4().hex}-{name}.tif"
                 tifffile.imwrite(path, a, photometric="minisblack")
                 self._made.append(path)
-                out[name] = {"path": str(path), "meta": m}
+                out[name] = {"path": self.to_worker(path), "meta": m}
         return out
 
     def submit(self, script: str, params: dict[str, Any] | None = None, inputs: dict[str, Any] | None = None,
@@ -384,5 +424,5 @@ class Worker:
         if status == "error":
             err = res.get("error") or {}
             raise WorkerError(f"{script} failed: {err.get('message', err)}\n{err.get('traceback', '')}".rstrip())
-        outputs = {n: load_output(n, s) for n, s in (res.get("outputs") or {}).items()}
+        outputs = {n: load_output(n, self._map_spec(s)) for n, s in (res.get("outputs") or {}).items()}
         return Result(outputs, logs)

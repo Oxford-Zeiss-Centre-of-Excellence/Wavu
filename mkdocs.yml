@@ -21,8 +21,8 @@ theme:
   logo: assets/img/favicon.svg
   favicon: assets/img/favicon.svg
   font:
-    text: Inter
-    code: JetBrains Mono
+    text: Noto Sans
+    code: Source Code Pro
   features:
     - navigation.tracking
     - navigation.tabs
@@ -65,9 +65,8 @@ plugins:
           build: true
           nav_translations:
             Home: Accueil
-            Start here: Pour commencer
+            How it works: Comment ça marche
             Write a script: Écrire un script
-            Share: Partager
             AI agents: Agents IA
             Help: Aide
         - locale: de
@@ -75,9 +74,8 @@ plugins:
           build: true
           nav_translations:
             Home: Startseite
-            Start here: Erste Schritte
+            How it works: So funktioniert es
             Write a script: Skript schreiben
-            Share: Teilen
             AI agents: KI-Agenten
             Help: Hilfe
         - locale: es
@@ -85,9 +83,8 @@ plugins:
           build: true
           nav_translations:
             Home: Inicio
-            Start here: Para empezar
+            How it works: Cómo funciona
             Write a script: Escribir un script
-            Share: Compartir
             AI agents: Agentes de IA
             Help: Ayuda
         - locale: ru
@@ -95,9 +92,8 @@ plugins:
           build: true
           nav_translations:
             Home: Главная
-            Start here: С чего начать
+            How it works: Как это устроено
             Write a script: Написать скрипт
-            Share: Поделиться
             AI agents: ИИ-агенты
             Help: Помощь
         - locale: ja
@@ -105,9 +101,8 @@ plugins:
           build: true
           nav_translations:
             Home: ホーム
-            Start here: はじめに
+            How it works: しくみ
             Write a script: スクリプトを書く
-            Share: 共有する
             AI agents: AI エージェント
             Help: ヘルプ
         - locale: ko
@@ -115,9 +110,8 @@ plugins:
           build: true
           nav_translations:
             Home: 홈
-            Start here: 시작하기
+            How it works: 작동 방식
             Write a script: 스크립트 작성
-            Share: 공유하기
             AI agents: AI 에이전트
             Help: 도움말
         - locale: zh-Hant
@@ -125,9 +119,8 @@ plugins:
           build: true
           nav_translations:
             Home: 首頁
-            Start here: 從這裡開始
+            How it works: 運作原理
             Write a script: 撰寫腳本
-            Share: 分享
             AI agents: AI 代理
             Help: 說明
         - locale: zh-Hans
@@ -135,9 +128,8 @@ plugins:
           build: true
           nav_translations:
             Home: 首页
-            Start here: 从这里开始
+            How it works: 工作原理
             Write a script: 编写脚本
-            Share: 分享
             AI agents: AI 智能体
             Help: 帮助
           theme:
@@ -168,10 +160,9 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Start here:
-      - start/what-is-wavu.md
-      - start/install.md
-      - start/first-run.md
+  - How it works:
+      - model/what-is-wavu.md
+      - model/architecture.md
   - Write a script:
       - write/get-the-template.md
       - write/test-without-fiji.md
@@ -180,9 +171,18 @@ nav:
       - write/outputs.md
       - write/logs-progress-cancel.md
       - write/real-images.md
-  - Share:
-      - share/with-your-lab.md
-      - share/with-the-world.md
+      - write/container.md
+  - wavu-fiji:
+      - fiji/install.md
+      - fiji/first-run.md
+      - fiji/with-your-lab.md
+      - fiji/with-the-world.md
+      - fiji/internals.md
+  - wavu-napari:
+      - napari/install.md
+      - napari/first-run.md
+      - napari/layers.md
+      - napari/internals.md
   - AI agents: agents.md
   - Help:
       - help/troubleshooting.md

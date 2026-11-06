@@ -13,15 +13,17 @@ def wavu = new GroovyShell(this.class.classLoader).evaluate(wavuLibFile)
 
 def gd = new ij.gui.GenericDialog("Wavu: connect to a running worker")
 gd.addFileField("Handshake file", Prefs.get("wavu.handshake", new File(System.getProperty("user.home"), ".wavu/worker.json").getPath()))
-gd.addMessage("Container only -- how the worker sees your data folder:")
+gd.addStringField("Host (empty: from the handshake file)", Prefs.get("wavu.host", ""), 30)
+gd.addMessage("Container or another machine -- a folder both sides see, under two names:")
 gd.addStringField("Host data folder", Prefs.get("wavu.hostPrefix", ""), 30)
 gd.addStringField("Same folder inside the container", Prefs.get("wavu.workerPrefix", ""), 30)
 gd.showDialog()
 if (gd.wasCanceled()) return
-String hs = gd.getNextString(), hp = gd.getNextString().trim(), wp = gd.getNextString().trim()
-Prefs.set("wavu.handshake", hs); Prefs.set("wavu.hostPrefix", hp); Prefs.set("wavu.workerPrefix", wp)
+String hs = gd.getNextString(), host = gd.getNextString().trim(), hp = gd.getNextString().trim(), wp = gd.getNextString().trim()
+Prefs.set("wavu.handshake", hs); Prefs.set("wavu.host", host); Prefs.set("wavu.hostPrefix", hp); Prefs.set("wavu.workerPrefix", wp)
+if (!hp != !wp) { IJ.error("Wavu", "Give both the host data folder and the folder inside the container, or neither."); return }
 try {
-    Map w = wavu.connect(new File(hs), hp ?: null, wp ?: null)
+    Map w = wavu.connect(new File(hs), hp ?: null, wp ?: null, host ?: null)
     IJ.showMessage("Wavu", "Connected to the worker serving\n" + w.scriptDir +
             "\n\nNow use Plugins > Wavu > Run Python Script... and pick it from the list.")
 } catch (Exception e) {

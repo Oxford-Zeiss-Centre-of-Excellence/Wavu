@@ -1,0 +1,121 @@
+# Installer wavu-napari
+
+## Pourquoi Wavu existe { #why-this-exists }
+
+- **Un seul environnement pour tout finit par casser.** Installez avec `pip`
+  un plugin Cellpose dans l'environnement de napari : il peut amener une autre
+  version de PyTorch, NumPy ou Qt ; le plugin suivant en impose d'autres, et
+  napari ou l'outil d'un collègue ne démarre plus. Mélanger `conda` et `pip`
+  dans un même environnement aggrave les choses.
+- **Python dans Fiji, c'est encore plus dur.** Le langage de script de Fiji
+  est Jython (Python 2.7, sans NumPy). Les passerelles comme PyImageJ obligent
+  à accorder à la main les versions de Java, de conda et des paquets sur
+  chaque machine.
+- **La réponse de Wavu :** le visualiseur reste petit et propre, et chaque
+  script tourne dans **son propre environnement pixi**, construit à partir de
+  son propre `pixi.lock`. Les scripts ne partagent aucun paquet : ils ne
+  peuvent casser ni les autres, ni napari, ni Fiji, et le même dossier
+  s'installe à l'identique sur chaque ordinateur.
+
+## L'idée en mots simples
+
+Dans napari, Wavu est un **second serveur** pour la même cuisine. C'est un
+panneau ancré sur le côté de la fenêtre napari : vous choisissez un dossier
+de script, remplissez un formulaire, appuyez sur **Run** (lancer), et les
+résultats apparaissent sous forme de calques.
+
+Il y a ici **deux garde-manger**, et les garder séparés, c'est tout le
+secret :
+
+- **Le garde-manger de napari** contient napari lui-même, Qt et le panneau
+  Wavu. Il est petit et ne change jamais quand vous ajoutez un script.
+- **Le garde-manger de chaque script** contient ce dont *ce* script a besoin
+  (Cellpose, PyTorch, scikit-image…), construit à partir du `pixi.toml` de
+  son dossier.
+
+Installer PyTorch pour un script ne peut donc jamais casser napari, et une
+mise à jour de napari ne peut jamais casser votre script.
+
+```mermaid
+flowchart LR
+    subgraph NP["env de napari (léger)"]
+        N["napari<br/>+ panneau Wavu"]:::fiji
+    end
+    W["wavu-worker"]:::worker
+    subgraph SE["env du dossier de script"]
+        S["script.py<br/>cellpose, torch…"]:::script
+    end
+    N -- "HTTP sur 127.0.0.1" --> W --> S
+
+    classDef fiji   fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
+    classDef worker fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+    classDef script fill:#fff3e0,stroke:#ef6c00,color:#e65100
+    style NP fill:#f3e5f5,stroke:#6a1b9a
+    style SE fill:#f3e5f5,stroke:#6a1b9a
+```
+
+## Ce qu'il vous faut
+
+- **pixi**, installé depuis [pixi.sh](https://pixi.sh) (une seule commande ;
+  la page l'affiche pour votre système). Vérifiez dans un nouveau terminal
+  avec `pixi --version`.
+- **Git**, depuis [git-scm.com](https://git-scm.com), pour télécharger Wavu.
+
+Vous n'installez ni Python ni napari vous-même : pixi s'occupe des deux.
+
+## Étape 1 : télécharger Wavu
+
+Ouvrez un terminal dans le dossier où vous rangez vos projets et lancez :
+
+```sh
+git clone https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu.git
+cd Wavu
+```
+
+## Étape 2 : démarrer napari
+
+```sh
+pixi run -e napari napari
+```
+
+`-e napari` choisit l'**environnement napari** de Wavu : napari plus le
+panneau Wavu. La première fois, pixi le télécharge, ce qui prend quelques
+minutes, une seule fois. Ensuite, napari s'ouvre en quelques secondes.
+Démarrez toujours napari avec cette commande depuis le dossier `Wavu` :
+c'est ainsi que le panneau est trouvé.
+
+## Étape 3 : ouvrir le panneau Wavu
+
+Dans napari, choisissez **Plugins › Run Python Script (Wavu)**. Un panneau
+s'ancre sur le côté de la fenêtre, avec :
+
+- un champ **Script folder** (dossier de script) et les boutons
+  **Start worker** (démarrer le worker) et **Connect to running worker**
+  (se connecter à un worker en cours d'exécution) ;
+- une case **Remote / container** (distant / conteneur), pour un worker qui
+  tourne ailleurs (vous pouvez l'ignorer pour l'instant) ;
+- une liste **Script** et un formulaire vide (rempli dès qu'un worker
+  tourne) ;
+- **Run** et **Cancel** (annuler), une barre de progression, une zone de
+  log et **Stop worker** (arrêter le worker).
+
+C'est toute l'installation.
+
+## Mettre à jour
+
+Dans le dossier `Wavu`, lancez `git pull`, puis redémarrez napari avec la
+même commande. pixi met à jour l'environnement de napari si nécessaire.
+
+## Vous utilisez aussi Fiji ?
+
+Les mêmes dossiers de script fonctionnent dans les deux visualiseurs. Le
+serveur de Fiji s'installe autrement (un zip, pas de terminal) : voir
+[Installer Wavu dans Fiji](../fiji/install.md).
+
+## En une phrase
+
+Clonez Wavu, lancez `pixi run -e napari napari` et ouvrez
+**Plugins › Run Python Script (Wavu)** : napari garde son petit
+garde-manger à lui, et chaque script apporte le sien.
+
+[Suite : votre première exécution dans napari :material-arrow-right:](first-run.md){ .md-button }

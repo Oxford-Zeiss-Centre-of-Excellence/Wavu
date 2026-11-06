@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "wavu-napari"
+version = "0.1.0"
+description = "napari frontend for Wavu: run Python scripts, each in its own pixi environment, from napari."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]  # a copy of the repository LICENSE
+authors = [{ name = "Oxford-Zeiss Centre of Excellence" }]
+classifiers = [
+    "Framework :: napari",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "Intended Audience :: Science/Research",
+]
+# wavu (the worker protocol and wavu.client) is the core package in the
+# repository root; the pixi `napari` environment installs both editable.
+dependencies = ["wavu", "magicgui>=0.8", "qtpy", "numpy>=1.24"]
+
+[project.optional-dependencies]
+rois = ["roifile>=2023.1"]
+tables = ["pandas>=1.5"]
+
+[project.entry-points."napari.manifest"]
+wavu-napari = "napari_wavu:napari.yaml"
+
+[project.urls]
+Homepage = "https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu"
+Documentation = "https://oxford-zeiss-centre-of-excellence.github.io/Wavu/"
+Issues = "https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/napari_wavu"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["pixi_env: starts a real worker through pixi in Wavu's template folder (slow first time)"]
+addopts = "-m 'not pixi_env'"

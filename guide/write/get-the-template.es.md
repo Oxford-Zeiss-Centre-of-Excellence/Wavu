@@ -8,7 +8,7 @@
 
 Nadie escribe una receta partiendo de una hoja en blanco. La **plantilla** es
 una receta terminada que funciona (el desenfoque de
-[tu primera ejecución](../start/first-run.md)) y que copias y luego cambias.
+[tu primera ejecución](../fiji/first-run.md)) y que copias y luego cambias.
 Editas un solo archivo, `script.py`, en [VS Code](https://code.visualstudio.com),
 un editor de código gratuito, y lo pruebas enseguida desde Fiji.
 
@@ -40,7 +40,7 @@ Para esto necesitas **VS Code** y **Git** instalados. Si no pasa nada, usa
 
 *Usar esta plantilla en GitHub* crea en cambio tu propia copia en línea; eso
 viene bien más adelante, cuando quieras
-[compartir con el mundo](../share/with-the-world.md).
+[compartir con el mundo](../fiji/with-the-world.md).
 
 ## Qué hay en la carpeta
 
@@ -50,7 +50,7 @@ viene bien más adelante, cuando quieras
 | `pixi.toml` | La lista de la compra de la despensa de este script. |
 | `test_script.py` | Comprobaciones que se ejecutan sin Fiji. **Empieza aquí** ([primero el test](test-without-fiji.md)). |
 | `.vscode/` | Hace que [depurar en VS Code](../help/debug-in-vscode.md) sea un clic. |
-| `README.md`, `.github/` | Notas y publicaciones automáticas ([avanzado](../share/with-the-world.md)). |
+| `README.md`, `.github/` | Notas y publicaciones automáticas ([avanzado](../fiji/with-the-world.md)). |
 
 ## El ciclo de cada día
 

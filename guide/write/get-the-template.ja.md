@@ -7,7 +7,7 @@
 ## やさしく言うと
 
 白紙からレシピカードを書く人はいません。**テンプレート** は、完成して
-ちゃんと動くレシピ（[最初の実行](../start/first-run.md) のぼかし）で、
+ちゃんと動くレシピ（[最初の実行](../fiji/first-run.md) のぼかし）で、
 これをコピーしてから書き換えます。編集するのは `script.py` という 1 つの
 ファイルだけです。無料のコードエディター
 [VS Code](https://code.visualstudio.com) で編集し、すぐに Fiji から試せます。
@@ -40,7 +40,7 @@ flowchart LR
 **File › Open Folder…**（フォルダーを開く）を選んでください。
 
 *GitHub でこのテンプレートを使う* は、代わりにあなた専用のオンラインの
-コピーを作ります。あとで [世界と共有](../share/with-the-world.md) したく
+コピーを作ります。あとで [世界と共有](../fiji/with-the-world.md) したく
 なったときに便利です。
 
 ## フォルダーの中身
@@ -51,7 +51,7 @@ flowchart LR
 | `pixi.toml` | このスクリプトの食材庫の買い物リスト。 |
 | `test_script.py` | Fiji なしで動くチェック。**ここから始めます**（[まずテストから](test-without-fiji.md)）。 |
 | `.vscode/` | [VS Code でのデバッグ](../help/debug-in-vscode.md) をワンクリックにします。 |
-| `README.md`, `.github/` | メモと、自動リリース（[上級](../share/with-the-world.md)）。 |
+| `README.md`, `.github/` | メモと、自動リリース（[上級](../fiji/with-the-world.md)）。 |
 
 ## いつもの流れ
 

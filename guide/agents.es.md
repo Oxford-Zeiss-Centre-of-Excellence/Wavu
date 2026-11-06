@@ -42,6 +42,7 @@ flowchart LR
 4. Añadir paquetes a `pixi.toml`, primero desde conda-forge.
 5. Ejecutar `pixi run test` hasta que todo pase y luego probarlo en Fiji.
 6. Empaquetarlo como entrada del menú de Fiji para tu laboratorio.
+7. Opcionalmente, [construir un contenedor](write/container.md).
 
 **Y las reglas**
 
@@ -148,10 +149,24 @@ flowchart LR
 
 ## Luego prueba una petición como
 
-!!! example ""
+!!! example "Una herramienta nueva"
     *Siguiendo el estilo Wavu, crea un script que encuentre núcleos con un
     umbral de Otsu y devuelva una imagen de etiquetas y una tabla con sus
     áreas. Escribe `test_script.py` primero.*
+
+!!! example "A partir de un plugin de napari"
+    *Convierte mi plugin de napari `<name or path>` en un script de Wavu:
+    conserva su algoritmo, pon sus dependencias en `pixi.toml` y escribe
+    `test_script.py` primero.*
+
+    Las dependencias pesadas del plugin pasan a su propio entorno pixi
+    aislado, así que ya no chocan con las de napari ni con las de otros
+    plugins, y el mismo script se puede ejecutar también desde Fiji.
+
+!!! example "A partir de un notebook"
+    *Convierte este notebook `<file.ipynb>` en un script de Wavu: las celdas
+    que hacen el análisis van dentro de `run` y los valores que ajusto pasan
+    a ser `PARAMS`. Escribe `test_script.py` primero.*
 
 Abre tu agente en una carpeta creada a partir de la
 [plantilla](write/get-the-template.md), para que empiece desde un script que

@@ -92,4 +92,4 @@ ctx.log("Model ready")
 `ctx.meta`를 읽으세요), 크기는 대략 1–2 GB 아래여야 하며, 첫 모델 다운로드처럼
 느린 일 전에는 `ctx.log`를 남기세요.
 
-[다음: 연구실과 공유하기 :material-arrow-right:](../share/with-your-lab.md){ .md-button }
+[다음: 컨테이너로 공유하기 :material-arrow-right:](container.md){ .md-button }

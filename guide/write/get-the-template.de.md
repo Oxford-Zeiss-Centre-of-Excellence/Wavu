@@ -8,7 +8,7 @@
 
 Niemand schreibt eine Rezeptkarte auf einem leeren Blatt. Die **Vorlage**
 ist ein fertiges, funktionierendes Rezept (der Weichzeichner aus
-[Ihrem ersten Durchlauf](../start/first-run.md)), das Sie kopieren und dann
+[Ihrem ersten Durchlauf](../fiji/first-run.md)), das Sie kopieren und dann
 ändern. Sie bearbeiten eine einzige Datei, `script.py`, in
 [VS Code](https://code.visualstudio.com), einem kostenlosen Code-Editor, und
 probieren sie sofort in Fiji aus.
@@ -43,7 +43,7 @@ in VS Code **File › Open Folder…** (Ordner öffnen).
 
 *Diese Vorlage auf GitHub verwenden* legt stattdessen Ihre eigene
 Online-Kopie an; das ist später praktisch, wenn Sie
-[mit der ganzen Welt teilen](../share/with-the-world.md) möchten.
+[mit der ganzen Welt teilen](../fiji/with-the-world.md) möchten.
 
 ## Was im Ordner liegt
 
@@ -53,7 +53,7 @@ Online-Kopie an; das ist später praktisch, wenn Sie
 | `pixi.toml` | Die Einkaufsliste für die Vorratskammer dieses Skripts. |
 | `test_script.py` | Prüfungen, die ohne Fiji laufen. **Hier beginnen** ([zuerst testen](test-without-fiji.md)). |
 | `.vscode/` | Macht das [Debuggen in VS Code](../help/debug-in-vscode.md) zu einem Klick. |
-| `README.md`, `.github/` | Notizen und automatische Veröffentlichungen ([für Fortgeschrittene](../share/with-the-world.md)). |
+| `README.md`, `.github/` | Notizen und automatische Veröffentlichungen ([für Fortgeschrittene](../fiji/with-the-world.md)). |
 
 ## Der Alltags-Kreislauf
 

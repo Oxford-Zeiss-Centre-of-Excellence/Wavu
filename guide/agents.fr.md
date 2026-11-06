@@ -43,6 +43,7 @@ flowchart LR
 5. Lancer `pixi run test` jusqu'à ce que tout réussisse, puis essayer dans
    Fiji.
 6. En faire une entrée de menu Fiji pour votre labo.
+7. En option, [construire un conteneur](write/container.md).
 
 **Et les règles**
 
@@ -149,10 +150,24 @@ flowchart LR
 
 ## Ensuite, essayez une demande comme
 
-!!! example ""
+!!! example "Un nouvel outil"
     *En suivant la méthode Wavu, crée un script qui trouve les noyaux avec un
     seuil d'Otsu et renvoie une image d'étiquettes et un tableau de leurs
     aires. Écris `test_script.py` en premier.*
+
+!!! example "À partir d'un plugin napari"
+    *Convertis mon plugin napari `<name or path>` en script Wavu : garde son
+    algorithme, mets ses dépendances dans `pixi.toml`, écris
+    `test_script.py` en premier.*
+
+    Les dépendances lourdes du plugin partent dans leur propre environnement
+    pixi isolé : elles n'entrent plus en conflit avec celles de napari ou
+    d'autres plugins, et le même script tourne ensuite aussi depuis Fiji.
+
+!!! example "À partir d'un notebook"
+    *Transforme ce notebook `<file.ipynb>` en script Wavu : les cellules qui
+    font l'analyse vont dans `run`, les valeurs que j'ajuste deviennent
+    `PARAMS`. Écris `test_script.py` en premier.*
 
 Ouvrez votre agent dans un dossier créé à partir du
 [modèle](write/get-the-template.md), pour qu'il parte d'un script qui

@@ -7,7 +7,7 @@
 ## The idea in plain words
 
 Nobody writes a recipe card from a blank page. The **template** is a
-finished, working recipe (the blur from [your first run](../start/first-run.md))
+finished, working recipe (the blur from [your first run](../fiji/first-run.md))
 that you copy and then change. You edit one file, `script.py`, in
 [VS Code](https://code.visualstudio.com), a free code editor, and try it
 straight away from Fiji.
@@ -38,7 +38,7 @@ This needs **VS Code** and **Git** installed. If nothing happens, use
 **Download ZIP**, unzip it, and in VS Code choose **File › Open Folder…**.
 
 *Use this template on GitHub* makes your own online copy instead; that is
-handy later, when you want to [share with the world](../share/with-the-world.md).
+handy later, when you want to [share with the world](../fiji/with-the-world.md).
 
 ## What is in the folder
 
@@ -48,7 +48,7 @@ handy later, when you want to [share with the world](../share/with-the-world.md)
 | `pixi.toml` | The shopping list for this script's pantry. |
 | `test_script.py` | Checks that run without Fiji. **Start here** ([test first](test-without-fiji.md)). |
 | `.vscode/` | Makes [debugging in VS Code](../help/debug-in-vscode.md) one click. |
-| `README.md`, `.github/` | Notes, and automatic releases ([advanced](../share/with-the-world.md)). |
+| `README.md`, `.github/` | Notes, and automatic releases ([advanced](../fiji/with-the-world.md)). |
 
 ## The everyday loop
 

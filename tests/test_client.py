@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import sys
 import threading
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -132,3 +133,38 @@ def test_child_env_drops_the_host_pixi_environment(monkeypatch):
     assert "PIXI_PROJECT_MANIFEST" not in env and "CONDA_PREFIX" not in env
     assert env["PYTHONUNBUFFERED"] == "1"
     json.dumps(env)
+
+
+# -- container / remote path mapping ------------------------------------------
+
+
+def test_paths_are_translated_between_host_and_container():
+    w = Worker("127.0.0.1", 1, "t", host_prefix=r"D:\data", worker_prefix="/data")
+    assert w.to_worker(r"D:\data\cells\a.tif") == "/data/cells/a.tif"
+    assert w.to_worker("d:/DATA/b.tif") == "/data/b.tif"            # Windows paths ignore case
+    assert w.to_worker("E:/elsewhere/c.tif") == "E:/elsewhere/c.tif"  # outside the shared folder: unchanged
+    assert w.from_worker("/data/.wavu-tmp/job/out.tif").replace("\\", "/") == "D:/data/.wavu-tmp/job/out.tif"
+    assert w.from_worker("/tmp/x.tif") == "/tmp/x.tif"
+    assert w._tmp == Path(r"D:\data") / ".wavu-tmp"                    # large inputs go where the container sees them
+
+
+def test_large_inputs_are_sent_as_container_paths(tmp_path):
+    w = Worker("127.0.0.1", 1, "t", host_prefix=str(tmp_path), worker_prefix="/data")
+    enc = w.encode_inputs({"image": np.zeros((2, 3, 8, 8), np.float32)})
+    assert enc["image"]["path"].startswith("/data/.wavu-tmp/")
+    assert (tmp_path / ".wavu-tmp" / enc["image"]["path"].rsplit("/", 1)[1]).is_file()
+
+
+def test_connect_with_a_shared_folder_runs_end_to_end(tmp_path):
+    hs = tmp_path / "worker.json"
+    shared = tmp_path / "shared"
+    shared.mkdir()
+    proc = WorkerProc(SCRIPTS, "--handshake-file", str(hs), "--tmp-dir", str(shared / ".wavu-tmp"))
+    try:
+        # Same folder under the same name on both sides (a local stand-in for a container mount).
+        w = Worker.connect(hs, host_prefix=shared, worker_prefix=str(shared))
+        img = np.ones((2, 3, 10, 10), np.float32)                    # 4-D: travels as a file in the shared folder
+        res = w.run("echo", {}, {"image": img})
+        assert res.outputs["image"].value.shape == img.shape
+    finally:
+        proc.stop()

@@ -96,6 +96,32 @@ Wavu-Dateien in Fiji und das Wavu in der Umgebung Ihres Skripts aus
 verschiedenen Versionen stammen. Oft funktioniert es trotzdem; wenn etwas
 fehlschlägt, aktualisieren Sie die Wavu-ZIP in Fiji.
 
+## In napari { #in-napari }
+
+In napari schreibt Wavu in das **Log-Feld des Wavu-Panels**, nicht in das
+Log-Fenster von Fiji; Fehler erscheinen zusätzlich als kurze
+napari-Benachrichtigung.
+
+- **napari öffnet sich unter Linux nicht** (*could not connect to display*
+  oder ein Fehler zum Qt-Plattform-Plugin): Sagen Sie Qt, welches
+  Anzeigesystem es nutzen soll, `export QT_QPA_PLATFORM=xcb` (X11) oder
+  `wayland`, und führen Sie dann erneut `pixi run -e napari napari` aus. Auf
+  einem Rechner ohne Bildschirm nehmen Sie `offscreen`.
+- **"pixi was not found", wenn Sie auf Start worker klicken**: napari wurde
+  anders gestartet als mit `pixi run -e napari napari`. Starten Sie es mit
+  diesem Befehl aus dem Ordner `Wavu`, oder setzen Sie die
+  Umgebungsvariable `WAVU_PIXI` auf den vollständigen Pfad des
+  pixi-Programms.
+- **Der erste Start worker scheint zu hängen**: Er baut gerade die eigene
+  Umgebung des Skripts, genau wie in Fiji. Das Log des Panels zeigt den
+  Fortschritt von pixi; warten Sie auf `Worker ready`. **Cancel** bricht ab.
+- **Ich habe mein Skript geändert, aber nichts hat sich geändert**: Klicken
+  Sie auf **Stop worker** und dann wieder auf **Start worker**.
+- **Die Image-Liste ist leer**: Nur Image- und Labels-Layer können gewählt
+  werden. Öffnen Sie zuerst ein Bild.
+
+Siehe auch [wavu-napari installieren](../napari/install.md).
+
 ## Immer noch nicht weiter? { #still-stuck }
 
 Fragen Sie im [image.sc-Forum](https://forum.image.sc) oder

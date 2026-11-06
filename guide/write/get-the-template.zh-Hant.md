@@ -7,7 +7,7 @@
 ## 用白話說
 
 沒有人會從一張白紙開始寫食譜卡。**範本**是一份寫好、能用的食譜
-（就是[第一次執行](../start/first-run.md)裡的模糊處理），你複製一份再修改。
+（就是[第一次執行](../fiji/first-run.md)裡的模糊處理），你複製一份再修改。
 你只要在 [VS Code](https://code.visualstudio.com)（一個免費的程式碼編輯器）
 裡編輯一個檔案 `script.py`，就能馬上在 Fiji 裡試。
 
@@ -36,7 +36,7 @@ flowchart LR
 **下載 ZIP**，解壓縮後在 VS Code 選 **File › Open Folder…**。
 
 *在 GitHub 上使用這個範本*則是建立一份你自己的線上副本；之後想
-[分享給全世界](../share/with-the-world.md)時會很方便。
+[分享給全世界](../fiji/with-the-world.md)時會很方便。
 
 ## 資料夾裡有什麼
 
@@ -46,7 +46,7 @@ flowchart LR
 | `pixi.toml` | 這個腳本食材櫃的購物清單。 |
 | `test_script.py` | 不用 Fiji 就能執行的檢查。**從這裡開始**（[先寫測試](test-without-fiji.md)）。 |
 | `.vscode/` | 讓[在 VS Code 中除錯](../help/debug-in-vscode.md)只要按一下。 |
-| `README.md`、`.github/` | 說明文件，以及自動發布（[進階](../share/with-the-world.md)）。 |
+| `README.md`、`.github/` | 說明文件，以及自動發布（[進階](../fiji/with-the-world.md)）。 |
 
 ## 日常循環
 

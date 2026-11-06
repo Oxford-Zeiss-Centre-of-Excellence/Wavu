@@ -96,4 +96,4 @@ ctx.log("Model ready")
 1–2 ГБ, а перед любым медленным шагом, например первой загрузкой модели,
 стоит вызвать `ctx.log`.
 
-[Далее: поделиться с лабораторией :material-arrow-right:](../share/with-your-lab.md){ .md-button }
+[Далее: поделиться в виде контейнера :material-arrow-right:](container.md){ .md-button }

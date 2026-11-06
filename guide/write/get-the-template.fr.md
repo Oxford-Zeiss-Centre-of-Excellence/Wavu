@@ -8,7 +8,7 @@
 
 Personne n'écrit une fiche recette à partir d'une page blanche. Le
 **modèle** est une recette finie qui fonctionne (le flou de
-[votre première exécution](../start/first-run.md)) que vous copiez puis
+[votre première exécution](../fiji/first-run.md)) que vous copiez puis
 modifiez. Vous éditez un seul fichier, `script.py`, dans
 [VS Code](https://code.visualstudio.com), un éditeur de code gratuit, et vous
 l'essayez tout de suite depuis Fiji.
@@ -43,7 +43,7 @@ utilisez **Télécharger le ZIP**, décompressez-le, et dans VS Code choisissez
 
 *Utiliser ce modèle sur GitHub* crée plutôt votre propre copie en ligne ;
 c'est pratique plus tard, quand vous voudrez
-[partager avec le monde](../share/with-the-world.md).
+[partager avec le monde](../fiji/with-the-world.md).
 
 ## Ce que contient le dossier
 
@@ -53,7 +53,7 @@ c'est pratique plus tard, quand vous voudrez
 | `pixi.toml` | La liste de courses pour le garde-manger de ce script. |
 | `test_script.py` | Des vérifications qui tournent sans Fiji. **Commencez ici** ([d'abord le test](test-without-fiji.md)). |
 | `.vscode/` | Permet de [déboguer dans VS Code](../help/debug-in-vscode.md) en un clic. |
-| `README.md`, `.github/` | Des notes, et les publications automatiques ([avancé](../share/with-the-world.md)). |
+| `README.md`, `.github/` | Des notes, et les publications automatiques ([avancé](../fiji/with-the-world.md)). |
 
 ## La boucle de tous les jours
 

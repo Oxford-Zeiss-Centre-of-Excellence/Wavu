@@ -37,6 +37,7 @@ flowchart LR
 4. 把套件加進 `pixi.toml`，優先用 conda-forge。
 5. 執行 `pixi run test` 直到全部通過，再到 Fiji 裡試試。
 6. 打包成實驗室用的 Fiji 選單項目。
+7. 也可以選擇[建置一個容器](write/container.md)。
 
 **還有這些規則**
 
@@ -135,9 +136,20 @@ flowchart LR
 
 ## 接著試試這樣的提示
 
-!!! example ""
+!!! example "一個新工具"
     *照 Wavu 的方式，寫一個用 Otsu 閾值找出細胞核的腳本，回傳一張標籤影像
     和一個列出它們面積的表格。先寫 `test_script.py`。*
+
+!!! example "從 napari 外掛改寫"
+    *把我的 napari 外掛 `<名稱或路徑>` 改寫成 Wavu 腳本：保留它的演算法，
+    把它的相依套件放進 `pixi.toml`，先寫 `test_script.py`。*
+
+    外掛那些笨重的相依套件會搬進它自己獨立的 pixi 環境，不再和 napari 或
+    其他外掛的套件衝突；而且同一個腳本也能從 Fiji 執行。
+
+!!! example "從筆記本改寫"
+    *把這個筆記本 `<file.ipynb>` 改寫成 Wavu 腳本：做分析的儲存格放進 `run`，
+    我會調整的數值變成 `PARAMS`。先寫 `test_script.py`。*
 
 在用[範本](write/get-the-template.md)建立的資料夾裡打開你的代理，這樣它就會
 從一個能正常運作的腳本開始。

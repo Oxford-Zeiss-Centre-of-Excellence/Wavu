@@ -42,6 +42,7 @@ flowchart LR
 4. Pakete in `pixi.toml` eintragen, zuerst aus conda-forge.
 5. `pixi run test` ausführen, bis alles besteht, dann in Fiji ausprobieren.
 6. Als Fiji-Menüeintrag für Ihr Labor verpacken.
+7. Optional [einen Container bauen](write/container.md).
 
 **Und die Regeln**
 
@@ -148,10 +149,25 @@ flowchart LR
 
 ## Dann probieren Sie eine Anfrage wie
 
-!!! example ""
+!!! example "Ein neues Werkzeug"
     *Erstelle nach dem Wavu-Weg ein Skript, das Zellkerne mit einem
     Otsu-Schwellenwert findet und ein Label-Bild sowie eine Tabelle ihrer
     Flächen zurückgibt. Schreibe zuerst `test_script.py`.*
+
+!!! example "Aus einem napari-Plugin"
+    *Wandle mein napari-Plugin `<name or path>` in ein Wavu-Skript um:
+    Behalte seinen Algorithmus, trage seine Abhängigkeiten in `pixi.toml`
+    ein, schreibe zuerst `test_script.py`.*
+
+    Die schweren Abhängigkeiten des Plugins ziehen in ihre eigene, isolierte
+    pixi-Umgebung um, sodass sie sich nicht mehr mit denen von napari oder
+    anderer Plugins in die Quere kommen, und dasselbe Skript läuft dann auch
+    in Fiji.
+
+!!! example "Aus einem Notebook"
+    *Mach aus diesem Notebook `<file.ipynb>` ein Wavu-Skript: Die Zellen,
+    die die Analyse erledigen, kommen in `run`, die Werte, an denen ich
+    drehe, werden zu `PARAMS`. Schreibe zuerst `test_script.py`.*
 
 Öffnen Sie Ihren Agenten in einem Ordner, der aus der
 [Vorlage](write/get-the-template.md) erstellt wurde, damit er von einem

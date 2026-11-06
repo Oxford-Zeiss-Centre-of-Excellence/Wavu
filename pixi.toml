@@ -60,7 +60,34 @@ mkdocs-static-i18n = ">=1.2"  # not on conda-forge
 docs-serve = "python tools/make_agent_files.py && mkdocs serve"
 docs-build = "python tools/make_agent_files.py && mkdocs build --strict"
 
+# wavu-napari: the napari frontend (napari/), with wavu itself editable.
+# A separate solve so napari's stack never moves the default env's pins.
+#   pixi run -e napari napari                    napari with Plugins > Wavu
+#   pixi run -e napari test-napari               widget + conversion tests (Qt offscreen)
+#   pixi run -e napari test-napari-integration   a real worker in templates/wavu-script, through pixi
+[feature.napari.dependencies]
+napari = "==0.7.1"
+pyqt = "*"
+numpy = ">=1.24"
+tifffile = ">=2023.1"
+roifile = ">=2023.1"
+pandas = ">=1.5"
+scipy = ">=1.10"
+pytest = ">=8"
+pytest-qt = ">=4"
+pytest-timeout = ">=2.3"
+
+[feature.napari.pypi-dependencies]
+wavu = { path = ".", editable = true }
+wavu-napari = { path = "napari", editable = true }
+
+[feature.napari.tasks]
+napari = { cmd = "napari", description = "Launch napari with the Wavu widget" }
+test-napari = { cmd = "pytest -q", cwd = "napari", env = { QT_QPA_PLATFORM = "offscreen" }, description = "wavu-napari unit + widget tests (Qt offscreen)" }
+test-napari-integration = { cmd = "pytest -q -m pixi_env -rs", cwd = "napari", env = { QT_QPA_PLATFORM = "offscreen" }, description = "wavu-napari: a real worker in templates/wavu-script through pixi" }
+
 [environments]
 default = { solve-group = "default" }
 build = { features = ["build"], solve-group = "default" }
 docs = { features = ["docs"], no-default-feature = true }
+napari = { features = ["napari"], solve-group = "napari" }

@@ -7,7 +7,7 @@
 ## 쉬운 말로 설명하면
 
 레시피 카드를 빈 종이에서 시작하는 사람은 없어요. **템플릿**은 완성되어
-잘 작동하는 레시피([첫 실행](../start/first-run.md)의 블러)이고, 이걸
+잘 작동하는 레시피([첫 실행](../fiji/first-run.md)의 블러)이고, 이걸
 복사해서 고쳐 쓰면 돼요. 무료 코드 편집기인
 [VS Code](https://code.visualstudio.com)에서 `script.py` 파일 하나만 고치고,
 바로 Fiji에서 시험해 볼 수 있어요.
@@ -38,7 +38,7 @@ flowchart LR
 **File › Open Folder…**를 고르세요.
 
 *GitHub에서 이 템플릿 사용하기*는 대신 나만의 온라인 사본을 만들어요.
-나중에 [전 세계와 공유](../share/with-the-world.md)하고 싶을 때 편리해요.
+나중에 [전 세계와 공유](../fiji/with-the-world.md)하고 싶을 때 편리해요.
 
 ## 폴더 안에 있는 것
 
@@ -48,7 +48,7 @@ flowchart LR
 | `pixi.toml` | 이 스크립트의 창고를 위한 장보기 목록. |
 | `test_script.py` | Fiji 없이 돌아가는 검사. **여기서 시작하세요**([테스트 먼저](test-without-fiji.md)). |
 | `.vscode/` | [VS Code 디버깅](../help/debug-in-vscode.md)을 클릭 한 번으로 해 줘요. |
-| `README.md`, `.github/` | 메모와 자동 릴리스([고급](../share/with-the-world.md)). |
+| `README.md`, `.github/` | 메모와 자동 릴리스([고급](../fiji/with-the-world.md)). |
 
 ## 매일 하는 반복
 

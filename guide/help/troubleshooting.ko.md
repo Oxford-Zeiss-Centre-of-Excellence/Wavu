@@ -86,6 +86,30 @@ Log의 *Note: Fiji client … and worker … differ*라는 줄은 Fiji 안의 Wa
 스크립트 환경 안의 Wavu가 서로 다른 릴리스라는 뜻이에요. 그래도 대개는
 작동해요. 뭔가 실패하면 Fiji의 Wavu zip을 업데이트하세요.
 
+## napari에서
+
+napari에서는 Wavu가 Fiji의 Log 창이 아니라 **Wavu 패널의 로그 칸**에 써요.
+오류는 짧은 napari 알림으로도 떠요.
+
+- **Linux에서 napari가 열리지 않아요**(*could not connect to display*, 또는
+  Qt platform plugin 관련 오류): 어떤 디스플레이 시스템을 쓸지 Qt에 알려
+  주세요. `export QT_QPA_PLATFORM=xcb`(X11) 또는 `wayland`로 설정한 다음
+  `pixi run -e napari napari`를 다시 실행하세요. 화면이 없는 컴퓨터에서는
+  `offscreen`을 쓰세요.
+- **Start worker를 누르면 "pixi was not found"가 나와요**: napari를
+  `pixi run -e napari napari`가 아닌 다른 방법으로 시작했어요. `Wavu` 폴더에서
+  이 명령으로 시작하거나, 환경 변수 `WAVU_PIXI`에 pixi 프로그램의 전체 경로를
+  넣으세요.
+- **첫 Start worker가 멈춘 것 같아요**: Fiji와 똑같이 스크립트만의 환경을
+  만드는 중이에요. 패널의 로그에 pixi 진행 상황이 나와요. `Worker ready`가
+  나올 때까지 기다리세요. **Cancel**을 누르면 그만둬요.
+- **스크립트를 고쳤는데 아무것도 안 바뀌어요**: **Stop worker**를 누른 다음
+  **Start worker**를 다시 누르세요.
+- **Image 목록이 비어 있어요**: Image 레이어와 Labels 레이어만 고를 수 있어요.
+  먼저 이미지를 여세요.
+
+[wavu-napari 설치하기](../napari/install.md)도 보세요.
+
 ## 그래도 안 되나요?
 
 [image.sc 포럼](https://forum.image.sc)에 묻거나

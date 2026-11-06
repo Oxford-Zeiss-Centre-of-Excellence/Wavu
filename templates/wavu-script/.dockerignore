@@ -1,0 +1,7 @@
+.git
+.pixi
+__pycache__
+.pytest_cache
+wavu-out
+dist
+.vscode

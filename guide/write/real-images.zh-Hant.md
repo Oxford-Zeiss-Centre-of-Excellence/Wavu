@@ -87,4 +87,4 @@ ctx.log("Model ready")
 `ctx.meta` 確認），大小最好在 1–2 GB 以內，而且在任何耗時的步驟（例如第一次下載模型）
 之前，都應該先 `ctx.log`。
 
-[下一步：分享給實驗室 :material-arrow-right:](../share/with-your-lab.md){ .md-button }
+[下一步：以容器分享 :material-arrow-right:](container.md){ .md-button }

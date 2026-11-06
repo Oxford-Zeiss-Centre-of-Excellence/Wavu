@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" aria-labelledby="t d" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
   <title id="t">The Wavu restaurant</title>
-  <desc id="d">Fiji is the waiter that takes the order and serves the plate. The worker is the kitchen that cooks your script. Every recipe has its own pantry, the pixi environment.</desc>
+  <desc id="d">The viewer (Fiji or napari) is the waiter that takes the order and serves the plate. The worker is the kitchen that cooks your script. Every recipe has its own pantry, the pixi environment.</desc>
   <defs>
     <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#546e7a"/>
     </marker>
   </defs>
   <rect x="0" y="0" width="720" height="300" rx="16" fill="#fafafa" stroke="#cfd8dc"/>
-  <!-- Fiji / waiter -->
+  <!-- viewer (Fiji or napari) / waiter -->
   <rect x="24" y="40" width="200" height="220" rx="14" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
-  <text x="124" y="72" text-anchor="middle" font-size="20" font-weight="700" fill="#0d47a1">Fiji</text>
+  <text x="124" y="72" text-anchor="middle" font-size="18" font-weight="700" fill="#0d47a1">Fiji · napari</text>
   <text x="124" y="94" text-anchor="middle" font-size="14" fill="#0d47a1">the waiter</text>
   <circle cx="124" cy="140" r="18" fill="#1565c0"/>
   <rect x="104" y="160" width="40" height="46" rx="10" fill="#1565c0"/>

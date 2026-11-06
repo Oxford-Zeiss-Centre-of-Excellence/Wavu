@@ -1,0 +1,10 @@
+name: wavu-napari
+display_name: Wavu
+contributions:
+  commands:
+    - id: wavu-napari.widget
+      title: Run a Wavu script
+      python_name: napari_wavu._widget:WavuWidget
+  widgets:
+    - command: wavu-napari.widget
+      display_name: Run Python Script

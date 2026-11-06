@@ -37,6 +37,7 @@ flowchart LR
 4. 把软件包加进 `pixi.toml`，优先用 conda-forge。
 5. 运行 `pixi run test` 直到全部通过，再到 Fiji 里试试。
 6. 打包成实验室用的 Fiji 菜单项。
+7. 可选：[构建一个容器](write/container.md)。
 
 **还有这些规则**
 
@@ -135,9 +136,20 @@ flowchart LR
 
 ## 然后试试这样的提示词
 
-!!! example ""
+!!! example "一个新工具"
     *按照 Wavu 的方式，写一个用 Otsu 阈值找出细胞核的脚本，返回一张标签图像
     和一个列出它们面积的表格。先写 `test_script.py`。*
+
+!!! example "从 napari 插件转换"
+    *把我的 napari 插件 `<名称或路径>` 转换成 Wavu 脚本：保留它的算法，
+    把它的依赖放进 `pixi.toml`，先写 `test_script.py`。*
+
+    插件那些庞大的依赖会搬进它自己独立的 pixi 环境，不再和 napari 或
+    其他插件的依赖冲突；而且同一个脚本也能从 Fiji 运行。
+
+!!! example "从笔记本转换"
+    *把这个笔记本 `<file.ipynb>` 转换成 Wavu 脚本：做分析的单元格放进 `run`，
+    我要调整的数值变成 `PARAMS`。先写 `test_script.py`。*
 
 在用[模板](write/get-the-template.md)创建的文件夹里打开你的智能体，这样它就会
 从一个能正常运行的脚本开始。

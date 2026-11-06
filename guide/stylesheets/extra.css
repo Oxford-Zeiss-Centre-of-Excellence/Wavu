@@ -1,3 +1,9 @@
+/* Fonts: Noto Sans (text) and Source Code Pro (code) come from the theme
+   (mkdocs.yml). CJK pages add the matching Noto Sans family so each language
+   gets its own glyph shapes; Google serves them in unicode-range slices, so
+   pages without CJK text download none of them. */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&family=Noto+Sans+SC:wght@400;700&family=Noto+Sans+TC:wght@400;700&display=swap");
+
 /* Wavu guide theme on top of Material: Wavu's palette, softer shapes, both schemes. */
 
 /* -- colours (light theme only) ----------------------------------------- */
@@ -67,3 +73,24 @@
 }
 .md-typeset .grid.cards .md-button { margin-top: .4rem; }
 
+
+/* Home-page cards: two per row on wide screens (four cards = a tidy 2 x 2). */
+.md-typeset .grid.cards { grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
+
+/* -- fonts per language (see the top of this file) ------------------------ */
+:root { --wavu-code: "Source Code Pro", SFMono-Regular, Consolas, monospace; }
+[lang="ja"] { --md-text-font-family: "Noto Sans", "Noto Sans JP", sans-serif; --md-code-font-family: var(--wavu-code), "Noto Sans JP"; }
+[lang="ko"] { --md-text-font-family: "Noto Sans", "Noto Sans KR", sans-serif; --md-code-font-family: var(--wavu-code), "Noto Sans KR"; }
+[lang="zh-Hant"] { --md-text-font-family: "Noto Sans", "Noto Sans TC", sans-serif; --md-code-font-family: var(--wavu-code), "Noto Sans TC"; }
+[lang="zh"], [lang="zh-Hans"] { --md-text-font-family: "Noto Sans", "Noto Sans SC", sans-serif; --md-code-font-family: var(--wavu-code), "Noto Sans SC"; }
+
+/* -- diagrams: readable labels on every coloured group ---------------------
+   Material draws group titles and arrow labels in a light grey, which is too
+   faint on the pale pink/green/blue group fills. Dark slate text, white label
+   boxes and darker lines keep them above WCAG AA contrast. */
+:root > * {
+  --md-mermaid-label-fg-color: #263238;
+  --md-mermaid-label-bg-color: #ffffff;
+  --md-mermaid-edge-color: #37474f;
+  --md-mermaid-node-fg-color: #263238;
+}

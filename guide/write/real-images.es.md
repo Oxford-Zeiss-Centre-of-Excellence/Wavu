@@ -103,4 +103,4 @@ Tu script recibe la imagen entera como un array en orden **T Z C Y X** (lee
 conviene usar `ctx.log` antes de cualquier paso lento, como la primera
 descarga de un modelo.
 
-[Siguiente: compartir con tu laboratorio :material-arrow-right:](../share/with-your-lab.md){ .md-button }
+[Siguiente: compartir como contenedor :material-arrow-right:](container.md){ .md-button }

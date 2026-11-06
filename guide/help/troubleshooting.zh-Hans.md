@@ -62,6 +62,18 @@ Wavu 的取消是**协作式的**：Esc 会竖起一面旗子，你的脚本要�
 
 Log 里的 *Note: Fiji client … and worker … differ* 表示 Fiji 里的 Wavu 文件和你脚本环境里的 Wavu 来自不同的发布版本。通常仍然能用；如果出了问题，请更新 Fiji 里的 Wavu zip。
 
+## 在 napari 中
+
+在 napari 中，Wavu 会写入 **Wavu 面板的日志框**，而不是 Fiji 的 Log 窗口；报错也会以简短的 napari 通知弹出。
+
+- **napari 在 Linux 上打不开**（*could not connect to display*，或关于 Qt platform plugin 的报错）：告诉 Qt 使用哪种显示系统，`export QT_QPA_PLATFORM=xcb`（X11）或 `wayland`，然后再运行一次 `pixi run -e napari napari`。在没有显示器的机器上，请用 `offscreen`。
+- **点击 Start worker 时提示“pixi was not found”**：napari 不是用 `pixi run -e napari napari` 启动的。请在 `Wavu` 文件夹里用这条命令启动它，或者把环境变量 `WAVU_PIXI` 设为 pixi 程序的完整路径。
+- **第一次 Start worker 好像卡住了**：它正在构建脚本专属的环境，和在 Fiji 里完全一样。面板的日志会显示 pixi 的进度；等到出现 `Worker ready`。点击 **Cancel** 可以放弃。
+- **我改了脚本，但什么都没变**：点击 **Stop worker**，再点击 **Start worker**。
+- **Image 列表是空的**：只能选择 Image 和 Labels 图层。请先打开一张图像。
+
+另请参阅[安装 wavu-napari](../napari/install.md)。
+
 ## 还是没解决？
 
 到 [image.sc 论坛](https://forum.image.sc)提问，或者[提交一个 issue](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/issues)。请把整个 Log 复制到你的消息里。

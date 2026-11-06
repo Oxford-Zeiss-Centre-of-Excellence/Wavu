@@ -58,7 +58,8 @@ packages = ["src/wavu"]
 "templates/wavu-script" = "wavu/template"
 
 [tool.hatch.build.targets.sdist]
-exclude = [".pixi", "tests/data", "**/pixi.lock", "**/.pixi"]
+# napari/ is its own package (wavu-napari) with its own pyproject.toml.
+exclude = [".pixi", "tests/data", "**/pixi.lock", "**/.pixi", "/napari"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "templates/wavu-script"]

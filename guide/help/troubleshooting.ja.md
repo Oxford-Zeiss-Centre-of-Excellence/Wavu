@@ -91,6 +91,31 @@ Wavu ファイルと、スクリプトの環境の中の Wavu が、別のリリ
 意味です。たいていはそのまま動きます。何かがうまくいかなければ、Fiji の
 Wavu zip を更新してください。
 
+## napari の場合
+
+napari では、Wavu は Fiji の Log ウィンドウではなく、**Wavu パネルのログ欄**
+に書き込みます。エラーは napari の短い通知としても表示されます。
+
+- **Linux で napari が開かない**（*could not connect to display*、または
+  Qt platform plugin に関するエラー）：どのディスプレイシステムを使うかを
+  Qt に教えます。`export QT_QPA_PLATFORM=xcb`（X11）または `wayland` を
+  設定してから、もう一度 `pixi run -e napari napari` を実行してください。
+  画面のないマシンでは `offscreen` を使います。
+- **Start worker を押すと「pixi was not found」と出る**：napari が
+  `pixi run -e napari napari` 以外の方法で起動されています。`Wavu`
+  フォルダーからこのコマンドで起動するか、環境変数 `WAVU_PIXI` に pixi
+  プログラムのフルパスを設定してください。
+- **最初の Start worker が止まっているように見える**：Fiji とまったく同じで、
+  スクリプト専用の環境を作っているところです。パネルのログに pixi の
+  進み具合が表示されます。`Worker ready` が出るまで待ってください。
+  **Cancel** を押すと中止します。
+- **スクリプトを変えたのに何も変わらない**：**Stop worker** を押してから、
+  もう一度 **Start worker** を押してください。
+- **Image の一覧が空**：選べるのは Image レイヤーと Labels レイヤーだけです。
+  先に画像を開いてください。
+
+[wavu-napari をインストールする](../napari/install.md) も見てください。
+
 ## それでも解決しない？
 
 [image.sc フォーラム](https://forum.image.sc) で質問するか、

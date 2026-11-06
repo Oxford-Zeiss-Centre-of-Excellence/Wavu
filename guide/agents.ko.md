@@ -40,6 +40,7 @@ flowchart LR
 4. 패키지를 `pixi.toml`에 추가해요. conda-forge가 우선이에요.
 5. 모두 통과할 때까지 `pixi run test`를 실행하고, 그다음 Fiji에서 해 봐요.
 6. 연구실용 Fiji 메뉴 항목으로 패키징해요.
+7. 원하면 [컨테이너를 빌드해요](write/container.md).
 
 **그리고 규칙**
 
@@ -143,9 +144,23 @@ flowchart LR
 
 ## 그다음 이런 프롬프트를 해 보세요
 
-!!! example ""
+!!! example "새 도구"
     *Wavu 방식으로, Otsu 임계값으로 핵을 찾고 레이블 이미지와 핵 면적 표를
     돌려주는 스크립트를 만들어 줘. `test_script.py`를 먼저 작성해 줘.*
+
+!!! example "napari 플러그인에서"
+    *내 napari 플러그인 `<name or path>`를 Wavu 스크립트로 바꿔 줘. 알고리즘은
+    그대로 두고, 의존성은 `pixi.toml`에 넣고, `test_script.py`를 먼저 작성해
+    줘.*
+
+    플러그인의 무거운 의존성이 자기만의 격리된 pixi 환경으로 옮겨 가서, 더
+    이상 napari나 다른 플러그인의 의존성과 충돌하지 않아요. 그리고 같은
+    스크립트를 Fiji에서도 실행할 수 있어요.
+
+!!! example "노트북에서"
+    *이 노트북 `<file.ipynb>`를 Wavu 스크립트로 바꿔 줘. 분석하는 셀은
+    `run`에 넣고, 내가 조정하는 값은 `PARAMS`로 만들어 줘. `test_script.py`를
+    먼저 작성해 줘.*
 
 [템플릿](write/get-the-template.md)으로 만든 폴더에서 에이전트를 여세요.
 그러면 동작하는 스크립트에서 시작할 수 있어요.
