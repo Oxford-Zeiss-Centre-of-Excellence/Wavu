@@ -2,7 +2,8 @@
 
 ## The idea in plain words
 
-A time-lapse is a dinner of several courses. Your Python script is the
+An image analysis is a dinner of several courses: each step (open, segment,
+track, count, plot) is one course. Your Python script is the
 waiter: it brings the ingredients (the movie) to the table, writes up the
 bill (a table of counts) and serves the plates in napari. Two dishes need
 special kitchenware, so they go to two different kitchens: one kitchen

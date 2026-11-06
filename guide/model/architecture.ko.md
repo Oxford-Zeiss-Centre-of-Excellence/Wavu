@@ -174,7 +174,7 @@ sequenceDiagram
     Note over V: 이미지, 표, ROI 열기
 ```
 
-## 주고받는 데이터
+## 주고받는 데이터 { #data-on-the-wire }
 
 Wavu는 **작은 데이터**를 위한 다리예요(메모리에 들어가는 이미지 한 장, 대략
 1–2 GB까지).

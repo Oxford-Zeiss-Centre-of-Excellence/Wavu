@@ -2,13 +2,17 @@
 
 ## The idea in plain words
 
-A good dinner is several courses, and not every course comes from the same
+An image analysis is a dinner of several courses: each step (open, segment,
+track, count, plot) is one course, and not every course comes from the same
 kitchen. Here Fiji, the waiter, serves most of the meal itself: it opens the
 movie, follows the cells, counts them and draws the result. Only one course,
 **finding the nuclei in every frame**, is ordered from a Wavu kitchen
 (`examples/segment_frames`, in its own environment). The macro version
-orders a second course there too, the tracking, because TrackMate cannot be
-driven from a macro.
+orders a second course there too, the tracking (trackpy). TrackMate itself
+runs fine from a script inside Fiji, through its
+[scripting interface](https://imagej.net/plugins/trackmate/scripting/scripting)
+in Groovy or Jython, as the Groovy version does; the ImageJ macro language
+just cannot reach that interface.
 
 The steps form a small **DAG** (directed acyclic graph): boxes that hand
 their result to the next box, with no loops back.
@@ -198,8 +202,10 @@ The first run installs each folder's kitchenware (a minute or two, once).
     }
     ```
 
-    Step 3 runs TrackMate from code: the *label image detector* turns each
-    label into one spot, and the *LAP tracker* links spots into tracks.
+    Step 3 runs TrackMate from code, as on its
+    [scripting page](https://imagej.net/plugins/trackmate/scripting/scripting):
+    the *label image detector* turns each label into one spot, and the
+    *LAP tracker* links spots into tracks.
 
 === "ImageJ macro"
 

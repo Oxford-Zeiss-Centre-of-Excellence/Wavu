@@ -180,7 +180,7 @@ sequenceDiagram
     Note over V: 画像、表、ROI を開く
 ```
 
-## 通信で運ばれるデータ
+## 通信で運ばれるデータ { #data-on-the-wire }
 
 Wavu は **小さなデータ** のための橋です（メモリ上の画像 1 枚、だいたい
 1〜2 GB まで）。

@@ -179,7 +179,7 @@ sequenceDiagram
     Note over V: abre imágenes, tablas, ROI
 ```
 
-## Los datos en tránsito
+## Los datos en tránsito { #data-on-the-wire }
 
 Wavu es un puente para **datos pequeños** (una imagen en memoria, hasta
 aproximadamente 1–2 GB).

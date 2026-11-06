@@ -164,7 +164,7 @@ sequenceDiagram
     Note over V: 開啟影像、表格、ROI
 ```
 
-## 傳輸中的資料
+## 傳輸中的資料 { #data-on-the-wire }
 
 Wavu 是為**小型資料**搭的橋（一張在記憶體裡的影像，大約 1–2 GB 以內）。
 
