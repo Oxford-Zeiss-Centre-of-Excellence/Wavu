@@ -45,6 +45,22 @@ flowchart LR
 - **Le même outil dans les deux visualiseurs**, car un dossier de script Wavu
   fonctionne déjà dans Fiji et dans napari.
 
+## Fondé sur les principes FAIR
+
+Chaque outil de wavu-marketplace suivra les
+[principes FAIR](https://www.go-fair.org/fair-principles/) pour les logiciels de
+recherche : **F**indable (trouvable), **A**ccessible (accessible),
+**I**nteroperable (interopérable), **R**eusable (réutilisable).
+Un dossier de script Wavu contient déjà la plupart des éléments ; la
+marketplace les vérifiera avant de lister un outil.
+
+| Principe | Ce que cela signifie pour un outil Wavu | D'où cela vient |
+|---|---|---|
+| **Findable** (trouvable) | Une entrée de catalogue avec un nom clair, une description, des mots-clés et des auteurs ; un identifiant pérenne (DOI) pour chaque release | `README.md`, `CITATION.cff`, un DOI Zenodo par release GitHub |
+| **Accessible** (accessible) | Téléchargement gratuit par les protocoles web standard, depuis un dépôt public ; les métadonnées restent en ligne même si une version est retirée | release GitHub, code source ouvert |
+| **Interoperable** (interopérable) | Des formats de fichiers ouverts en entrée et en sortie (OME-Zarr, OME-TIFF, ImageJ RoiSet, CSV) ; le même outil fonctionne dans Fiji et dans napari | le contrat de script, wavu-fiji, wavu-napari |
+| **Reusable** (réutilisable) | Une licence, une citation, des tests et la batterie de cuisine exacte (`pixi.lock`), pour que l'outil fonctionne de la même façon sur chaque ordinateur, des années plus tard | `LICENSE`, `CITATION.cff`, `test_script.py`, `pixi.lock` |
+
 ## Ce que vous pouvez faire aujourd'hui
 
 - Partager un outil avec votre labo en un seul zip :

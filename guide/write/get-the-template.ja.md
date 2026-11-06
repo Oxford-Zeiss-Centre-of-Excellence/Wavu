@@ -7,17 +7,20 @@
 ## やさしく言うと
 
 白紙からレシピカードを書く人はいません。**テンプレート** は、完成して
-ちゃんと動くレシピ（[最初の実行](../fiji/first-run.md) のぼかし）で、
+ちゃんと動くレシピ（[Fiji](../fiji/first-run.md) または
+[napari](../napari/first-run.md) での最初の実行のぼかし）で、
 これをコピーしてから書き換えます。編集するのは `script.py` という 1 つの
 ファイルだけです。無料のコードエディター
-[VS Code](https://code.visualstudio.com) で編集し、すぐに Fiji から試せます。
+[VS Code](https://code.visualstudio.com) で編集し、すぐに Fiji や napari
+から試せます。テンプレートはどちらのビューアーでも同じです。レシピは 1 つ、
+ウェイターは 2 人です。
 
 ```mermaid
 flowchart LR
     T["テンプレート<br/>（ワンクリック）"]:::env
     V["VS Code で script.py を<br/>編集して保存"]:::script
-    S["Fiji: Stop Worker"]:::fiji
-    R["Fiji: Run Python Script"]:::fiji
+    S["ワーカーを止める<br/>（Fiji または napari）"]:::fiji
+    R["もう一度実行<br/>（Fiji または napari）"]:::fiji
     T --> V --> S --> R
     R -- "どこかを変える" --> V
 
@@ -47,13 +50,13 @@ flowchart LR
 
 | ファイル | 何か |
 |---|---|
-| `script.py` | **あなたのレシピ。** `PARAMS`（ダイアログ）と `run`（処理）。 |
+| `script.py` | **あなたのレシピ。** `PARAMS`（ダイアログまたはフォーム）と `run`（処理）。 |
 | `pixi.toml` | このスクリプトの調理器具のリスト。必要なパッケージです。 |
-| `test_script.py` | Fiji なしで動くチェック。**ここから始めます**（[まずテストから](test-without-fiji.md)）。 |
+| `test_script.py` | ビューアーなしで動くチェック。**ここから始めます**（[まずテストから](test-without-fiji.md)）。 |
 | `.vscode/` | [VS Code でのデバッグ](../help/debug-in-vscode.md) をワンクリックにします。 |
 | `README.md`, `.github/` | メモと、自動リリース（[上級](../fiji/with-the-world.md)）。 |
 
-## いつもの流れ
+## いつもの流れ { #the-everyday-loop }
 
 1. `test_script.py` に **まずチェックを書きます**。小さな作り物の画像から
    何が出てくるべきでしょう？ `pixi run test` を実行し、失敗するのを確かめます。
@@ -61,12 +64,22 @@ flowchart LR
    構いませんが、特に AI アシスタントがコードを書くときは強くおすすめします。）
 2. VS Code で `script.py` を **編集** して **保存** します
    （++ctrl+s++、Mac なら ++cmd+s++）。`pixi run test` が通るまで続けます。
-3. Fiji で **Plugins › Wavu › Stop Worker** を選びます。
-4. **Plugins › Wavu › Run Python Script** を選び、フォルダーを選びます。
+3. **ワーカーを止めて、もう一度実行します。**
 
-!!! warning "なぜ Stop Worker？"
+    === "Fiji"
+
+        **Plugins › Wavu › Stop Worker** を選び、次に
+        **Plugins › Wavu › Run Python Script** を選んでフォルダーを選びます。
+
+    === "napari"
+
+        Wavu パネル（**Plugins › Run Python Script (Wavu)**）で
+        **Stop worker** を押し、次に **Start worker** を押してスクリプトを選び、
+        **Run** を押します。
+
+!!! warning "なぜワーカーを止めるの？"
     厨房は開店するときにレシピを読みます。前回の実行から開いたままだと、
-    *古い* レシピで料理を続けてしまいます。**Stop Worker** で厨房を閉めれば、
+    *古い* レシピで料理を続けてしまいます。ワーカーを止めて厨房を閉めれば、
     次の実行で保存した変更が読み込まれます。かかるのは 1 秒ほどで、
     調理器具はそろったままです。
 
@@ -83,8 +96,9 @@ scipy = ">=1.10"
 scikit-image = "*"     # <- 新しい行："*" はどのバージョンでもよいという意味
 ```
 
-保存して **Stop Worker** し、もう一度実行します。Wavu が新しい行に気づき、
-pixi がパッケージを取ってきます（Log に表示されます）。PyPI（`pip` の世界）
+保存してワーカーを止め、もう一度実行します。Wavu が新しい行に気づき、
+pixi がパッケージを取ってきます（Fiji の Log または napari パネルのログに
+表示されます）。PyPI（`pip` の世界）
 にしかないパッケージは、代わりに `[pypi-dependencies]` の下に書きます。
 
 !!! info "パッケージはどこから来るの？ conda-forge と PyPI"
@@ -101,14 +115,15 @@ pixi がパッケージを取ってきます（Log に表示されます）。Py
     pixi add scikit-image
     ```
 
-    `pixi add` は `pixi.toml` を代わりに書き換えてくれます。ターミナルで
-    `pixi` を使うには、[pixi.sh](https://pixi.sh) からインストールして
-    ください。Fiji がダウンロードしたものは、ターミナルからは見えません。
+    `pixi add` は `pixi.toml` を代わりに書き換えてくれます。napari を
+    使っている人は、ターミナルですでに `pixi` を使えます。Fiji を使っている
+    人は [pixi.sh](https://pixi.sh) からインストールしてください。Fiji が
+    ダウンロードしたものは、ターミナルからは見えません。
 
 ## ひとことで言うと
 
 ワンクリックで動くスクリプトフォルダーを手に入れ、VS Code で `script.py`
-を編集し、変更を試すたびに Fiji で **Stop Worker** と
-**Run Python Script** を実行します。
+を編集し、変更を試すたびに Fiji か napari でワーカーを止めてもう一度
+実行します。
 
 [次へ：まずテストから :material-arrow-right:](test-without-fiji.md){ .md-button }

@@ -17,7 +17,7 @@ def layer(data, **kw):
 
 def test_layer_input_sends_the_array_and_pixel_size():
     arr, meta = layer_input(layer(np.ones((4, 5), np.uint16), scale=(0.5, 0.5), units=("micrometer", "micrometer")))
-    assert arr.shape == (4, 5) and meta == {"title": "cells", "pixel_um": 0.5}
+    assert arr.shape == (4, 5) and meta == {"title": "cells", "pixel_um": 0.5, "axes": "YX"}
 
 
 def test_layer_input_ignores_unit_scale_and_takes_the_finest_multiscale_level():
@@ -69,3 +69,11 @@ def test_table_rows_from_dicts_and_dataframes():
     assert table_rows([{"a": 1}, {"b": 2}]) == (["a", "b"], [[1, ""], ["", 2]])
     cols, rows = table_rows(pd.DataFrame({"x": [1, 2]}))
     assert cols == ["x"] and rows == [[1], [2]]
+
+
+def test_axes_are_filled_in_when_known():
+    from napari_wavu._convert import layer_axes
+    assert layer_input(layer(np.zeros((4, 5))))[1]["axes"] == "YX"
+    assert layer_axes(layer(np.zeros((3, 4, 5)), axis_labels=("t", "y", "x")), np.zeros((3, 4, 5))) == "TYX"
+    assert layer_axes(layer(np.zeros((3, 4, 5)), axis_labels=("0", "1", "2")), np.zeros((3, 4, 5))) is None
+    assert layer_axes(layer(np.zeros((4, 5, 3)), rgb=True), np.zeros((4, 5, 3))) == "YXS"

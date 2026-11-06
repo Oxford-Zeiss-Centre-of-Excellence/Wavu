@@ -7,18 +7,20 @@
 ## L'idée en mots simples
 
 Personne n'écrit une fiche recette à partir d'une page blanche. Le
-**modèle** est une recette finie qui fonctionne (le flou de
-[votre première exécution](../fiji/first-run.md)) que vous copiez puis
-modifiez. Vous éditez un seul fichier, `script.py`, dans
+**modèle** est une recette finie qui fonctionne (le flou de votre première
+exécution dans [Fiji](../fiji/first-run.md) ou
+[napari](../napari/first-run.md)) que vous copiez puis modifiez. Vous éditez
+un seul fichier, `script.py`, dans
 [VS Code](https://code.visualstudio.com), un éditeur de code gratuit, et vous
-l'essayez tout de suite depuis Fiji.
+l'essayez tout de suite depuis Fiji ou napari. C'est le même modèle pour les
+deux visualiseurs : une recette, deux serveurs.
 
 ```mermaid
 flowchart LR
     T["Modèle<br/>(un clic)"]:::env
     V["Modifier script.py<br/>dans VS Code, enregistrer"]:::script
-    S["Fiji : Stop Worker"]:::fiji
-    R["Fiji : Run Python Script"]:::fiji
+    S["Arrêter le worker<br/>(Fiji ou napari)"]:::fiji
+    R["Relancer<br/>(Fiji ou napari)"]:::fiji
     T --> V --> S --> R
     R -- "changer quelque chose" --> V
 
@@ -49,13 +51,13 @@ c'est pratique plus tard, quand vous voudrez
 
 | Fichier | Ce que c'est |
 |---|---|
-| `script.py` | **Votre recette.** `PARAMS` (la boîte de dialogue) et `run` (le travail). |
+| `script.py` | **Votre recette.** `PARAMS` (la boîte de dialogue ou le formulaire) et `run` (le travail). |
 | `pixi.toml` | La liste de la batterie de cuisine de ce script : les paquets dont il a besoin. |
-| `test_script.py` | Des vérifications qui tournent sans Fiji. **Commencez ici** ([d'abord le test](test-without-fiji.md)). |
+| `test_script.py` | Des vérifications qui tournent sans aucun visualiseur. **Commencez ici** ([d'abord le test](test-without-fiji.md)). |
 | `.vscode/` | Permet de [déboguer dans VS Code](../help/debug-in-vscode.md) en un clic. |
 | `README.md`, `.github/` | Des notes, et les publications automatiques ([avancé](../fiji/with-the-world.md)). |
 
-## La boucle de tous les jours
+## La boucle de tous les jours { #the-everyday-loop }
 
 1. **Écrivez d'abord la vérification** dans `test_script.py` : que doit-on
    obtenir pour une petite image inventée ? Lancez `pixi run test` et
@@ -64,15 +66,24 @@ c'est pratique plus tard, quand vous voudrez
    recommandée, surtout quand un assistant IA écrit le code.)
 2. **Modifiez** `script.py` dans VS Code et **enregistrez** (++ctrl+s++, ou
    ++cmd+s++ sur Mac) jusqu'à ce que `pixi run test` réussisse.
-3. Dans Fiji, choisissez **Plugins › Wavu › Stop Worker**.
-4. Choisissez **Plugins › Wavu › Run Python Script** et sélectionnez votre
-   dossier.
+3. **Arrêtez le worker et relancez :**
 
-!!! warning "Pourquoi Stop Worker ?"
+    === "Fiji"
+
+        Choisissez **Plugins › Wavu › Stop Worker**, puis
+        **Plugins › Wavu › Run Python Script** et sélectionnez votre dossier.
+
+    === "napari"
+
+        Dans le panneau Wavu (**Plugins › Run Python Script (Wavu)**),
+        appuyez sur **Stop worker**, puis sur **Start worker**, choisissez le
+        script, et appuyez sur **Run**.
+
+!!! warning "Pourquoi arrêter le worker ?"
     La cuisine lit la recette à l'ouverture. Si elle est encore ouverte
     depuis la dernière exécution, elle continue de cuisiner l'*ancienne*
-    recette. **Stop Worker** la ferme, pour que l'exécution suivante lise vos
-    modifications enregistrées. Cela ne prend qu'une seconde ; la
+    recette. Arrêter le worker la ferme, pour que l'exécution suivante lise
+    vos modifications enregistrées. Cela ne prend qu'une seconde ; la
     batterie de cuisine reste installée.
 
 ## Ajouter un paquet { #adding-a-package }
@@ -88,10 +99,10 @@ scipy = ">=1.10"
 scikit-image = "*"     # <- nouvelle ligne : "*" veut dire n'importe quelle version
 ```
 
-Enregistrez, faites **Stop Worker**, et relancez. Wavu remarque la nouvelle
-ligne et pixi récupère le paquet (le Log l'affiche). Les paquets qui
-n'existent que sur PyPI (le monde de `pip`) vont plutôt sous
-`[pypi-dependencies]`.
+Enregistrez, arrêtez le worker, et relancez. Wavu remarque la nouvelle ligne
+et pixi récupère le paquet (le Log de Fiji ou le journal du panneau napari
+l'affiche). Les paquets qui n'existent que sur PyPI (le monde de `pip`) vont
+plutôt sous `[pypi-dependencies]`.
 
 !!! info "D'où viennent les paquets ? conda-forge et PyPI"
     Imaginez deux magasins. **conda-forge** est celui où pixi va d'abord : un magasin gratuit, tenu par la communauté, de paquets prêts à l'emploi, y compris ceux qui contiennent du code compilé comme numpy, scikit-image ou PyTorch, et même des outils qui ne sont pas en Python. Tout ce qui est sous `[dependencies]` vient de là. **PyPI** est le magasin de `pip` ; quelques paquets ne se trouvent que là, et ils vont sous `[pypi-dependencies]`.
@@ -107,14 +118,15 @@ n'existent que sur PyPI (le monde de `pip`) vont plutôt sous
     pixi add scikit-image
     ```
 
-    `pixi add` modifie `pixi.toml` pour vous. Pour avoir `pixi` dans un
-    terminal, installez-le depuis [pixi.sh](https://pixi.sh) ; la copie
-    téléchargée par Fiji n'est pas dans le chemin (PATH) du terminal.
+    `pixi add` modifie `pixi.toml` pour vous. Les utilisateurs de napari ont
+    déjà `pixi` dans le terminal. Les utilisateurs de Fiji l'installent
+    depuis [pixi.sh](https://pixi.sh) ; la copie téléchargée par Fiji n'est
+    pas dans le chemin (PATH) du terminal.
 
 ## En une phrase
 
 Un clic pour obtenir un dossier de script qui fonctionne, modifiez
-`script.py` dans VS Code, puis **Stop Worker** et **Run Python Script** dans
-Fiji pour essayer chaque changement.
+`script.py` dans VS Code, puis arrêtez le worker et relancez, dans Fiji ou
+napari, pour essayer chaque changement.
 
 [Suite : d'abord le test :material-arrow-right:](test-without-fiji.md){ .md-button }

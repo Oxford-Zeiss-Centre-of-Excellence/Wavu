@@ -7,17 +7,19 @@
 ## 쉬운 말로 설명하면
 
 레시피 카드를 빈 종이에서 시작하는 사람은 없어요. **템플릿**은 완성되어
-잘 작동하는 레시피([첫 실행](../fiji/first-run.md)의 블러)이고, 이걸
-복사해서 고쳐 쓰면 돼요. 무료 코드 편집기인
+잘 작동하는 레시피([Fiji](../fiji/first-run.md)나
+[napari](../napari/first-run.md)에서 한 첫 실행의 블러)이고, 이걸 복사해서
+고쳐 쓰면 돼요. 무료 코드 편집기인
 [VS Code](https://code.visualstudio.com)에서 `script.py` 파일 하나만 고치고,
-바로 Fiji에서 시험해 볼 수 있어요.
+바로 Fiji나 napari에서 시험해 볼 수 있어요. 두 뷰어 모두 같은 템플릿을
+써요. 레시피는 하나, 웨이터는 둘이에요.
 
 ```mermaid
 flowchart LR
     T["템플릿<br/>(클릭 한 번)"]:::env
     V["VS Code에서 script.py<br/>고치고 저장"]:::script
-    S["Fiji: Stop Worker"]:::fiji
-    R["Fiji: Run Python Script"]:::fiji
+    S["워커 멈추기<br/>(Fiji 또는 napari)"]:::fiji
+    R["다시 실행<br/>(Fiji 또는 napari)"]:::fiji
     T --> V --> S --> R
     R -- "뭔가 바꾸기" --> V
 
@@ -44,13 +46,13 @@ flowchart LR
 
 | 파일 | 무엇인가요 |
 |---|---|
-| `script.py` | **나의 레시피.** `PARAMS`(대화상자)와 `run`(실제 작업). |
+| `script.py` | **나의 레시피.** `PARAMS`(대화상자 또는 폼)와 `run`(실제 작업). |
 | `pixi.toml` | 이 스크립트의 주방 도구 목록: 필요한 패키지들. |
-| `test_script.py` | Fiji 없이 돌아가는 검사. **여기서 시작하세요**([테스트 먼저](test-without-fiji.md)). |
+| `test_script.py` | 뷰어 없이 돌아가는 검사. **여기서 시작하세요**([테스트 먼저](test-without-fiji.md)). |
 | `.vscode/` | [VS Code 디버깅](../help/debug-in-vscode.md)을 클릭 한 번으로 해 줘요. |
 | `README.md`, `.github/` | 메모와 자동 릴리스([고급](../fiji/with-the-world.md)). |
 
-## 매일 하는 반복
+## 매일 하는 반복 { #the-everyday-loop }
 
 1. `test_script.py`에 **검사를 먼저 써요**. 작은 지어낸 이미지에서 무엇이
    나와야 하나요? `pixi run test`를 실행해서 실패하는 걸 확인해요.
@@ -58,12 +60,22 @@ flowchart LR
    되지만, 특히 AI 어시스턴트가 코드를 쓸 때는 강력히 추천해요.)
 2. VS Code에서 `script.py`를 **고치고 저장**해요(++ctrl+s++, Mac은
    ++cmd+s++). `pixi run test`가 통과할 때까지요.
-3. Fiji에서 **Plugins › Wavu › Stop Worker**를 골라요.
-4. **Plugins › Wavu › Run Python Script**를 고르고 폴더를 선택해요.
+3. **워커를 멈추고 다시 실행해요:**
 
-!!! warning "왜 Stop Worker를 하나요?"
+    === "Fiji"
+
+        **Plugins › Wavu › Stop Worker**를 고른 다음,
+        **Plugins › Wavu › Run Python Script**를 고르고 폴더를 선택해요.
+
+    === "napari"
+
+        Wavu 패널(**Plugins › Run Python Script (Wavu)**)에서
+        **Stop worker**를 누르고, **Start worker**를 누른 다음, 스크립트를
+        고르고 **Run**을 눌러요.
+
+!!! warning "왜 워커를 멈추나요?"
     주방은 문을 열 때 레시피를 읽어요. 지난 실행 때부터 계속 열려 있으면
-    *옛날* 레시피로 계속 요리해요. **Stop Worker**로 주방을 닫으면 다음
+    *옛날* 레시피로 계속 요리해요. 워커를 멈추면 주방이 닫히고, 다음
     실행 때 저장한 변경 사항을 읽어요. 1초면 되고, 주방 도구는 그대로 갖춰져
     있어요.
 
@@ -80,8 +92,8 @@ scipy = ">=1.10"
 scikit-image = "*"     # <- 새 줄: "*"는 아무 버전이나 된다는 뜻
 ```
 
-저장하고, **Stop Worker**를 하고, 다시 실행하세요. Wavu가 새 줄을 알아채고
-pixi가 패키지를 가져와요(Log에 나와요). PyPI(`pip`의 세계)에만 있는
+저장하고, 워커를 멈추고, 다시 실행하세요. Wavu가 새 줄을 알아채고
+pixi가 패키지를 가져와요(Fiji의 Log나 napari 패널의 로그에 나와요). PyPI(`pip`의 세계)에만 있는
 패키지는 대신 `[pypi-dependencies]` 아래에 넣으세요.
 
 !!! info "패키지는 어디서 오나요? conda-forge와 PyPI"
@@ -98,14 +110,15 @@ pixi가 패키지를 가져와요(Log에 나와요). PyPI(`pip`의 세계)에만
     pixi add scikit-image
     ```
 
-    `pixi add`가 `pixi.toml`을 대신 고쳐 줘요. 터미널에서 `pixi`를 쓰려면
+    `pixi add`가 `pixi.toml`을 대신 고쳐 줘요. napari 사용자는 이미
+    터미널에서 `pixi`를 쓸 수 있어요. Fiji 사용자는
     [pixi.sh](https://pixi.sh)에서 설치하세요. Fiji가 내려받은 pixi는
     터미널의 경로에 없어요.
 
 ## 한 문장으로
 
 클릭 한 번으로 잘 작동하는 스크립트 폴더를 받고, VS Code에서 `script.py`를
-고친 다음, Fiji에서 **Stop Worker**와 **Run Python Script**로 변경 사항을
+고친 다음, Fiji나 napari에서 워커를 멈추고 다시 실행해서 변경 사항을
 하나씩 시험하세요.
 
 [다음: 테스트 먼저 :material-arrow-right:](test-without-fiji.md){ .md-button }

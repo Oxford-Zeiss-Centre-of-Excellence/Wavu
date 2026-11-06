@@ -23,9 +23,25 @@ def layer_input(layer: Any) -> tuple[np.ndarray, dict[str, Any]]:
     if len(scale) == 2 and scale[0] == scale[1] and scale[0] != 1.0:
         if not units or all(u in ("micrometer", "um", "µm", "pixel") for u in units):
             meta["pixel_um"] = scale[0]
-    if getattr(layer, "rgb", False):
-        meta["axes"] = "YXS" if arr.ndim == 3 else None
+    meta["axes"] = layer_axes(layer, arr)
     return arr, {k: v for k, v in meta.items() if v is not None}
+
+
+def layer_axes(layer: Any, arr: np.ndarray) -> str | None:
+    """ImageJ-style axes for ctx.meta, when they are known.
+
+    RGB → "YXS"; 2-D → "YX"; otherwise napari's axis labels when they are single
+    letters among T, Z, C, Y, X (e.g. from an OME-Zarr reader). Unknown → None
+    (scripts read ctx.meta["image"].get("axes")).
+    """
+    if getattr(layer, "rgb", False):
+        return "YXS" if arr.ndim == 3 else None
+    if arr.ndim == 2:
+        return "YX"
+    labels = [str(a).strip().upper() for a in (getattr(layer, "axis_labels", None) or ())]
+    if len(labels) == arr.ndim and all(len(a) == 1 and a in "TZCYX" for a in labels)             and len(set(labels)) == len(labels) and labels[-2:] == ["Y", "X"]:
+        return "".join(labels)
+    return None
 
 
 def is_labels(name: str, arr: np.ndarray, meta: dict[str, Any]) -> bool:

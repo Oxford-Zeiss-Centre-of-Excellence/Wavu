@@ -19,6 +19,7 @@ exclude_docs: |
 
 theme:
   name: material
+  custom_dir: guide_overrides   # footer with partner logos
   language: en
   logo: assets/img/favicon.svg
   favicon: assets/img/favicon.svg

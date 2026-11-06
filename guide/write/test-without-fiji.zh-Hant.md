@@ -1,25 +1,25 @@
 # 先寫測試
 
 !!! success "強烈建議：每次修改都從這裡開始"
-    你*可以*跳過測試，直接到 Fiji 裡試。但在寫程式碼**之前**先寫好檢查，
+    你*可以*跳過測試，直接到 Fiji 或 napari 裡試。但在寫程式碼**之前**先寫好檢查，
     是最能省時間的習慣；當程式碼是由 **AI 助理**幫你寫的時候，這一點尤其重要（見下文）。
 
 ## 用白話說
 
 廚師在下鍋**之前**就決定好這道菜該是什麼味道，然後邊煮邊嚐。
 **測試**就是把這個決定寫下來：一個小小的檢查，拿一張自己造出來的影像跑你的
-`run` 函式，告訴你*通過*還是*失敗*，而且**完全不用開 Fiji**。
+`run` 函式，告訴你*通過*還是*失敗*，而且**完全不用開 Fiji 或 napari**。
 先寫測試再寫程式，就叫做*測試驅動開發*（test-driven development，TDD）。
 
-Wavu 給你一個 Fiji 的替身 `FakeCtx`，它會把 Log 訊息和進度記錄下來，
-而不是顯示出來。
+Wavu 給你一個 Fiji 和 napari 的替身 `FakeCtx`，它會把 Log 訊息和進度記錄下來，
+而不是顯示出來。因為同一個腳本在兩邊都能跑，一套測試就能同時涵蓋兩者。
 
 ```mermaid
 flowchart LR
     T["1 · 寫下檢查<br/>(test_script.py)"]:::worker
     R["2 · pixi run test<br/>失敗（紅燈）"]:::fiji
     S["3 · 修改 script.py<br/>直到通過（綠燈）"]:::script
-    F["4 · 在 Fiji 裡試試"]:::env
+    F["4 · 在 Fiji 或 napari 裡試試"]:::env
     T --> R --> S --> F
     S -- "下一個想法" --> T
 
@@ -56,10 +56,10 @@ def test_blur_smooths_a_single_bright_pixel():
     assert ctx.progress_values[-1] == 1.0      # 進度到了 100 %
 ```
 
-- `run_script` 會像 Fiji 一樣呼叫你的 `run`，你沒給的參數會用 `PARAMS`
+- `run_script` 會像 Fiji 或 napari 一樣呼叫你的 `run`，你沒給的參數會用 `PARAMS`
   裡的預設值補上。
 - `ctx.messages` 存著你寫過的所有 Log；`ctx.progress_values` 存著每一個進度值。
-- `FakeCtx(cancel_after=2)` 會假裝使用者在兩次檢查之後按了 Esc，
+- `FakeCtx(cancel_after=2)` 會假裝使用者在兩次檢查之後取消了（在 Fiji 按 Esc，在 napari 按 **Cancel**），
   讓你測試取消功能是否正常。
 
 為新想法寫的**第一個測試**可以就這麼小：做一張你已經知道答案的影像
@@ -79,7 +79,7 @@ pixi run test
 如果出現紅色的 `F` 和 `failed`，表示有一項檢查沒通過；上面的文字會告訴你是哪一行、為什麼。
 
 !!! tip "終端機裡沒有 `pixi`？"
-    Fiji 下載的 pixi 放在看不到的地方。要在終端機使用，請從
+    如果你是連同 Wavu 一起安裝 napari 的，你已經有 pixi 了。Fiji 下載的 pixi 放在看不到的地方。要在終端機使用，請從
     [pixi.sh](https://pixi.sh) 安裝一次 pixi，然後關掉終端機再重新開啟。
 
     === "Windows"
@@ -103,12 +103,12 @@ pixi run test
 
 1. 由**你**來寫或確認測試：輸入的影像，以及你預期的答案。
 2. 請助理：*「在不修改測試的前提下，讓 `pixi run test` 通過。」*
-3. 在相信結果之前，**自己執行測試**，然後再到 Fiji 裡試試。
+3. 在相信結果之前，**自己執行測試**，然後再到 Fiji 或 napari 裡試試。
 
 助理寫的測試，要像它寫的程式碼一樣仔細讀：一個永遠不會失敗的檢查，什麼也保護不了。
 
 ## 一句話總結
 
-先寫檢查，看它失敗，修改 `script.py` 直到 `pixi run test` 通過，然後才到 Fiji 裡試。
+先寫檢查，看它失敗，修改 `script.py` 直到 `pixi run test` 通過，然後才到 Fiji 或 napari 裡試。
 
 [下一步：從筆記本到 Wavu :material-arrow-right:](from-notebook.md){ .md-button }

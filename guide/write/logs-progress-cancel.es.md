@@ -8,16 +8,26 @@ pedido, pero es el cocinero quien decide cuándo es seguro dejar de remover.
 
 En Wavu, `ctx` es esa línea entre la cocina y la mesa:
 
-- `ctx.log("…")` envía un mensaje a la ventana **Log** de Fiji.
-- `ctx.progress(0.5)` mueve la **barra de progreso** de Fiji hasta la mitad.
-- `ctx.cancelled()` te dice si el usuario ha pulsado **Esc**.
+- `ctx.log("…")` envía un mensaje al **log**.
+- `ctx.progress(0.5)` mueve la **barra de progreso** hasta la mitad.
+- `ctx.cancelled()` te dice si el usuario ha pedido **parar**.
+
+Tu código es el mismo en los dos visores; solo cambia dónde aparecen las
+cosas:
+
+| | Fiji | napari |
+|---|---|---|
+| `ctx.log` y `print` | la ventana **Log** | el cuadro de log del panel de Wavu |
+| `ctx.progress` | la barra de progreso de Fiji, más *Wavu: script 40%* en la barra de estado | la barra de progreso del panel de Wavu |
+| cómo cancela el usuario | pulsa **Esc** | pulsa **Cancel** en el panel |
+| un error en tu código | una ventana de error, con los detalles en el Log | `Error: …` en el log del panel, más una notificación |
 
 ```mermaid
 flowchart RL
     S["tu run()"]:::script
-    L["ventana Log"]:::fiji
+    L["log<br/>(ventana Log · log del panel)"]:::fiji
     P["barra de progreso"]:::fiji
-    E["tecla Esc"]:::fiji
+    E["Esc · botón Cancel"]:::fiji
     S -- "ctx.log(...)" --> L
     S -- "ctx.progress(0..1)" --> P
     E -. "ctx.cancelled() pasa a True" .-> S
@@ -26,16 +36,16 @@ flowchart RL
     classDef script fill:#fff3e0,stroke:#ef6c00,color:#e65100
 ```
 
-## Escribir en el Log
+## Escribir en el log
 
 ```python
 ctx.log(f"Segmenting a {img.shape} image")
 ```
 
-La línea aparece en el Log de Fiji al momento, mientras tu código sigue en
-marcha. Un simple `print(...)` dentro de `run` hace lo mismo. Escribe en el
-Log *antes* de cualquier paso lento, para que el usuario sepa que Fiji no se
-ha colgado.
+La línea aparece en el log al momento, mientras tu código sigue en marcha.
+Un simple `print(...)` dentro de `run` hace lo mismo. Escribe en el log
+*antes* de cualquier paso lento, para que el usuario sepa que nada se ha
+colgado.
 
 ## Progreso
 
@@ -47,17 +57,19 @@ for i, plane in enumerate(planes):
     ctx.progress((i + 1) / len(planes))
 ```
 
-La barra de progreso de Fiji se llena, y la barra de estado, en la parte
-inferior de la ventana principal de Fiji, muestra el nombre del script y un
+La barra de progreso se llena. En Fiji, la barra de estado, en la parte
+inferior de la ventana principal, muestra además el nombre del script y un
 porcentaje, como *Wavu: script 40%*.
 
 ## Cancelar: por qué tu código tiene que ayudar { #cancel-why-your-code-has-to-help }
 
-Haz clic en una ventana de Fiji y pulsa **Esc**. El Log dice
-*Cancelling script…*. Pero Python no se puede interrumpir de forma segura
-desde fuera en mitad de un cálculo, así que Wavu solo **levanta una bandera**.
-Tu código comprueba la bandera en momentos razonables y se detiene con
-educación. Esto se llama **cancelación cooperativa**.
+En Fiji, haz clic en una ventana de Fiji y pulsa **Esc**; el Log dice
+*Cancelling script…*. En napari, pulsa **Cancel** en el panel de Wavu; el
+log dice *Cancelling...* y, cuando tu script se ha detenido, *Cancelled.*
+Pero Python no se puede interrumpir de forma segura desde fuera en mitad de
+un cálculo, así que Wavu solo **levanta una bandera**. Tu código comprueba la
+bandera en momentos razonables y se detiene con educación. Esto se llama
+**cancelación cooperativa**.
 
 La plantilla lo hace dentro de su bucle:
 
@@ -70,8 +82,8 @@ for i, plane in enumerate(planes):
 ```
 
 Una forma más corta: `ctx.check_cancelled()` detiene la ejecución en el acto
-si se ha pulsado Esc (lanza un error especial, `wavu.Cancelled`, que Wavu
-gestiona sin hacer ruido).
+si el usuario ha cancelado (lanza un error especial, `wavu.Cancelled`, que
+Wavu gestiona sin hacer ruido).
 
 ```python
 ctx.check_cancelled()       # entre dos pasos lentos
@@ -79,11 +91,12 @@ masks = model.eval(img)
 ctx.check_cancelled()
 ```
 
-!!! warning "Esc durante una llamada larga"
+!!! warning "Cancelar durante una llamada larga"
     Si tu script pasa cinco minutos dentro de una sola llamada, como un gran
-    `model.eval(...)`, Esc solo surte efecto *después* de que esa llamada
-    termine. Dividir el trabajo (plano a plano, tesela a tesela) hace que
-    cancelar parezca instantáneo.
+    `model.eval(...)`, Esc o **Cancel** solo surten efecto *después* de que
+    esa llamada termine.
+    Dividir el trabajo (plano a plano, tesela a tesela) hace que cancelar
+    parezca instantáneo.
 
 ## Un patrón para copiar
 
@@ -111,6 +124,7 @@ def run(ctx, inputs, params):
 ## En una frase
 
 Usa `ctx.log` para hablar, `ctx.progress` para mostrar cuánto llevas, y
-comprueba `ctx.cancelled()` entre pasos para que Esc pueda detener tu script.
+comprueba `ctx.cancelled()` entre pasos para que Esc (Fiji) o **Cancel**
+(napari) puedan detener tu script.
 
 [Siguiente: imágenes reales :material-arrow-right:](real-images.md){ .md-button }

@@ -8,16 +8,25 @@
 
 Wavu에서는 `ctx`가 주방과 테이블을 잇는 연락선이에요.
 
-- `ctx.log("…")`는 Fiji의 **Log** 창에 메시지를 보내요.
-- `ctx.progress(0.5)`는 Fiji의 **진행 표시줄**을 절반까지 옮겨요.
-- `ctx.cancelled()`는 사용자가 **Esc**를 눌렀는지 알려 줘요.
+- `ctx.log("…")`는 **로그**에 메시지를 보내요.
+- `ctx.progress(0.5)`는 **진행 표시줄**을 절반까지 옮겨요.
+- `ctx.cancelled()`는 사용자가 **멈춰** 달라고 했는지 알려 줘요.
+
+코드는 두 뷰어에서 똑같아요. 어디에 나타나는지만 달라요.
+
+| | Fiji | napari |
+|---|---|---|
+| `ctx.log`와 `print` | **Log** 창 | Wavu 패널의 로그 상자 |
+| `ctx.progress` | Fiji의 진행 표시줄, 그리고 상태 표시줄의 *Wavu: script 40%* | Wavu 패널의 진행 표시줄 |
+| 사용자가 취소하는 법 | **Esc** 누르기 | 패널에서 **Cancel** 누르기 |
+| 코드의 오류 | 오류 창, 자세한 내용은 Log에 | 패널 로그의 `Error: …`, 그리고 알림 |
 
 ```mermaid
 flowchart RL
     S["나의 run()"]:::script
-    L["Log 창"]:::fiji
+    L["로그<br/>(Log 창 · 패널 로그)"]:::fiji
     P["진행 표시줄"]:::fiji
-    E["Esc 키"]:::fiji
+    E["Esc · Cancel 버튼"]:::fiji
     S -- "ctx.log(...)" --> L
     S -- "ctx.progress(0..1)" --> P
     E -. "ctx.cancelled()가 True가 돼요" .-> S
@@ -32,9 +41,9 @@ flowchart RL
 ctx.log(f"Segmenting a {img.shape} image")
 ```
 
-코드가 아직 돌고 있는 동안에도 그 줄이 바로 Fiji의 Log에 나타나요. `run`
+코드가 아직 돌고 있는 동안에도 그 줄이 바로 로그에 나타나요. `run`
 안의 평범한 `print(...)`도 똑같이 동작해요. 느린 작업 *전에* 로그를 남기면
-사용자가 Fiji가 멈춘 게 아니라는 걸 알 수 있어요.
+사용자가 아무것도 멈춘 게 아니라는 걸 알 수 있어요.
 
 ## 진행 상황
 
@@ -46,12 +55,15 @@ for i, plane in enumerate(planes):
     ctx.progress((i + 1) / len(planes))
 ```
 
-Fiji의 진행 표시줄이 차오르고, Fiji 메인 창 아래쪽 상태 표시줄에 스크립트
-이름과 백분율이 *Wavu: script 40%*처럼 나와요.
+진행 표시줄이 차올라요. Fiji에서는 메인 창 아래쪽 상태 표시줄에도
+스크립트 이름과 백분율이 *Wavu: script 40%*처럼 나와요.
 
 ## 취소: 왜 코드가 도와야 하나요 { #cancel-why-your-code-has-to-help }
 
-Fiji 창을 클릭하고 **Esc**를 누르세요. Log에 *Cancelling script…*가 나와요.
+Fiji에서는 Fiji 창을 클릭하고 **Esc**를 누르세요. Log에
+*Cancelling script…*가 나와요. napari에서는 Wavu 패널의 **Cancel**을
+누르세요. 로그에 *Cancelling...*이 나오고, 스크립트가 멈추면 *Cancelled.*가
+나와요.
 하지만 Python은 계산 도중에 밖에서 안전하게 끊을 수 없어요. 그래서 Wavu는
 **깃발만 올려요.** 코드가 적당한 때에 깃발을 확인하고 얌전히 멈추는 거예요.
 이걸 **협력적 취소(cooperative cancel)**라고 해요.
@@ -66,7 +78,7 @@ for i, plane in enumerate(planes):
     ...
 ```
 
-더 짧은 방법도 있어요. `ctx.check_cancelled()`는 Esc가 눌렸으면 그 자리에서
+더 짧은 방법도 있어요. `ctx.check_cancelled()`는 사용자가 취소했으면 그 자리에서
 실행을 멈춰요(Wavu가 조용히 처리하는 특별한 `wavu.Cancelled` 오류를 내요).
 
 ```python
@@ -75,9 +87,9 @@ masks = model.eval(img)
 ctx.check_cancelled()
 ```
 
-!!! warning "긴 호출 하나 도중의 Esc"
+!!! warning "긴 호출 하나 도중의 취소"
     스크립트가 큰 `model.eval(...)` 같은 호출 하나 안에서 5분을 보낸다면,
-    Esc는 그 호출이 끝난 *뒤에야* 효과가 있어요. 작업을 나누면(평면별로,
+    Esc나 **Cancel**은 그 호출이 끝난 *뒤에야* 효과가 있어요. 작업을 나누면(평면별로,
     타일별로) 취소가 즉시 되는 것처럼 느껴져요.
 
 ## 그대로 따라 쓸 패턴
@@ -106,6 +118,7 @@ def run(ctx, inputs, params):
 ## 한 문장으로
 
 `ctx.log`로 말하고, `ctx.progress`로 얼마나 왔는지 보여 주고, 단계 사이에
-`ctx.cancelled()`를 확인하면 Esc로 스크립트를 멈출 수 있어요.
+`ctx.cancelled()`를 확인하면 Esc(Fiji)나 **Cancel**(napari)로 스크립트를
+멈출 수 있어요.
 
 [다음: 실제 이미지 :material-arrow-right:](real-images.md){ .md-button }

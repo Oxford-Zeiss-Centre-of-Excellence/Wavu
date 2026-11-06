@@ -1,29 +1,31 @@
 # D'abord le test
 
 !!! success "Vivement recommandé : commencez chaque modification ici"
-    Vous *pouvez* sauter les tests et aller directement dans Fiji. Mais écrire
-    la vérification **avant** le code est l'habitude qui fait gagner le plus de
-    temps, et elle compte surtout quand un **assistant IA** écrit le code pour
-    vous (voir plus bas).
+    Vous *pouvez* sauter les tests et aller directement dans Fiji ou napari.
+    Mais écrire la vérification **avant** le code est l'habitude qui fait
+    gagner le plus de temps, et elle compte surtout quand un **assistant IA**
+    écrit le code pour vous (voir plus bas).
 
 ## L'idée en mots simples
 
 Un chef décide du goût que doit avoir le plat **avant** de cuisiner, puis
 goûte au fur et à mesure. Un **test**, c'est cette décision mise par écrit :
 une toute petite vérification qui lance votre fonction `run` sur une image
-inventée et répond *réussi* ou *échoué*, **sans ouvrir Fiji**. L'écrire en
-premier s'appelle le *développement piloté par les tests* (en anglais
-*test-driven development*, TDD).
+inventée et répond *réussi* ou *échoué*, **sans ouvrir Fiji ni napari**.
+L'écrire en premier s'appelle le *développement piloté par les tests* (en
+anglais *test-driven development*, TDD).
 
-Wavu vous donne une doublure de Fiji, `FakeCtx`, qui enregistre les messages
-du Log et la progression au lieu de les afficher.
+Wavu vous donne une doublure du visualiseur, `FakeCtx`, qui enregistre les
+messages du journal et la progression au lieu de les afficher. Comme le même
+script tourne dans les deux visualiseurs, une seule série de tests couvre les
+deux.
 
 ```mermaid
 flowchart LR
     T["1 · Écrire la vérification<br/>(test_script.py)"]:::worker
     R["2 · pixi run test<br/>elle échoue (rouge)"]:::fiji
     S["3 · Modifier script.py<br/>jusqu'à la réussite (vert)"]:::script
-    F["4 · Essayer dans Fiji"]:::env
+    F["4 · Essayer dans Fiji ou napari"]:::env
     T --> R --> S --> F
     S -- "idée suivante" --> T
 
@@ -61,13 +63,14 @@ def test_blur_smooths_a_single_bright_pixel():
     assert ctx.progress_values[-1] == 1.0      # la progression a atteint 100 %
 ```
 
-- `run_script` appelle votre `run` exactement comme Fiji le ferait, en
-  prenant les valeurs par défaut de `PARAMS` pour tout ce que vous omettez.
-- `ctx.messages` contient tout ce que vous avez écrit dans le Log ;
+- `run_script` appelle votre `run` exactement comme Fiji ou napari le
+  ferait, en prenant les valeurs par défaut de `PARAMS` pour tout ce que vous
+  omettez.
+- `ctx.messages` contient tout ce que vous avez écrit dans le journal ;
   `ctx.progress_values`, chaque valeur de progression.
-- `FakeCtx(cancel_after=2)` fait comme si l'utilisateur avait appuyé sur
-  Échap après deux vérifications : vous pouvez ainsi tester que l'annulation
-  fonctionne.
+- `FakeCtx(cancel_after=2)` fait comme si l'utilisateur avait annulé (Échap
+  dans Fiji, **Cancel** dans napari) après deux vérifications : vous pouvez
+  ainsi tester que l'annulation fonctionne.
 
 **Votre premier test** pour une nouvelle idée peut être aussi petit que
 ceci : fabriquez une image dont vous connaissez la réponse (un carré
@@ -90,9 +93,10 @@ vérification n'a pas tenu ; le texte au-dessus indique quelle ligne et
 pourquoi.
 
 !!! tip "Pas de `pixi` dans le terminal ?"
-    Le pixi téléchargé par Fiji est rangé à l'écart. Pour le terminal,
-    installez pixi une fois depuis [pixi.sh](https://pixi.sh), puis fermez et
-    rouvrez le terminal.
+    Si vous avez installé napari avec Wavu, vous l'avez déjà. Le pixi
+    téléchargé par Fiji est rangé à l'écart. Pour le terminal, installez pixi
+    une fois depuis [pixi.sh](https://pixi.sh), puis fermez et rouvrez le
+    terminal.
 
     === "Windows"
 
@@ -119,7 +123,7 @@ qu'ils ne peuvent pas contourner par de belles paroles :
 2. Demandez à l'assistant : *« fais passer `pixi run test` sans modifier les
    tests. »*
 3. **Lancez les tests vous-même** avant de faire confiance au résultat, puis
-   essayez dans Fiji.
+   essayez dans Fiji ou napari.
 
 Lisez les tests écrits par l'assistant aussi attentivement que son code :
 une vérification qui ne peut jamais échouer ne protège rien.
@@ -128,6 +132,6 @@ une vérification qui ne peut jamais échouer ne protège rien.
 
 Écrivez d'abord la vérification, regardez-la échouer, modifiez `script.py`
 jusqu'à ce que `pixi run test` réussisse, et seulement ensuite essayez dans
-Fiji.
+Fiji ou napari.
 
 [Suite : du notebook à Wavu :material-arrow-right:](from-notebook.md){ .md-button }

@@ -39,6 +39,21 @@ flowchart LR
 - **同一個工具在 Fiji 和 napari 都能用**，因為 Wavu 腳本資料夾本來就能在
   兩邊執行。
 
+## 以 FAIR 原則為基礎
+
+wavu-marketplace 裡的每個工具，都會遵守研究軟體的
+[FAIR 原則](https://www.go-fair.org/fair-principles/)：
+**F**indable（可找到）、**A**ccessible（可取得）、
+**I**nteroperable（可互通）、**R**eusable（可重複使用）。
+Wavu 腳本資料夾已經具備大部分的要素；marketplace 會在工具上架前逐一檢查。
+
+| 原則 | 對 Wavu 工具的意義 | 從哪裡來 |
+|---|---|---|
+| **Findable**（可找到） | 目錄條目有清楚的名稱、說明、關鍵字和作者；每個 release 都有永久識別碼（DOI） | `README.md`、`CITATION.cff`、每個 GitHub release 一個 Zenodo DOI |
+| **Accessible**（可取得） | 透過標準網路協定，從公開的儲存庫免費下載；即使某個版本被撤下，後設資料仍會留在網路上 | GitHub release、開放原始碼 |
+| **Interoperable**（可互通） | 輸入和輸出都用開放的檔案格式（OME-Zarr、OME-TIFF、ImageJ RoiSet、CSV）；同一個工具在 Fiji 和 napari 都能用 | 腳本約定、wavu-fiji、wavu-napari |
+| **Reusable**（可重複使用） | 有授權條款、引用資訊、測試，以及確切的廚具（`pixi.lock`），讓工具在每台電腦上、多年之後都以同樣的方式執行 | `LICENSE`、`CITATION.cff`、`test_script.py`、`pixi.lock` |
+
 ## 你今天就能做的事
 
 - 用一個 zip 把工具分享給實驗室：[分享給實驗室](fiji/with-your-lab.md)。

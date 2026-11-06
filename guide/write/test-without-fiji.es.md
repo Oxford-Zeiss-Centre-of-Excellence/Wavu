@@ -1,7 +1,7 @@
 # Primero el test
 
 !!! success "Muy recomendable: empieza aquí cada cambio"
-    *Puedes* saltarte los tests e ir directamente a Fiji. Pero escribir la
+    *Puedes* saltarte los tests e ir directamente a Fiji o napari. Pero escribir la
     comprobación **antes** que el código es el hábito que más tiempo ahorra, y
     importa sobre todo cuando un **asistente de IA** escribe el código por ti
     (ver más abajo).
@@ -11,18 +11,19 @@
 Un cocinero decide cómo debe saber el plato **antes** de cocinar, y luego va
 probando sobre la marcha. Un **test** es esa decisión por escrito: una pequeña
 comprobación que ejecuta tu función `run` sobre una imagen inventada y dice
-*pasa* o *falla*, **sin abrir Fiji**. Escribirlo primero se llama
+*pasa* o *falla*, **sin abrir Fiji ni napari**. Escribirlo primero se llama
 *desarrollo guiado por tests* (TDD, del inglés *test-driven development*).
 
-Wavu te da un sustituto de Fiji, `FakeCtx`, que guarda los mensajes del Log y
-el progreso en lugar de mostrarlos.
+Wavu te da un sustituto del visor, `FakeCtx`, que guarda los mensajes del log
+y el progreso en lugar de mostrarlos. Como el mismo script se ejecuta en los
+dos visores, un solo conjunto de tests sirve para ambos.
 
 ```mermaid
 flowchart LR
     T["1 · Escribe la comprobación<br/>(test_script.py)"]:::worker
     R["2 · pixi run test<br/>falla (rojo)"]:::fiji
     S["3 · Cambia script.py<br/>hasta que pase (verde)"]:::script
-    F["4 · Pruébalo en Fiji"]:::env
+    F["4 · Pruébalo en Fiji o napari"]:::env
     T --> R --> S --> F
     S -- "siguiente idea" --> T
 
@@ -60,12 +61,12 @@ def test_blur_smooths_a_single_bright_pixel():
     assert ctx.progress_values[-1] == 1.0      # el progreso llegó al 100 %
 ```
 
-- `run_script` llama a tu `run` igual que lo haría Fiji, rellenando con los
+- `run_script` llama a tu `run` igual que lo harían Fiji o napari, rellenando con los
   valores por defecto de `PARAMS` todo lo que no indiques.
 - `ctx.messages` guarda todo lo que escribiste en el Log; `ctx.progress_values`,
   cada valor de progreso.
-- `FakeCtx(cancel_after=2)` simula que el usuario pulsó Esc después de dos
-  comprobaciones, para que puedas probar que cancelar funciona.
+- `FakeCtx(cancel_after=2)` simula que el usuario canceló (Esc en Fiji,
+  **Cancel** en napari) después de dos comprobaciones, para que puedas probar que cancelar funciona.
 
 **Tu primer test** para una idea nueva puede ser así de pequeño: crea una
 imagen cuya respuesta conoces (un cuadrado brillante, dos manchas separadas)
@@ -86,7 +87,8 @@ Deberías ver una línea corta de puntos y un resumen como
 no se cumplió; el texto de encima te dice qué línea y por qué.
 
 !!! tip "¿No hay `pixi` en la terminal?"
-    El pixi que descargó Fiji está guardado fuera de la vista. Para la
+    Si instalaste napari con Wavu, ya lo tienes. El pixi que descargó Fiji
+    está guardado fuera de la vista. Para la
     terminal, instala pixi una vez desde [pixi.sh](https://pixi.sh), y luego
     cierra y vuelve a abrir la terminal.
 
@@ -115,7 +117,7 @@ promesa que no pueden esquivar con palabras:
 2. Pide al asistente: *"haz que `pixi run test` pase sin cambiar los
    tests."*
 3. **Ejecuta tú los tests** antes de fiarte del resultado, y luego pruébalo
-   en Fiji.
+   en Fiji o napari.
 
 Lee los tests que escribe el asistente con el mismo cuidado que su código:
 una comprobación que nunca puede fallar no protege nada.
@@ -123,6 +125,6 @@ una comprobación que nunca puede fallar no protege nada.
 ## En una frase
 
 Escribe primero la comprobación, mira cómo falla, cambia `script.py` hasta
-que `pixi run test` pase, y solo entonces pruébalo en Fiji.
+que `pixi run test` pase, y solo entonces pruébalo en Fiji o napari.
 
 [Siguiente: del notebook a Wavu :material-arrow-right:](from-notebook.md){ .md-button }

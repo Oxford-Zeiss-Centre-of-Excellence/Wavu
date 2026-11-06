@@ -7,16 +7,18 @@
 ## 用白話說
 
 沒有人會從一張白紙開始寫食譜卡。**範本**是一份寫好、能用的食譜
-（就是[第一次執行](../fiji/first-run.md)裡的模糊處理），你複製一份再修改。
+（就是你在 [Fiji](../fiji/first-run.md) 或 [napari](../napari/first-run.md)
+第一次執行時的模糊處理），你複製一份再修改。
 你只要在 [VS Code](https://code.visualstudio.com)（一個免費的程式碼編輯器）
-裡編輯一個檔案 `script.py`，就能馬上在 Fiji 裡試。
+裡編輯一個檔案 `script.py`，就能馬上在 Fiji 或 napari 裡試。兩者用的是同一份範本：
+一份食譜，兩位服務生。
 
 ```mermaid
 flowchart LR
     T["範本<br/>（按一下）"]:::env
     V["在 VS Code 編輯<br/>script.py 並儲存"]:::script
-    S["Fiji：Stop Worker"]:::fiji
-    R["Fiji：Run Python Script"]:::fiji
+    S["停止 worker<br/>（Fiji 或 napari）"]:::fiji
+    R["再執行一次<br/>（Fiji 或 napari）"]:::fiji
     T --> V --> S --> R
     R -- "改點東西" --> V
 
@@ -42,13 +44,13 @@ flowchart LR
 
 | 檔案 | 是什麼 |
 |---|---|
-| `script.py` | **你的食譜。** `PARAMS`（對話框）和 `run`（實際工作）。 |
+| `script.py` | **你的食譜。** `PARAMS`（對話框或表單）和 `run`（實際工作）。 |
 | `pixi.toml` | 這個腳本的廚具清單：它需要的套件。 |
-| `test_script.py` | 不用 Fiji 就能執行的檢查。**從這裡開始**（[先寫測試](test-without-fiji.md)）。 |
+| `test_script.py` | 不用 Fiji 或 napari 就能執行的檢查。**從這裡開始**（[先寫測試](test-without-fiji.md)）。 |
 | `.vscode/` | 讓[在 VS Code 中除錯](../help/debug-in-vscode.md)只要按一下。 |
 | `README.md`、`.github/` | 說明文件，以及自動發布（[進階](../fiji/with-the-world.md)）。 |
 
-## 日常循環
+## 日常循環 { #the-everyday-loop }
 
 1. **先寫檢查**，寫在 `test_script.py` 裡：給一張自己造的小影像，應該得到什麼結果？
    執行 `pixi run test`，看它失敗。
@@ -56,12 +58,22 @@ flowchart LR
    尤其是當程式碼由 AI 助理來寫的時候。）
 2. 在 VS Code 中**編輯** `script.py` 並**儲存**（++ctrl+s++，Mac 上是 ++cmd+s++），
    直到 `pixi run test` 通過。
-3. 在 Fiji 中選 **Plugins › Wavu › Stop Worker**。
-4. 選 **Plugins › Wavu › Run Python Script**，再挑你的資料夾。
+3. **停止 worker，再執行一次：**
 
-!!! warning "為什麼要 Stop Worker？"
+    === "Fiji"
+
+        選 **Plugins › Wavu › Stop Worker**，然後選
+        **Plugins › Wavu › Run Python Script**，再挑你的資料夾。
+
+    === "napari"
+
+        在 Wavu 面板（**Plugins › Run Python Script (Wavu)**）裡按
+        **Stop worker**，再按 **Start worker**，挑選腳本，然後按
+        **Run**。
+
+!!! warning "為什麼要停止 worker？"
     worker（廚房）在開門時讀一次食譜。如果它從上次執行後還開著，
-    就會繼續照*舊*食譜做菜。**Stop Worker** 把它關掉，下次執行時才會讀到你儲存的修改。
+    就會繼續照*舊*食譜做菜。停止 worker 就是把它關掉，下次執行時才會讀到你儲存的修改。
     這只要一秒鐘；廚具依然準備就緒。
 
 ## 加入套件 { #adding-a-package }
@@ -76,8 +88,8 @@ scipy = ">=1.10"
 scikit-image = "*"     # <- 新加的一行："*" 表示任何版本都可以
 ```
 
-儲存、按 **Stop Worker**，再執行一次。Wavu 會注意到新加的那一行，pixi
-就會去下載這個套件（Log 會顯示過程）。只在 PyPI（`pip` 的世界）才有的套件，
+儲存、停止 worker，再執行一次。Wavu 會注意到新加的那一行，pixi
+就會去下載這個套件（Fiji 的 Log 或 napari 面板的 log 會顯示過程）。只在 PyPI（`pip` 的世界）才有的套件，
 則要放在 `[pypi-dependencies]` 底下。
 
 !!! info "套件從哪裡來？conda-forge 和 PyPI"
@@ -94,12 +106,12 @@ scikit-image = "*"     # <- 新加的一行："*" 表示任何版本都可以
     pixi add scikit-image
     ```
 
-    `pixi add` 會幫你修改 `pixi.toml`。要在終端機裡用 `pixi`，請從
-    [pixi.sh](https://pixi.sh) 安裝；Fiji 下載的那一份不在終端機的路徑上。
+    `pixi add` 會幫你修改 `pixi.toml`。napari 使用者的終端機裡已經有 `pixi`。
+    Fiji 使用者請從 [pixi.sh](https://pixi.sh) 安裝；Fiji 下載的那一份不在終端機的路徑上。
 
 ## 一句話總結
 
-按一下就得到一個能用的腳本資料夾，在 VS Code 裡編輯 `script.py`，然後在 Fiji 裡按
-**Stop Worker** 和 **Run Python Script** 來試每一次修改。
+按一下就得到一個能用的腳本資料夾，在 VS Code 裡編輯 `script.py`，然後在 Fiji 或 napari 裡
+停止 worker 再執行一次，來試每一次修改。
 
 [下一步：先寫測試 :material-arrow-right:](test-without-fiji.md){ .md-button }

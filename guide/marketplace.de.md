@@ -46,6 +46,22 @@ flowchart LR
 - **Dasselbe Werkzeug in beiden Betrachtern**, denn ein Wavu-Skriptordner
   läuft bereits in Fiji und in napari.
 
+## Nach den FAIR-Prinzipien gebaut
+
+Jedes Werkzeug in wavu-marketplace wird den
+[FAIR-Prinzipien](https://www.go-fair.org/fair-principles/) für Forschungssoftware
+folgen: **F**indable (auffindbar), **A**ccessible (zugänglich),
+**I**nteroperable (interoperabel), **R**eusable (wiederverwendbar).
+Ein Wavu-Skriptordner bringt die meisten Teile schon mit; der Marketplace
+prüft sie, bevor ein Werkzeug aufgenommen wird.
+
+| Prinzip | Was es für ein Wavu-Werkzeug bedeutet | Woher es kommt |
+|---|---|---|
+| **Findable** (auffindbar) | Ein Katalogeintrag mit klarem Namen, Beschreibung, Schlagwörtern und Autorinnen und Autoren; eine dauerhafte Kennung (DOI) für jedes Release | `README.md`, `CITATION.cff`, ein Zenodo-DOI pro GitHub-Release |
+| **Accessible** (zugänglich) | Kostenlos über übliche Web-Protokolle aus einem öffentlichen Repository herunterladbar; die Metadaten bleiben online, auch wenn eine Version zurückgezogen wird | GitHub-Release, offener Quellcode |
+| **Interoperable** (interoperabel) | Offene Dateiformate für Ein- und Ausgabe (OME-Zarr, OME-TIFF, ImageJ RoiSet, CSV); dasselbe Werkzeug läuft in Fiji und in napari | der Skript-Vertrag, wavu-fiji, wavu-napari |
+| **Reusable** (wiederverwendbar) | Eine Lizenz, eine Zitierangabe, Tests und genau die richtigen Küchengeräte (`pixi.lock`), damit das Werkzeug auf jedem Computer gleich läuft, auch Jahre später | `LICENSE`, `CITATION.cff`, `test_script.py`, `pixi.lock` |
+
 ## Was Sie heute schon tun können
 
 - Ein Werkzeug als ein einziges Zip mit Ihrem Labor teilen:

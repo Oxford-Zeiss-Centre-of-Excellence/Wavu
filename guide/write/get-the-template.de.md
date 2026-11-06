@@ -7,18 +7,20 @@
 ## Die Idee in einfachen Worten
 
 Niemand schreibt eine Rezeptkarte auf einem leeren Blatt. Die **Vorlage**
-ist ein fertiges, funktionierendes Rezept (der Weichzeichner aus
-[Ihrem ersten Durchlauf](../fiji/first-run.md)), das Sie kopieren und dann
-ändern. Sie bearbeiten eine einzige Datei, `script.py`, in
+ist ein fertiges, funktionierendes Rezept (der Weichzeichner aus Ihrem
+ersten Durchlauf in [Fiji](../fiji/first-run.md) oder
+[napari](../napari/first-run.md)), das Sie kopieren und dann ändern. Sie
+bearbeiten eine einzige Datei, `script.py`, in
 [VS Code](https://code.visualstudio.com), einem kostenlosen Code-Editor, und
-probieren sie sofort in Fiji aus.
+probieren sie sofort in Fiji oder napari aus. Es ist dieselbe Vorlage für
+beide Viewer: ein Rezept, zwei Kellner.
 
 ```mermaid
 flowchart LR
     T["Vorlage<br/>(ein Klick)"]:::env
     V["script.py in VS Code<br/>bearbeiten, speichern"]:::script
-    S["Fiji: Stop Worker"]:::fiji
-    R["Fiji: Run Python Script"]:::fiji
+    S["Worker stoppen<br/>(Fiji oder napari)"]:::fiji
+    R["Erneut ausführen<br/>(Fiji oder napari)"]:::fiji
     T --> V --> S --> R
     R -- "etwas ändern" --> V
 
@@ -49,13 +51,13 @@ Online-Kopie an; das ist später praktisch, wenn Sie
 
 | Datei | Was sie ist |
 |---|---|
-| `script.py` | **Ihr Rezept.** `PARAMS` (der Dialog) und `run` (die Arbeit). |
+| `script.py` | **Ihr Rezept.** `PARAMS` (der Dialog oder das Formular) und `run` (die Arbeit). |
 | `pixi.toml` | Die Liste der Küchengeräte dieses Skripts: die Pakete, die es braucht. |
-| `test_script.py` | Prüfungen, die ohne Fiji laufen. **Hier beginnen** ([zuerst testen](test-without-fiji.md)). |
+| `test_script.py` | Prüfungen, die ganz ohne Viewer laufen. **Hier beginnen** ([zuerst testen](test-without-fiji.md)). |
 | `.vscode/` | Macht das [Debuggen in VS Code](../help/debug-in-vscode.md) zu einem Klick. |
 | `README.md`, `.github/` | Notizen und automatische Veröffentlichungen ([für Fortgeschrittene](../fiji/with-the-world.md)). |
 
-## Der Alltags-Kreislauf
+## Der Alltags-Kreislauf { #the-everyday-loop }
 
 1. **Schreiben Sie zuerst die Prüfung** in `test_script.py`: Was soll bei
    einem kleinen ausgedachten Bild herauskommen? Führen Sie `pixi run test`
@@ -64,13 +66,23 @@ Online-Kopie an; das ist später praktisch, wenn Sie
    vor allem wenn ein KI-Assistent den Code schreibt.)
 2. **Bearbeiten** Sie `script.py` in VS Code und **speichern** Sie
    (++ctrl+s++, oder ++cmd+s++ auf dem Mac), bis `pixi run test` besteht.
-3. Wählen Sie in Fiji **Plugins › Wavu › Stop Worker**.
-4. Wählen Sie **Plugins › Wavu › Run Python Script** und dann Ihren Ordner.
+3. **Stoppen Sie den Worker und führen Sie erneut aus:**
 
-!!! warning "Warum Stop Worker?"
+    === "Fiji"
+
+        Wählen Sie **Plugins › Wavu › Stop Worker**, dann
+        **Plugins › Wavu › Run Python Script** und Ihren Ordner.
+
+    === "napari"
+
+        Drücken Sie im Wavu-Panel (**Plugins › Run Python Script (Wavu)**)
+        **Stop worker**, dann **Start worker**, wählen Sie das Skript und
+        drücken Sie **Run**.
+
+!!! warning "Warum den Worker stoppen?"
     Die Küche liest das Rezept, wenn sie öffnet. Ist sie vom letzten
     Durchlauf noch geöffnet, kocht sie weiter nach dem *alten* Rezept.
-    **Stop Worker** schließt sie, damit der nächste Durchlauf Ihre
+    Das Stoppen des Workers schließt sie, damit der nächste Durchlauf Ihre
     gespeicherten Änderungen liest. Das dauert nur eine Sekunde; die
     Küchengeräte bleiben eingerichtet.
 
@@ -87,8 +99,9 @@ scipy = ">=1.10"
 scikit-image = "*"     # <- neue Zeile: "*" heißt: beliebige Version
 ```
 
-Speichern, **Stop Worker**, und noch einmal ausführen. Wavu bemerkt die neue
-Zeile, und pixi holt das Paket (das Log zeigt es an). Pakete, die es nur auf
+Speichern, Worker stoppen und noch einmal ausführen. Wavu bemerkt die neue
+Zeile, und pixi holt das Paket (das Log in Fiji oder das Log im napari-Panel
+zeigt es an). Pakete, die es nur auf
 PyPI gibt (der Welt von `pip`), gehören stattdessen unter
 `[pypi-dependencies]`.
 
@@ -106,15 +119,15 @@ PyPI gibt (der Welt von `pip`), gehören stattdessen unter
     pixi add scikit-image
     ```
 
-    `pixi add` bearbeitet `pixi.toml` für Sie. Damit `pixi` im Terminal
-    funktioniert, installieren Sie es von [pixi.sh](https://pixi.sh); die
-    Kopie, die Fiji heruntergeladen hat, liegt nicht im Suchpfad (PATH) des
+    `pixi add` bearbeitet `pixi.toml` für Sie. napari-Nutzer haben `pixi`
+    bereits im Terminal. Fiji-Nutzer installieren es von
+    [pixi.sh](https://pixi.sh); die Kopie, die Fiji heruntergeladen hat, liegt nicht im Suchpfad (PATH) des
     Terminals.
 
 ## In einem Satz
 
 Ein Klick bringt Ihnen einen funktionierenden Skriptordner; bearbeiten Sie
-`script.py` in VS Code und probieren Sie jede Änderung in Fiji mit
-**Stop Worker** und **Run Python Script** aus.
+`script.py` in VS Code, stoppen Sie dann den Worker und führen Sie erneut
+aus, in Fiji oder napari, um jede Änderung auszuprobieren.
 
 [Weiter: zuerst testen :material-arrow-right:](test-without-fiji.md){ .md-button }

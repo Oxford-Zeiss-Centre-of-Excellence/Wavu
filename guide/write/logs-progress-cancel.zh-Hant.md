@@ -7,16 +7,25 @@
 
 在 Wavu 裡，`ctx` 就是 worker（廚房）和餐桌之間的那條線：
 
-- `ctx.log("…")` 把一則訊息送到 Fiji 的 **Log** 視窗。
-- `ctx.progress(0.5)` 把 Fiji 的**進度條**移到一半。
-- `ctx.cancelled()` 告訴你使用者有沒有按 **Esc**。
+- `ctx.log("…")` 把一則訊息送到 **log**。
+- `ctx.progress(0.5)` 把**進度條**移到一半。
+- `ctx.cancelled()` 告訴你使用者有沒有要求**停止**。
+
+你的程式碼在 Fiji 和 napari 裡都一樣；只有東西出現的地方不同：
+
+| | Fiji | napari |
+|---|---|---|
+| `ctx.log` 和 `print` | **Log** 視窗 | Wavu 面板裡的 log 框 |
+| `ctx.progress` | Fiji 的進度條，加上狀態列裡的 *Wavu: script 40%* | Wavu 面板裡的進度條 |
+| 使用者怎麼取消 | 按 **Esc** | 在面板裡按 **Cancel** |
+| 你的程式碼出錯時 | 一個錯誤視窗，詳細內容在 Log 裡 | 面板 log 裡的 `Error: …`，加上一則通知 |
 
 ```mermaid
 flowchart RL
     S["你的 run()"]:::script
-    L["Log 視窗"]:::fiji
+    L["log<br/>（Log 視窗 · 面板 log）"]:::fiji
     P["進度條"]:::fiji
-    E["Esc 鍵"]:::fiji
+    E["Esc · Cancel 按鈕"]:::fiji
     S -- "ctx.log(...)" --> L
     S -- "ctx.progress(0..1)" --> P
     E -. "ctx.cancelled() 變成 True" .-> S
@@ -31,9 +40,9 @@ flowchart RL
 ctx.log(f"Segmenting a {img.shape} image")
 ```
 
-這一行會立刻出現在 Fiji 的 Log 裡，即使你的程式碼還在執行。
+這一行會立刻出現在 log 裡，即使你的程式碼還在執行。
 在 `run` 裡用一般的 `print(...)` 效果也一樣。在任何耗時的步驟*之前*先寫 Log，
-使用者才知道 Fiji 沒有當掉。
+使用者才知道沒有東西當掉。
 
 ## 進度
 
@@ -45,13 +54,14 @@ for i, plane in enumerate(planes):
     ctx.progress((i + 1) / len(planes))
 ```
 
-Fiji 的進度條會慢慢填滿，Fiji 主視窗底部的狀態列會顯示腳本名稱和百分比，例如
+進度條會慢慢填滿。在 Fiji 裡，主視窗底部的狀態列還會顯示腳本名稱和百分比，例如
 *Wavu: script 40%*。
 
 ## 取消：為什麼需要你的程式碼配合 { #cancel-why-your-code-has-to-help }
 
-在任一個 Fiji 視窗上按一下，再按 **Esc**。Log 會顯示
-*Cancelling script…*。但 Python 在計算途中無法從外部被安全地打斷，所以 Wavu
+在 Fiji 裡，在任一個 Fiji 視窗上按一下，再按 **Esc**；Log 會顯示
+*Cancelling script…*。在 napari 裡，在 Wavu 面板按 **Cancel**；log 會顯示
+*Cancelling...*，等你的腳本停下來後再顯示 *Cancelled.*。但 Python 在計算途中無法從外部被安全地打斷，所以 Wavu
 只會**舉起一面旗子**。你的程式碼在適當的時機檢查這面旗子，然後禮貌地停下來。
 這叫做**合作式取消**（cooperative cancel）。
 
@@ -65,7 +75,7 @@ for i, plane in enumerate(planes):
     ...
 ```
 
-更短的寫法：如果已經按了 Esc，`ctx.check_cancelled()` 會當場停止執行
+更短的寫法：如果使用者已經取消，`ctx.check_cancelled()` 會當場停止執行
 （它會丟出一個特殊的 `wavu.Cancelled` 錯誤，Wavu 會安靜地處理掉）。
 
 ```python
@@ -74,9 +84,9 @@ masks = model.eval(img)
 ctx.check_cancelled()
 ```
 
-!!! warning "在一個很長的呼叫中按 Esc"
+!!! warning "在一個很長的呼叫中取消"
     如果你的腳本在單一呼叫裡花了五分鐘，例如一個很大的
-    `model.eval(...)`，Esc 只會在那個呼叫*結束之後*才生效。
+    `model.eval(...)`，Esc 或 **Cancel** 只會在那個呼叫*結束之後*才生效。
     把工作拆開（一個平面一個平面、一塊一塊地處理），取消就會感覺很即時。
 
 ## 可以照抄的寫法
@@ -105,6 +115,6 @@ def run(ctx, inputs, params):
 ## 一句話總結
 
 用 `ctx.log` 說話，用 `ctx.progress` 顯示做到哪裡，並在步驟之間檢查
-`ctx.cancelled()`，讓 Esc 能停下你的腳本。
+`ctx.cancelled()`，讓 Esc（Fiji）或 **Cancel**（napari）能停下你的腳本。
 
 [下一步：真實的影像 :material-arrow-right:](real-images.md){ .md-button }

@@ -8,14 +8,15 @@
 
 /* -- colours (light theme only) ----------------------------------------- */
 :root > * {
-  --md-primary-fg-color: #1565c0;         /* Fiji blue (as in the diagrams) */
-  --md-primary-fg-color--light: #42a5f5;
-  --md-primary-fg-color--dark: #0d47a1;
+  --md-primary-fg-color: #002147;         /* Oxford blue */
+  --md-primary-fg-color--light: #1d4f8c;
+  --md-primary-fg-color--dark: #00152e;
   --md-accent-fg-color: #ef6c00;          /* script orange */
   --md-accent-fg-color--transparent: #ef6c001a;
   --md-default-bg-color: #fbfcfe;
-  --md-footer-bg-color: #1565c0;          /* bottom bar = top bar */
-  --md-footer-bg-color--dark: #1565c0;
+  --md-footer-bg-color: #002147;          /* bottom bar = top bar */
+  --md-footer-bg-color--dark: #002147;
+  --md-typeset-a-color: #1d5fae;          /* links: a lighter royal blue on white */
   --wavu-card-bg: #ffffff;
   --wavu-shadow: 0 1px 2px #0d47a114, 0 6px 20px #0d47a10f;
 }
@@ -94,3 +95,9 @@
   --md-mermaid-edge-color: #37474f;
   --md-mermaid-node-fg-color: #263238;
 }
+
+/* -- footer: partner logos ---------------------------------------------- */
+.wavu-footer { display: flex; flex-direction: column; gap: .5rem; }
+.wavu-logos { display: flex; flex-wrap: wrap; align-items: center; gap: 1.6rem; margin: .6rem 0 .4rem; }
+.wavu-logos img { height: 2.2rem; width: auto; display: block; opacity: .95; }
+.wavu-logos a:hover img { opacity: 1; }

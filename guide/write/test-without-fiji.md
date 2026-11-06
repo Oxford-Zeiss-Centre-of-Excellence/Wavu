@@ -1,7 +1,7 @@
 # Test first
 
 !!! success "Strongly recommended: start every change here"
-    You *can* skip tests and go straight to Fiji. But writing the check
+    You *can* skip tests and go straight to Fiji or napari. But writing the check
     **before** the code is the habit that saves the most time, and it matters
     most when an **AI assistant** writes the code for you (see below).
 
@@ -10,17 +10,19 @@
 A chef decides how the dish should taste **before** cooking, then tastes as
 they go. A **test** is that decision written down: a tiny check that runs your
 `run` function on a made-up image and says *pass* or *fail*, **without
-opening Fiji**. Writing it first is called *test-driven development* (TDD).
+opening Fiji or napari**. Writing it first is called *test-driven
+development* (TDD).
 
-Wavu gives you a stand-in for Fiji, `FakeCtx`, that records log messages and
-progress instead of showing them.
+Wavu gives you a stand-in for the viewer, `FakeCtx`, that records log
+messages and progress instead of showing them. Because the same script runs
+in both viewers, one set of tests covers both.
 
 ```mermaid
 flowchart LR
     T["1 · Write the check<br/>(test_script.py)"]:::worker
     R["2 · pixi run test<br/>it fails (red)"]:::fiji
     S["3 · Change script.py<br/>until it passes (green)"]:::script
-    F["4 · Try it in Fiji"]:::env
+    F["4 · Try it in Fiji or napari"]:::env
     T --> R --> S --> F
     S -- "next idea" --> T
 
@@ -57,12 +59,12 @@ def test_blur_smooths_a_single_bright_pixel():
     assert ctx.progress_values[-1] == 1.0      # progress reached 100 %
 ```
 
-- `run_script` calls your `run` just as Fiji would, filling in the defaults
+- `run_script` calls your `run` just as Fiji or napari would, filling in the defaults
   from `PARAMS` for anything you leave out.
 - `ctx.messages` holds everything you logged; `ctx.progress_values` every
   progress value.
-- `FakeCtx(cancel_after=2)` pretends the user pressed Esc after two checks,
-  so you can test that cancel works.
+- `FakeCtx(cancel_after=2)` pretends the user cancelled (Esc in Fiji,
+  **Cancel** in napari) after two checks, so you can test that cancel works.
 
 **Your first test** for a new idea can be this small: make an image where
 you know the answer (one bright square, two separate blobs), and assert the
@@ -83,7 +85,8 @@ You should see a short line of dots and a summary such as
 text above it says which line and why.
 
 !!! tip "No `pixi` in the terminal?"
-    The pixi that Fiji downloaded is kept out of sight. For the terminal,
+    If you installed napari with Wavu, you already have it. The pixi that
+    Fiji downloaded is kept out of sight. For the terminal,
     install pixi once from [pixi.sh](https://pixi.sh), then close and reopen
     the terminal.
 
@@ -112,7 +115,7 @@ cannot talk their way around:
 2. Ask the assistant: *"make `pixi run test` pass without changing the
    tests."*
 3. **Run the tests yourself** before you trust the result, then try it in
-   Fiji.
+   Fiji or napari.
 
 Read the tests the assistant writes as carefully as its code: a check that
 can never fail protects nothing.
@@ -120,6 +123,6 @@ can never fail protects nothing.
 ## In one sentence
 
 Write the check first, watch it fail, change `script.py` until
-`pixi run test` passes, and only then try it in Fiji.
+`pixi run test` passes, and only then try it in Fiji or napari.
 
 [Next: from notebook to Wavu :material-arrow-right:](from-notebook.md){ .md-button }

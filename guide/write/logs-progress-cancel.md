@@ -8,16 +8,25 @@ call it off, but the cook decides when it is safe to stop stirring.
 
 In Wavu, `ctx` is that line between kitchen and table:
 
-- `ctx.log("…")` sends a message to Fiji's **Log** window.
-- `ctx.progress(0.5)` moves Fiji's **progress bar** to half-way.
-- `ctx.cancelled()` tells you whether the user pressed **Esc**.
+- `ctx.log("…")` sends a message to the **log**.
+- `ctx.progress(0.5)` moves the **progress bar** to half-way.
+- `ctx.cancelled()` tells you whether the user asked to **stop**.
+
+Your code is the same in both viewers; only where things show up differs:
+
+| | Fiji | napari |
+|---|---|---|
+| `ctx.log` and `print` | the **Log** window | the log box in the Wavu panel |
+| `ctx.progress` | Fiji's progress bar, plus *Wavu: script 40%* in the status bar | the progress bar in the Wavu panel |
+| how the user cancels | press **Esc** | press **Cancel** in the panel |
+| an error in your code | an error window, details in the Log | `Error: …` in the panel's log, plus a notification |
 
 ```mermaid
 flowchart RL
     S["your run()"]:::script
-    L["Log window"]:::fiji
+    L["log<br/>(Log window · panel log)"]:::fiji
     P["progress bar"]:::fiji
-    E["Esc key"]:::fiji
+    E["Esc · Cancel button"]:::fiji
     S -- "ctx.log(...)" --> L
     S -- "ctx.progress(0..1)" --> P
     E -. "ctx.cancelled() becomes True" .-> S
@@ -32,9 +41,9 @@ flowchart RL
 ctx.log(f"Segmenting a {img.shape} image")
 ```
 
-The line appears in Fiji's Log immediately, while your code is still running.
+The line appears in the log immediately, while your code is still running.
 A plain `print(...)` inside `run` does the same. Log *before* anything slow,
-so the user knows Fiji is not frozen.
+so the user knows nothing is frozen.
 
 ## Progress
 
@@ -46,14 +55,16 @@ for i, plane in enumerate(planes):
     ctx.progress((i + 1) / len(planes))
 ```
 
-Fiji's progress bar fills up, and the status bar at the bottom of the main
-Fiji window shows the script name and a percentage, such as
+The progress bar fills up. In Fiji, the status bar at the bottom of the
+main window also shows the script name and a percentage, such as
 *Wavu: script 40%*.
 
 ## Cancel: why your code has to help
 
-Click on a Fiji window and press **Esc**. The Log says
-*Cancelling script…*. But Python cannot be interrupted safely from outside in
+In Fiji, click on a Fiji window and press **Esc**; the Log says
+*Cancelling script…*. In napari, press **Cancel** in the Wavu panel; the log
+says *Cancelling...* and, once your script has stopped, *Cancelled.*
+But Python cannot be interrupted safely from outside in
 the middle of a calculation, so Wavu only **raises a flag**. Your code
 checks the flag at sensible moments and stops politely. This is called
 **cooperative cancel**.
@@ -68,8 +79,8 @@ for i, plane in enumerate(planes):
     ...
 ```
 
-A shorter way: `ctx.check_cancelled()` stops the run on the spot if Esc was
-pressed (it raises a special `wavu.Cancelled` error that Wavu handles
+A shorter way: `ctx.check_cancelled()` stops the run on the spot if the user
+cancelled (it raises a special `wavu.Cancelled` error that Wavu handles
 quietly).
 
 ```python
@@ -78,9 +89,10 @@ masks = model.eval(img)
 ctx.check_cancelled()
 ```
 
-!!! warning "Esc during one long call"
+!!! warning "Cancel during one long call"
     If your script spends five minutes inside a single call, such as one big
-    `model.eval(...)`, Esc only takes effect *after* that call returns.
+    `model.eval(...)`, Esc or **Cancel** only takes effect *after* that call
+    returns.
     Splitting the work (plane by plane, tile by tile) makes cancel feel
     instant.
 
@@ -110,6 +122,7 @@ def run(ctx, inputs, params):
 ## In one sentence
 
 Use `ctx.log` to talk, `ctx.progress` to show how far you are, and check
-`ctx.cancelled()` between steps so Esc can stop your script.
+`ctx.cancelled()` between steps so Esc (Fiji) or **Cancel** (napari) can stop
+your script.
 
 [Next: real images :material-arrow-right:](real-images.md){ .md-button }

@@ -4,9 +4,10 @@
 
 Una celda de notebook y un script de Wavu hacen el mismo trabajo; solo
 cambian las **puertas de entrada y salida**. En un notebook *tú* escribes los
-ajustes, cargas el archivo y miras el gráfico. En Wavu, **Fiji** rellena los
-ajustes desde un diálogo, te pasa la imagen que ya está abierta y muestra lo
-que devuelvas. Tu análisis, en el medio, sigue igual.
+ajustes, cargas el archivo y miras el gráfico. En Wavu, el visor (**Fiji** o
+**napari**) rellena los ajustes desde un diálogo o formulario, te pasa la
+imagen que ya está abierta y muestra lo que devuelvas. Tu análisis, en el
+medio, sigue igual, y el script también, sea cual sea el visor que lo ejecute.
 
 ```mermaid
 flowchart LR
@@ -17,7 +18,7 @@ flowchart LR
         A4["plt.imshow(labels)"]:::script
     end
     subgraph WV["Script de Wavu"]
-        B1["PARAMS → diálogo"]:::fiji
+        B1["PARAMS → diálogo / formulario"]:::fiji
         B2["inputs['image']"]:::fiji
         B3["tu análisis"]:::worker
         B4["return {'labels': labels}"]:::fiji
@@ -34,13 +35,13 @@ flowchart LR
 
 ## La tabla de traducción
 
-| En tu notebook | En `script.py` | Lo que ves en Fiji |
+| En tu notebook | En `script.py` | Lo que ves en Fiji o napari |
 |---|---|---|
-| `sigma = 2.0` | `"sigma": {"type": "float", "default": 2.0, "label": "Sigma (pixels)"}` en `PARAMS`, y luego `params["sigma"]` | un campo numérico **Sigma (pixels)** |
-| `img = io.imread("cells.tif")` | `"image": {"type": "image"}` en `PARAMS`, y luego `inputs["image"]` | un desplegable con las imágenes abiertas |
-| `print("found", n)` | `ctx.log(f"found {n}")` (`print` también funciona) | una línea en la ventana **Log** |
-| `plt.imshow(labels)` | `return {"labels": labels}` | una ventana de imagen nueva llamada *…-labels* |
-| `df` (una tabla) | `return {"cells": df}` | una tabla Results |
+| `sigma = 2.0` | `"sigma": {"type": "float", "default": 2.0, "label": "Sigma (pixels)"}` en `PARAMS`, y luego `params["sigma"]` | un campo numérico **Sigma (pixels)** en el diálogo de Fiji o en el formulario del panel de napari |
+| `img = io.imread("cells.tif")` | `"image": {"type": "image"}` en `PARAMS`, y luego `inputs["image"]` | un desplegable: las imágenes abiertas (Fiji) o las capas Image y Labels (napari); la entrada es la que elijas |
+| `print("found", n)` | `ctx.log(f"found {n}")` (`print` también funciona) | una línea en la ventana **Log** de Fiji o en el log del panel de napari |
+| `plt.imshow(labels)` | `return {"labels": labels}` | una ventana de imagen nueva llamada *…-labels* (Fiji) o una capa Labels (napari) |
+| `df` (una tabla) | `return {"cells": df}` | una tabla Results (Fiji) o un panel de tabla (napari) |
 
 ## Un ejemplo completo
 
@@ -72,39 +73,44 @@ PARAMS = {
 def run(ctx, inputs, params):
     from skimage import filters, measure
 
-    img = inputs["image"]                     # la imagen elegida en el diálogo
+    img = inputs["image"]                     # la imagen elegida en el diálogo/formulario
     smooth = filters.gaussian(img, params["sigma"])
     mask = smooth > filters.threshold_otsu(smooth)
     labels = measure.label(mask)
-    ctx.log(f"found {labels.max()} nuclei")   # aparece en el Log de Fiji
-    return {"labels": labels}                 # se abre como imagen nueva
+    ctx.log(f"found {labels.max()} nuclei")   # aparece en el log
+    return {"labels": labels}                 # ventana de imagen nueva / capa Labels
 ```
 
 Usa scikit-image, así que primero añade `scikit-image = "*"` a `pixi.toml`
 ([cómo](get-the-template.md#adding-a-package)). Guarda los dos archivos,
-**Stop Worker**, y ejecútalo sobre *Blobs*.
+para el worker ([cómo](get-the-template.md#the-everyday-loop)) y ejecútalo
+sobre una imagen 2D: *Blobs* en Fiji, o *Coins* en napari
+(**File › Open Sample › napari builtins › Coins**).
 
 ## Las tres reglas
 
-1. **`PARAMS` al principio** es el diálogo. Cada entrada se convierte en un
-   campo.
+1. **`PARAMS` al principio** es el diálogo (Fiji) o el formulario (napari).
+   Cada entrada se convierte en un campo.
 2. **`def run(ctx, inputs, params):`** es donde se hace el trabajo. Las
    imágenes llegan en `inputs`, los demás ajustes en `params`, y `ctx` es tu
-   línea de vuelta a Fiji (Log, barra de progreso, cancelar).
+   línea de vuelta al visor (log, barra de progreso, cancelar).
 3. **Devuelve un diccionario.** Cada clave se convierte en el nombre de un
-   resultado (Fiji antepone el nombre de la imagen, como en *blobs-labels*),
-   y cada valor se muestra de la forma adecuada.
+   resultado (Fiji antepone el nombre de la imagen, como en *blobs-labels*;
+   napari llama a la capa como la clave), y cada valor se muestra de la forma
+   adecuada.
 
 !!! tip "Dos costumbres que ahorran tiempo"
-    - **Importa los paquetes pesados dentro de `run`**, como arriba. Así Fiji
-      puede mostrar el diálogo enseguida, sin esperar a imports grandes.
+    - **Importa los paquetes pesados dentro de `run`**, como arriba. Así el
+      diálogo o formulario puede aparecer enseguida, sin esperar a imports
+      grandes.
     - **Lanza un error con un mensaje claro** ante errores del usuario, por
       ejemplo `raise ValueError("Please pick a single-channel image")`. Fiji
-      muestra el mensaje en una ventana de error.
+      muestra el mensaje en una ventana de error; napari escribe `Error: …`
+      en el log del panel y muestra una notificación.
 
 La primera línea del docstring (el texto entre comillas triples al principio
-del todo) aparece en la parte superior del diálogo, así que haz que sea una
-descripción corta.
+del todo) aparece en la parte superior del diálogo de Fiji y del panel de
+napari, así que haz que sea una descripción corta.
 
 ## En una frase
 

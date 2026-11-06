@@ -3,16 +3,17 @@
 ## La idea en palabras sencillas
 
 `PARAMS` es la **carta** que tu camarero le da al cliente. Tú enumeras lo que
-se puede elegir, y Fiji dibuja el diálogo por ti: no hay que programar
-botones ni ventanas. Cada entrada tiene un **nombre** (lo que usa tu código),
-un **tipo** (qué clase de campo es), un **valor por defecto** (lo que aparece
-rellenado al principio) y una **etiqueta** opcional (el texto que lee el
-usuario).
+se puede elegir, y el visor dibuja los campos por ti: Fiji como un diálogo,
+napari como un formulario en el panel de Wavu. No hay que programar botones
+ni ventanas, y el mismo `PARAMS` funciona en los dos. Cada entrada tiene un
+**nombre** (lo que usa tu código), un **tipo** (qué clase de campo es), un
+**valor por defecto** (lo que aparece rellenado al principio) y una
+**etiqueta** opcional (el texto que lee el usuario).
 
 ```mermaid
 flowchart LR
     P["Entrada de PARAMS<br/>&quot;sigma&quot;: {type: float,<br/>default: 2.0,<br/>label: Sigma (pixels)}"]:::script
-    D["Campo del diálogo<br/>Sigma (pixels) [2.000]"]:::fiji
+    D["Campo del diálogo / formulario<br/>Sigma (pixels) [2.000]"]:::fiji
     R["En run():<br/>params[&quot;sigma&quot;] == 2.0"]:::worker
     P --> D --> R
 
@@ -36,39 +37,43 @@ PARAMS = {
 }
 ```
 
-Fiji lo convierte en este diálogo:
+Cada visor lo convierte en sus propios campos; tu código recibe los mismos
+valores:
 
-| `type` | Campo en Fiji | Lo que recibe `run` |
-|---|---|---|
-| `float` | casilla numérica (3 decimales) | un número decimal, p. ej. `2.0`, en `params` |
-| `int` | casilla numérica (sin decimales) | un número entero, p. ej. `3`, en `params` |
-| `str` | casilla de texto | texto, p. ej. `"cells"`, en `params` |
-| `bool` | casilla de verificación | `True` o `False`, en `params` |
-| `choice` | desplegable | el texto elegido, p. ej. `"otsu"`, en `params` |
-| `image` | desplegable con las **imágenes abiertas** | un array de NumPy en **`inputs`** (no en `params`) |
+| `type` | Campo en Fiji | Campo en napari | Lo que recibe `run` |
+|---|---|---|---|
+| `float` | casilla numérica (3 decimales) | casilla numérica con decimales | un número decimal, p. ej. `2.0`, en `params` |
+| `int` | casilla numérica (sin decimales) | casilla de número entero | un número entero, p. ej. `3`, en `params` |
+| `str` | casilla de texto | casilla de texto | texto, p. ej. `"cells"`, en `params` |
+| `bool` | casilla de verificación | casilla de verificación | `True` o `False`, en `params` |
+| `choice` | desplegable | desplegable | el texto elegido, p. ej. `"otsu"`, en `params` |
+| `image` | desplegable con las **imágenes abiertas** | desplegable con las **capas Image y Labels** | un array de NumPy en **`inputs`** (no en `params`) |
+
+El desplegable de capas de napari se actualiza solo cuando añades o quitas
+una capa.
 
 ## La letra pequeña
 
 - **`default` es obligatorio** para todos los tipos excepto `image`. En
   `choice` se puede omitir; entonces se usa el primer elemento.
 - **`choices`** es obligatorio en `choice`: una lista de las opciones.
-- **`label` es opcional.** Sin él, Fiji muestra el nombre con la primera
-  letra en mayúscula y los `_` convertidos en espacios: `min_area` se
+- **`label` es opcional.** Sin él, los dos visores muestran el nombre con la
+  primera letra en mayúscula y los `_` convertidos en espacios: `min_area` se
   convierte en *Min area*.
 - Los **nombres** deben ser nombres válidos de Python: letras, dígitos y `_`,
   sin empezar por un dígito.
-- **Fiji comprueba los valores** antes de que se ejecute tu código. Un tipo
+- **Los valores se comprueban** antes de que se ejecute tu código. Un tipo
   incorrecto o una opción desconocida se rechaza con un mensaje, así que
   `run` siempre recibe valores limpios del tipo declarado.
 - La **primera línea del docstring** al principio de `script.py` se muestra
-  en la parte superior del diálogo.
-- El diálogo añade una casilla extra, **Debug in VS Code**, para
+  en la parte superior del diálogo de Fiji y en el panel de napari.
+- El diálogo de Fiji añade una casilla extra, **Debug in VS Code**, para
   [depurar](../help/debug-in-vscode.md). Normalmente déjala desmarcada.
 
 !!! info "Un campo `image` necesita una imagen abierta"
-    Si tu script tiene un campo `image` y no hay ninguna imagen abierta en
-    Fiji, Wavu se detiene con *"… needs an image -- open one first"*. Abre una
-    y vuelve a ejecutar.
+    Si tu script tiene un campo `image` y no hay nada abierto, Wavu se
+    detiene con un mensaje: en Fiji *"… needs an image -- open one first"*,
+    en napari *"…: open an image layer first"*. Abre una y vuelve a ejecutar.
 
 ## ¿Dos imágenes? Dos campos
 
@@ -90,7 +95,7 @@ def run(ctx, inputs, params):
 ## En una frase
 
 Escribe una línea de `PARAMS` por cada ajuste, con un tipo y un valor por
-defecto, y Fiji construye el diálogo y te entrega los valores ya comprobados
-en `params` (las imágenes, en `inputs`).
+defecto, y Fiji o napari construyen los campos y te entregan los valores ya
+comprobados en `params` (las imágenes, en `inputs`).
 
 [Siguiente: qué puedes devolver :material-arrow-right:](outputs.md){ .md-button }
