@@ -124,3 +124,9 @@
   .md-footer .wavu-logos { flex-wrap: wrap; gap: .9rem; }
   .md-footer .wavu-logos img { height: 1.6rem; }
 }
+
+/* Figures (images, GIFs, Mermaid diagrams) sit centred in the text column,
+   also inside list items. Scoped to page content: footer logos and inline
+   icons keep their own layout. */
+.md-content .md-typeset img { display: block; margin-left: auto; margin-right: auto; }
+.md-content .md-typeset .mermaid { text-align: center; }
