@@ -1,5 +1,11 @@
 # Fiji でパイプライン
 
+!!! question "このパイプラインが測るもの"
+    分裂する核のタイムラプスで、**細胞数（y）と時間（x）** の関係を測ります。
+    もう一つの見方として、**系譜** の数も数えます。系譜とは、最初の細胞 1 個と
+    その娘細胞すべてのことです。下のどのステップも、この出力に必要だから
+    あります（[解析の前に](index.md) を参照）。
+
 ## やさしく言うと
 
 画像解析はいくつものコースからなるディナーです。各ステップ（開く、
@@ -38,9 +44,13 @@ flowchart LR
    を見てください。マクロでは **Plugins › Wavu › Run Script (Macro)** の
    `tables` 欄を使います。ダイアログに **Tables** 欄がなければ、wavu-fiji を
    更新してください。
-2. **サンプルフォルダーを手に入れます。**
-   [Wavu リポジトリの zip](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/archive/refs/heads/main.zip)
-   をダウンロードして解凍します。`examples/segment_frames`（マクロでは
+2. **サンプルフォルダーを手に入れます。** Wavu リポジトリを VS Code で開くと、
+   VS Code がクローンしてくれます。または zip でダウンロードして解凍します。
+
+   [Wavu リポジトリを VS Code で開く](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button .md-button--primary }
+   [ZIP をダウンロード](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/archive/refs/heads/main.zip){ .md-button }
+
+   `examples/segment_frames`（マクロでは
    `examples/track_trackpy` も）は **置かれている場所のまま** 使ってください。
    その `pixi.toml` が、2 つ上のフォルダーにある Wavu を見つけるからです。
 3. **データ：** `examples/data/demo_timelapse.tif` は、このページのために
@@ -350,6 +360,23 @@ flowchart LR
 です。TrackMate（分岐をオンにした場合）は 1 本のトラックを枝分かれさせるので、
 25 個の核と新しく入ってきた 1 個で 26 本になります。trackpy は 2 つの娘細胞の
 片方に新しいトラックを始めるので、4 回の分裂で 4 本増えます。
+
+![アニメーションの結果：トラックの尾が付いた動画と、フレームごとに伸びていく細胞数と時間のグラフ](../assets/img/results/counts.gif){ width="720" }
+
+左は、各トラックの尾が付いた動画（trackpy）です。右は測定値、つまり
+**細胞数と時間** のグラフです。灰色の破線：本当の数。青い点：測った細胞数で、
+どの方法でも同じです。どれも同じセグメンテーションを数えるからです。
+オレンジの線：各フレームで生きている **TrackMate の系譜** の数。点とオレンジの
+線の差は分裂で生まれた細胞の数で、4 回の分裂のたびに 1 つずつ広がります。
+系譜の線は、50 分で核が 1 個出ていくと下がり、85 分で 1 個入ってくると
+戻ります。
+
+![最後のフレームとすべてのトラック：左が TrackMate、右が trackpy](../assets/img/results/tracks-compare.png){ width="720" }
+
+すべてのトラックを描いた最後のフレームです。左の TrackMate では、分裂の
+あとも 2 つの娘細胞が母細胞の色のままです。母細胞のトラックに属している
+からです（枝分かれする系譜）。右の trackpy では、娘細胞ごとに自分の
+トラックが付くので、トラックはあっても系譜はありません。
 
 ## ヒント
 

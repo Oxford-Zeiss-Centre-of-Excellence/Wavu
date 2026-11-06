@@ -1,5 +1,12 @@
 # Pipeline in Python und napari
 
+!!! question "Was diese Pipeline misst"
+    **Zellen (y) gegen die Zeit (x)** in einem Zeitraffer sich teilender
+    Zellkerne und, als zweiter Blick, die Zahl der **Zelllinien**: eine
+    Startzelle plus alle ihre Tochterzellen. Jeder Schritt unten existiert,
+    weil dieses Ergebnis ihn braucht
+    (siehe [Vor jeder Analyse](index.md)).
+
 ## Die Idee in einfachen Worten { #the-idea-in-plain-words }
 
 Eine Bildanalyse ist ein Abendessen mit mehreren Gängen: Jeder Schritt
@@ -38,15 +45,23 @@ flowchart LR
 Blaue Kästen laufen in Ihrem eigenen Skript (*native* Schritte); grüne
 Kästen sind Wavu-Schritte, jeder in seiner eigenen Umgebung.
 
-## Die Daten { #the-data }
+## Bevor Sie anfangen { #before-you-start }
 
-Das Wavu-Repository enthält einen kleinen synthetischen Film,
-`examples/data/demo_timelapse.tif`: 30 Einzelbilder mit 256 × 256 Pixeln,
-0,65 µm pro Pixel, 5 Minuten zwischen den Bildern. Etwa 25 Zellkerne
-wandern umher; vier teilen sich, einer verlässt das Sichtfeld und einer
-kommt herein, die wahre Zahl steigt also von 25 auf 29. Da wir den Film
-selbst gemacht haben, kennen wir die richtige Antwort und können die
-Pipeline daran prüfen.
+1. **Holen Sie sich das Wavu-Repository**: Öffnen Sie es in VS Code, das
+   es für Sie klont, oder klonen Sie es mit `git clone`. Alles auf dieser
+   Seite läuft aus diesem Ordner, mit [pixi](../napari/install.md).
+
+   [Wavu-Repository in VS Code öffnen](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button .md-button--primary }
+
+2. **Die Daten**: `examples/data/demo_timelapse.tif`, ein kleiner
+   synthetischer Film: 30 Einzelbilder mit 256 × 256 Pixeln, 0,65 µm pro
+   Pixel, 5 Minuten zwischen den Bildern. Etwa 25 Zellkerne wandern umher;
+   vier teilen sich, einer verlässt das Sichtfeld und einer kommt herein,
+   die wahre Zahl steigt also von 25 auf 29. Da wir den Film selbst gemacht
+   haben, kennen wir die richtige Antwort und können die Pipeline daran
+   prüfen.
+
+   ![Der Demo-Zeitraffer: Zellkerne, die über 30 Bilder driften und sich teilen](../assets/img/demo-timelapse.gif){ width="256" }
 
 ## Der Code { #the-code }
 
@@ -200,8 +215,9 @@ um eins.
 
 ## So führen Sie es aus { #how-to-run-it }
 
-Aus einem Klon des Wavu-Repositorys (seine Umgebung `napari` enthält
-`wavu`, napari und matplotlib):
+Öffnen Sie in VS Code ein Terminal (**Terminal › New Terminal**) im
+Wavu-Ordner und führen Sie aus (seine Umgebung `napari` enthält `wavu`,
+napari und matplotlib):
 
 ```sh
 pixi run -e napari python examples/pipelines/dag_counting.py
@@ -219,12 +235,27 @@ Das schreibt `counts.csv` (Bild, Zellen, Minuten) und `plot.png` nach
 Durchlauf installiert die Umgebungen der beiden Skriptordner; das dauert
 einige Minuten, einmalig.
 
+## Das Ergebnis { #the-result }
+
 Beim Demofilm stimmt die Zahl in 27 der 30 Bilder und ist in den anderen
-drei um eins zu hoch (am wahrscheinlichsten wegen der Zellkerne, die am
-Rand hinaus- und hereinwandern: Die Wahrheit zählt einen Zellkern erst,
-wenn sein Mittelpunkt im Bild liegt, die Segmentierung, sobald ein Teil
-davon zu sehen ist); trackpy findet 32 Tracks, von denen 7 nach Bild 0
-beginnen.
+drei um eins zu hoch (wegen der Zellkerne, die am Rand hinaus- und
+hereinwandern: Die Wahrheit zählt einen Zellkern erst, wenn sein
+Mittelpunkt im Bild liegt, die Segmentierung, sobald ein Teil davon zu
+sehen ist). trackpy findet 32 Tracks, von denen 7 nach Bild 0 beginnen:
+die vier Tochterzellen und die Neuankömmlinge, plus ein paar Abbrüche.
+
+![Animiertes Ergebnis: der Film mit Track-Schweifen und die Zellen gegen die Zeit, Bild für Bild wachsend](../assets/img/results/counts.gif){ width="720" }
+
+Links der Film mit dem Schweif jedes Tracks (trackpy). Rechts die Messung,
+**Zellen gegen die Zeit**. Grau gestrichelt: die wahre Zahl. Blaue Punkte:
+die gemessenen Zellen, bei jeder Methode dieselben, weil alle dieselbe
+Segmentierung zählen. Orange Linie, zum Vergleich: die
+**TrackMate-Zelllinien** der [Fiji-Version](pipeline-fiji.md), die in
+jedem Bild vorhanden sind; trackpy hat Tracks, aber keine Zelllinien.
+Der Abstand zwischen den Punkten und der orangen Linie sind die durch
+Teilung entstandenen Zellen: Er wächst bei jeder der vier Teilungen um
+eins. Die Zelllinien-Kurve sinkt bei 50 min, wenn ein Zellkern das Bild
+verlässt, und steigt bei 85 min wieder, wenn einer hereinkommt.
 
 ## In einem Satz { #in-one-sentence }
 

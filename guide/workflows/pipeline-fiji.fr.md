@@ -1,5 +1,12 @@
 # Pipeline dans Fiji
 
+!!! question "Ce que mesure ce pipeline"
+    **Les cellules (y) en fonction du temps (x)** dans un time-lapse de
+    noyaux qui se divisent et, en second regard, le nombre de **lignées** :
+    une cellule de départ plus toutes ses filles. Chaque étape ci-dessous
+    existe parce que ce résultat en a besoin
+    (voir [Avant toute analyse](index.md)).
+
 ## L'idée en mots simples { #the-idea-in-plain-words }
 
 Une analyse d'images est un dîner en plusieurs plats : chaque étape (ouvrir,
@@ -42,9 +49,14 @@ script Wavu. Dans la version macro, l'étape 3 est verte elle aussi
    La macro a besoin du champ `tables` de
    **Plugins › Wavu › Run Script (Macro)** : si son dialogue n'a pas de champ
    **Tables**, mettez wavu-fiji à jour.
-2. **Récupérez les dossiers d'exemple.** Téléchargez le
-   [dépôt Wavu en zip](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/archive/refs/heads/main.zip)
-   et décompressez-le. Utilisez `examples/segment_frames` (et, pour la macro,
+2. **Récupérez les dossiers d'exemple** : ouvrez le dépôt Wavu dans
+   VS Code, qui le clone pour vous, ou téléchargez-le en zip et
+   décompressez-le.
+
+   [Ouvrir le dépôt Wavu dans VS Code](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button .md-button--primary }
+   [Télécharger le ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/archive/refs/heads/main.zip){ .md-button }
+
+   Utilisez `examples/segment_frames` (et, pour la macro,
    `examples/track_trackpy`) **là où ils sont** : leur `pixi.toml` trouve
    Wavu deux dossiers plus haut.
 3. **Les données** : `examples/data/demo_timelapse.tif`, un film synthétique
@@ -361,6 +373,25 @@ division activée) laisse une trajectoire se ramifier, donc 25 noyaux plus
 1 nouveau venu donnent 26 trajectoires ; trackpy commence une nouvelle
 trajectoire pour l'une des deux filles, donc les 4 divisions ajoutent
 4 trajectoires.
+
+![Résultat animé : le film avec les queues des trajectoires, et les cellules en fonction du temps qui grandissent image par image](../assets/img/results/counts.gif){ width="720" }
+
+À gauche, le film avec la queue de chaque trajectoire (trackpy). À droite,
+la mesure, **les cellules en fonction du temps**. Tirets gris : le vrai
+compte. Points bleus : les cellules mesurées, les mêmes pour toutes les
+méthodes, car toutes comptent la même segmentation. Ligne orange : les
+**lignées TrackMate** présentes dans chaque image. L'écart entre les points
+et la ligne orange, ce sont les cellules nées d'une division : il augmente
+d'une unité à chacune des quatre divisions. La ligne des lignées baisse à
+50 min, quand un noyau sort, et remonte à 85 min, quand un noyau entre.
+
+![La dernière image avec toutes les trajectoires : TrackMate à gauche, trackpy à droite](../assets/img/results/tracks-compare.png){ width="720" }
+
+La dernière image avec chaque trajectoire. À gauche, TrackMate : après une
+division, les deux filles gardent la couleur de leur mère, car elles
+appartiennent à sa trajectoire (une lignée qui se ramifie). À droite,
+trackpy : chaque fille reçoit sa propre trajectoire, il y a donc des
+trajectoires mais pas de lignées.
 
 ## Astuces { #tips }
 

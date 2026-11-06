@@ -1,5 +1,11 @@
 # Pipeline en Python y napari
 
+!!! question "Qué mide este pipeline"
+    **Células (y) frente al tiempo (x)** en una serie temporal de núcleos
+    que se dividen y, como segunda mirada, el número de **linajes**: una
+    célula inicial más todas sus hijas. Cada paso de abajo existe porque
+    este resultado lo necesita (mira [Antes de cualquier análisis](index.md)).
+
 ## La idea en palabras sencillas
 
 Un análisis de imágenes es una cena de varios platos: cada paso (abrir,
@@ -38,14 +44,22 @@ flowchart LR
 Las cajas azules se ejecutan en tu propio script (pasos *nativos*); las
 cajas verdes son pasos de Wavu, cada uno en su propio entorno.
 
-## Los datos
+## Antes de empezar
 
-El repositorio de Wavu trae una pequeña película sintética,
-`examples/data/demo_timelapse.tif`: 30 fotogramas de 256 × 256 píxeles,
-0,65 µm por píxel, 5 minutos entre fotogramas. Unos 25 núcleos se
-desplazan; cuatro se dividen, uno sale del campo de visión y otro entra, así
-que el recuento real va de 25 a 29. Como hicimos nosotros la película,
-conocemos la respuesta correcta y podemos comprobar el pipeline con ella.
+1. **Consigue el repositorio de Wavu**: ábrelo en VS Code, que lo clona por
+   ti, o clónalo con `git clone`. Todo lo de esta página se ejecuta desde
+   esa carpeta, con [pixi](../napari/install.md).
+
+   [Abrir el repositorio de Wavu en VS Code](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button .md-button--primary }
+
+2. **Los datos**: `examples/data/demo_timelapse.tif`, una pequeña película
+   sintética: 30 fotogramas de 256 × 256 píxeles, 0,65 µm por píxel,
+   5 minutos entre fotogramas. Unos 25 núcleos se desplazan; cuatro se
+   dividen, uno sale del campo de visión y otro entra, así que el recuento
+   real va de 25 a 29. Como hicimos nosotros la película, conocemos la
+   respuesta correcta y podemos comprobar el pipeline con ella.
+
+   ![La serie temporal de demostración: núcleos que se desplazan y se dividen en 30 fotogramas](../assets/img/demo-timelapse.gif){ width="256" }
 
 ## El código
 
@@ -197,8 +211,8 @@ escalón.
 
 ## Cómo ejecutarlo
 
-Desde un clon del repositorio de Wavu (su entorno `napari` tiene `wavu`,
-napari y matplotlib):
+En VS Code, abre una terminal (**Terminal › New Terminal**) en la carpeta
+de Wavu y ejecuta (su entorno `napari` tiene `wavu`, napari y matplotlib):
 
 ```sh
 pixi run -e napari python examples/pipelines/dag_counting.py
@@ -216,12 +230,28 @@ Esto escribe `counts.csv` (frame, cells, minutes) y `plot.png` en
 instala los entornos de las dos carpetas de script, lo que tarda unos
 minutos, una sola vez.
 
+## El resultado
+
 En la película de demostración, el recuento es correcto en 27 de los 30
-fotogramas y uno de más en los otros tres (lo más probable, por los núcleos
-que salen y entran por el borde: la realidad cuenta un núcleo solo cuando
-su centro está dentro de la imagen; la segmentación, en cuanto se ve una
-parte); trackpy encuentra 32 trayectorias, 7 de las cuales empiezan después
-del fotograma 0.
+fotogramas y uno de más en los otros tres (los núcleos que salen y entran
+por el borde: la realidad cuenta un núcleo solo cuando su centro está
+dentro de la imagen; la segmentación, en cuanto se ve una parte). trackpy
+encuentra 32 trayectorias, 7 de las cuales empiezan después del
+fotograma 0: las cuatro hijas y los recién llegados, más algunos cortes.
+
+![Resultado animado: la película con las colas de las trayectorias, y las células frente al tiempo creciendo fotograma a fotograma](../assets/img/results/counts.gif){ width="720" }
+
+A la izquierda, la película con la cola de cada trayectoria (trackpy). A la
+derecha, la medida, **células frente al tiempo**. Gris discontinuo: el
+recuento real. Puntos azules: las células medidas, iguales en todos los
+métodos, porque todos cuentan la misma segmentación. Línea naranja, para
+comparar: los **linajes de TrackMate** de la
+[versión en Fiji](pipeline-fiji.md) vivos en cada fotograma; trackpy tiene
+trayectorias pero no linajes.
+La distancia entre los puntos y la línea naranja son las células nacidas
+por división: crece en uno en cada una de las cuatro divisiones. La línea
+de linajes baja a los 50 min, cuando un núcleo se va, y vuelve a subir a
+los 85 min, cuando entra otro.
 
 ## En una frase
 

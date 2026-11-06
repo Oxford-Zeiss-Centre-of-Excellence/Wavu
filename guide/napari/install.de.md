@@ -57,6 +57,11 @@ git clone https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu.git
 cd Wavu
 ```
 
+Oder lassen Sie VS Code es klonen und öffnen, und benutzen Sie dann sein
+Terminal (**Terminal › New Terminal**) für die nächsten Schritte:
+
+[Wavu-Repository in VS Code öffnen](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button }
+
 ## Schritt 2: napari starten
 
 ```sh

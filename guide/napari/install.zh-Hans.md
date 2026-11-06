@@ -51,6 +51,11 @@ git clone https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu.git
 cd Wavu
 ```
 
+或者让 VS Code 把它克隆（clone）下来并打开，接下来的步骤就用它的终端
+（**Terminal › New Terminal**）：
+
+[在 VS Code 中打开 Wavu 仓库](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button }
+
 ## 第 2 步：启动 napari
 
 ```sh

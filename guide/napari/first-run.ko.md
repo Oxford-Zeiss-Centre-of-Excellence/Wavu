@@ -25,9 +25,10 @@ sequenceDiagram
 ## 1단계: 템플릿 폴더 받기
 
 템플릿을 zip으로 내려받아 다시 찾기 쉬운 곳, 예를 들어 *문서* 폴더에
-압축을 푸세요.
+압축을 푸세요. VS Code를 쓴다면 VS Code가 템플릿을 클론하게 해도 돼요.
 
 [ZIP 내려받기](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
+[템플릿을 VS Code에서 열기](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu-Script-Template.git){ .md-button }
 
 `Wavu-Script-Template-main`이라는 폴더가 생기고, 그 안에 `script.py`(레시피)와
 `pixi.toml`(그 주방 도구 목록)이 있어요. 올바른 폴더는

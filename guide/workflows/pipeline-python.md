@@ -1,5 +1,11 @@
 # Pipeline in Python and napari
 
+!!! question "What this pipeline measures"
+    **Cells (y) against time (x)** in a time-lapse of dividing nuclei, and,
+    as a second look, the number of **lineages**: one starting cell plus all
+    its daughters. Every step below exists because this output needs it
+    (see [Before any analysis](index.md)).
+
 ## The idea in plain words
 
 An image analysis is a dinner of several courses: each step (open, segment,
@@ -37,14 +43,22 @@ flowchart LR
 Blue boxes run in your own script (*native* steps); green boxes are Wavu
 steps, each in its own environment.
 
-## The data
+## Before you start
 
-The Wavu repository has a small synthetic movie,
-`examples/data/demo_timelapse.tif`: 30 frames of 256 × 256 pixels,
-0.65 µm per pixel, 5 minutes between frames. About 25 nuclei drift
-around; four divide, one leaves the field of view and one enters, so the
-true count goes from 25 to 29. Since we made the movie, we know the right
-answer and can check the pipeline against it.
+1. **Get the Wavu repository**: open it in VS Code, which clones it for
+   you, or clone it with `git clone`. Everything on this page runs from
+   that folder, with [pixi](../napari/install.md).
+
+   [Open the Wavu repository in VS Code](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button .md-button--primary }
+
+2. **The data**: `examples/data/demo_timelapse.tif`, a small synthetic
+   movie: 30 frames of 256 × 256 pixels, 0.65 µm per pixel, 5 minutes
+   between frames. About 25 nuclei drift around; four divide, one leaves
+   the field of view and one enters, so the true count goes from 25 to 29.
+   Since we made the movie, we know the right answer and can check the
+   pipeline against it.
+
+   ![The demo time-lapse: nuclei drifting and dividing over 30 frames](../assets/img/demo-timelapse.gif){ width="256" }
 
 ## The code
 
@@ -191,8 +205,9 @@ ones begin, and the curve on the right steps up by one.
 
 ## How to run it
 
-From a clone of the Wavu repository (its `napari` environment has
-`wavu`, napari and matplotlib):
+In VS Code, open a terminal (**Terminal › New Terminal**) in the Wavu
+folder and run (its `napari` environment has `wavu`, napari and
+matplotlib):
 
 ```sh
 pixi run -e napari python examples/pipelines/dag_counting.py
@@ -210,11 +225,27 @@ This writes `counts.csv` (frame, cells, minutes) and `plot.png` to
 the environments of the two script folders, which takes a few minutes,
 once.
 
+## The result
+
 On the demo movie, the count is right in 27 of the 30 frames and one too
-high in the other three (most likely the nuclei leaving and entering at
-the edge: the truth counts a nucleus only when its centre is inside the
-image, the segmentation as soon as part of it shows); trackpy finds 32 tracks, 7 of which start after
-frame 0.
+high in the other three (the nuclei leaving and entering at the edge: the
+truth counts a nucleus only when its centre is inside the image, the
+segmentation as soon as part of it shows). trackpy finds 32 tracks, 7 of
+which start after frame 0: the four daughters and newcomers, plus a few
+breaks.
+
+![Animated result: the movie with track tails, and cells against time growing frame by frame](../assets/img/results/counts.gif){ width="720" }
+
+Left, the movie with each track's tail (trackpy). Right, the measurement,
+**cells against time**. Dashed grey: the true count. Blue dots: the measured
+cells, the same for every method, because all of them count the same
+segmentation. Orange line, for comparison: the **TrackMate lineages** of the
+[Fiji version](pipeline-fiji.md) alive in each frame; trackpy has tracks
+but no lineages.
+The gap between the dots and the orange line is the cells born by division:
+it widens by one at each of the four divisions. The lineage line dips at
+50 min, when a nucleus leaves, and comes back at 85 min, when one enters.
+
 
 ## In one sentence
 

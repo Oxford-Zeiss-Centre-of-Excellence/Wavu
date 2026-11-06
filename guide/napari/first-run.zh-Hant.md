@@ -24,9 +24,11 @@ sequenceDiagram
 
 ## 步驟 1：取得範本資料夾
 
-把範本下載成 zip 檔，解壓縮到你之後找得到的地方，例如*文件*資料夾：
+把範本下載成 zip 檔，解壓縮到你之後找得到的地方，例如*文件*資料夾；如果你用 VS Code，也可以讓它幫你把範本複製（clone）
+下來：
 
 [下載 ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
+[在 VS Code 中開啟範本](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu-Script-Template.git){ .md-button }
 
 你會得到一個叫 `Wavu-Script-Template-main` 的資料夾，裡面有 `script.py`
 （食譜）和 `pixi.toml`（它的廚具清單）。正確的資料夾是**直接**

@@ -41,7 +41,8 @@ flowchart LR
   [Pipeline en Fiji](pipeline-fiji.md) o
   [Pipeline en Python](pipeline-python.md). Esta página usa las mismas
   carpetas de ejemplo (`examples/segment_frames`, `examples/track_trackpy`)
-  y los mismos ajustes.
+  y los mismos ajustes; vienen con el repositorio de Wavu
+  ([ábrelo en VS Code](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git)).
 - **Una carpeta de series temporales** (`.tif`). Para probarlo, crea una
   carpeta y copia en ella `examples/data/demo_timelapse.tif` dos o tres
   veces con nombres distintos. Todas las copias dan los mismos números, lo

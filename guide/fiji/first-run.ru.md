@@ -25,9 +25,11 @@ sequenceDiagram
 ## Шаг 1: получите папку шаблона
 
 Скачайте шаблон как zip и распакуйте туда, где легко его найти, например в
-*Документы*:
+*Документы*, или, если вы пользуетесь VS Code, пусть он сам клонирует
+шаблон:
 
 [Скачать ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
+[Открыть шаблон в VS Code](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu-Script-Template.git){ .md-button }
 
 Получится папка `Wavu-Script-Template-main`. Внутри лежат `script.py`
 (рецепт) и `pixi.toml` (список его кухонной утвари). Это и есть вся

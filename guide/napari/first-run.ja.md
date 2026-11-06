@@ -26,9 +26,11 @@ sequenceDiagram
 ## ステップ 1：テンプレートフォルダーを手に入れる
 
 テンプレートを zip でダウンロードし、あとで見つけられる場所（たとえば
-*ドキュメント*）に展開します。
+*ドキュメント*）に展開します。VS Code を使っているなら、VS Code に
+テンプレートをクローンしてもらうこともできます。
 
 [ZIP をダウンロード](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
+[テンプレートを VS Code で開く](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu-Script-Template.git){ .md-button }
 
 `Wavu-Script-Template-main` というフォルダーができ、`script.py`（レシピ）と
 `pixi.toml`（調理器具のリスト）が入っています。正しいフォルダーは、

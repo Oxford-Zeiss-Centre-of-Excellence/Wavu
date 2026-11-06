@@ -27,9 +27,11 @@ sequenceDiagram
 ## Étape 1 : récupérer le dossier modèle
 
 Téléchargez le modèle sous forme de zip et décompressez-le à un endroit où
-vous le retrouverez, par exemple dans *Documents* :
+vous le retrouverez, par exemple dans *Documents*, ou, si vous utilisez
+VS Code, laissez-le cloner le modèle pour vous :
 
 [Télécharger le ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
+[Ouvrir le modèle dans VS Code](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu-Script-Template.git){ .md-button }
 
 Vous obtenez un dossier nommé `Wavu-Script-Template-main` avec `script.py`
 (la recette) et `pixi.toml` (la liste de sa batterie de cuisine). Le

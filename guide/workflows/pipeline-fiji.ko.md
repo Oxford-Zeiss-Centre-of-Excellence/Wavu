@@ -1,5 +1,11 @@
 # Fiji에서 파이프라인
 
+!!! question "이 파이프라인이 재는 것"
+    분열하는 핵의 타임랩스에서 **시간에 따른 세포 수**(y는 세포 수, x는 시간)를
+    재고, 두 번째로 **계보**의 수도 봐요. 계보란 처음 세포 하나와 그 딸세포
+    전부예요. 아래의 모든 단계는 이 출력에 필요하기 때문에 있어요
+    ([분석 전에](index.md) 참고).
+
 ## 쉬운 말로 설명하면
 
 이미지 분석은 여러 코스로 된 저녁 식사예요. 각 단계(열기, 분할, 추적,
@@ -38,9 +44,13 @@ flowchart LR
    보세요. 매크로는 **Plugins › Wavu › Run Script (Macro)**의 `tables`
    입력란을 써요. 대화상자에 **Tables** 입력란이 없다면 wavu-fiji를
    업데이트하세요.
-2. **예제 폴더를 받으세요.**
-   [Wavu 저장소 zip](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/archive/refs/heads/main.zip)을
-   내려받아 압축을 푸세요. `examples/segment_frames`(매크로라면
+2. **예제 폴더를 받으세요.** Wavu 저장소를 VS Code에서 열면 VS Code가
+   클론해 줘요. 아니면 zip으로 내려받아 압축을 푸세요.
+
+   [Wavu 저장소를 VS Code에서 열기](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button .md-button--primary }
+   [ZIP 내려받기](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/archive/refs/heads/main.zip){ .md-button }
+
+   `examples/segment_frames`(매크로라면
    `examples/track_trackpy`도)는 **있는 자리에서 그대로** 쓰세요. 그
    `pixi.toml`이 두 단계 위 폴더에서 Wavu를 찾거든요.
 3. **데이터:** `examples/data/demo_timelapse.tif`는 이 페이지를 위해 만든
@@ -349,6 +359,22 @@ flowchart LR
 하나를 갈라지게 하니, 핵 25개에 새로 들어온 1개를 더해 트랙 26개가 돼요.
 trackpy는 두 딸세포 중 하나에 새 트랙을 시작하니, 분열 4번이 트랙 4개를
 더해요.
+
+![애니메이션 결과: 트랙 꼬리가 달린 동영상과, 프레임마다 자라나는 시간에 따른 세포 수 그래프](../assets/img/results/counts.gif){ width="720" }
+
+왼쪽은 각 트랙의 꼬리를 그린 동영상(trackpy)이에요. 오른쪽은 측정값, 곧
+**시간에 따른 세포 수**예요. 회색 점선: 실제 개수. 파란 점: 측정한 세포
+수로, 어느 방법이든 같아요. 모두 같은 분할 결과를 세니까요. 주황색 선: 각
+프레임에 살아 있는 **TrackMate 계보** 수. 점과 주황색 선 사이의 틈은 분열로
+태어난 세포 수이고, 분열 네 번마다 하나씩 벌어져요. 계보 선은 50분에 핵
+하나가 나갈 때 내려가고, 85분에 하나가 들어올 때 다시 올라와요.
+
+![마지막 프레임과 모든 트랙: 왼쪽은 TrackMate, 오른쪽은 trackpy](../assets/img/results/tracks-compare.png){ width="720" }
+
+모든 트랙을 그린 마지막 프레임이에요. 왼쪽 TrackMate에서는 분열 뒤에도 두
+딸세포가 어미 세포의 색을 그대로 가져요. 어미 세포의 트랙에 속하기
+때문이에요(갈라지는 계보). 오른쪽 trackpy에서는 딸세포마다 자기 트랙이
+생기니, 트랙은 있지만 계보는 없어요.
 
 ## 팁
 

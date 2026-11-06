@@ -1,5 +1,10 @@
 # Fiji 中的分析流程
 
+!!! question "這個分析流程量什麼"
+    在一段細胞核會分裂的縮時影片裡，量**細胞數（y）對時間（x）**；再換個
+    角度看，量**譜系**的數目：一個起始細胞加上它所有的子細胞。下面的每個
+    步驟之所以存在，都是因為這個輸出需要它（請看[分析之前](index.md)）。
+
 ## 用白話說
 
 一次影像分析就像一頓有好幾道菜的晚餐：每個步驟（開啟、分割、追蹤、
@@ -36,9 +41,13 @@ flowchart LR
 1. **Fiji 裡已安裝 Wavu**：請看[安裝 wavu-fiji](../fiji/install.md)。
    巨集需要 **Plugins › Wavu › Run Script (Macro)** 的 `tables` 欄位：
    如果它的對話框沒有 **Tables** 欄位，請更新 wavu-fiji。
-2. **取得範例資料夾**。下載
-   [Wavu 儲存庫的 zip 檔](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/archive/refs/heads/main.zip)
-   並解壓縮。直接在**原來的位置**使用 `examples/segment_frames`（巨集還要用
+2. **取得範例資料夾**：在 VS Code 中開啟 Wavu 儲存庫，它會幫你複製
+   （clone）下來；或者把它下載成 zip 檔再解壓縮。
+
+   [在 VS Code 中開啟 Wavu 儲存庫](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button .md-button--primary }
+   [下載 ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/archive/refs/heads/main.zip){ .md-button }
+
+   直接在**原來的位置**使用 `examples/segment_frames`（巨集還要用
    `examples/track_trackpy`）：它們的 `pixi.toml` 會往上兩層資料夾找到 Wavu。
 3. **資料**：`examples/data/demo_timelapse.tif`，一段專為本頁製作的合成
    影片：30 個影格，每格 256 × 256 像素，每像素 0.65 µm，每格間隔 5 分鐘。
@@ -342,6 +351,20 @@ flowchart LR
 是因為兩種追蹤器處理分裂的方式不一樣：TrackMate（開啟 splitting 時）讓
 一條軌跡分岔，所以 25 個細胞核加上 1 個新來的，得到 26 條軌跡；trackpy
 則為兩個子細胞的其中一個開一條新軌跡，所以 4 次分裂多出 4 條軌跡。
+
+![動態結果：帶有軌跡尾巴的影片，以及逐格增長的細胞數對時間圖](../assets/img/results/counts.gif){ width="720" }
+
+左邊是影片，每條軌跡都拖著尾巴（trackpy）。右邊是量測結果，**細胞數對
+時間**。灰色虛線：真實數量。藍點：量到的細胞數，每種方法都一樣，因為它們
+數的都是同一份分割結果。橘線：每個影格中存在的 **TrackMate 譜系**。藍點和
+橘線之間的差距，就是分裂產生的細胞：四次分裂，每次差距加一。譜系線在
+50 分鐘時下降，因為有一個細胞核離開；到 85 分鐘又回升，因為有一個進來。
+
+![畫上所有軌跡的最後一個影格：左邊是 TrackMate，右邊是 trackpy](../assets/img/results/tracks-compare.png){ width="720" }
+
+畫上每條軌跡的最後一個影格。左邊是 TrackMate：分裂之後，兩個子細胞都保留
+母細胞的顏色，因為它們屬於母細胞那條軌跡（一個會分岔的譜系）。右邊是 trackpy：
+每個子細胞各有一條自己的軌跡，所以有軌跡，卻沒有譜系。
 
 ## 小技巧
 

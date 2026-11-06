@@ -40,7 +40,8 @@ flowchart LR
   [Fiji でパイプライン](pipeline-fiji.md) または
   [Python でパイプライン](pipeline-python.md)。このページも同じサンプル
   フォルダー（`examples/segment_frames`、`examples/track_trackpy`）と同じ
-  設定を使います。
+  設定を使います。これらは Wavu リポジトリに入っています
+  （[VS Code で開く](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git)）。
 - **タイムラプスのフォルダー**（`.tif`）。試すには、フォルダーを作り、
   `examples/data/demo_timelapse.tif` を別々の名前で 2、3 回コピーします。
   どのコピーも同じ数を出すので、確認が簡単です。

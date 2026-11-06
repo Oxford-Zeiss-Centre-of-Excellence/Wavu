@@ -1,5 +1,12 @@
 # Pipeline en Python et napari
 
+!!! question "Ce que mesure ce pipeline"
+    **Les cellules (y) en fonction du temps (x)** dans un time-lapse de
+    noyaux qui se divisent et, en second regard, le nombre de **lignées** :
+    une cellule de départ plus toutes ses filles. Chaque étape ci-dessous
+    existe parce que ce résultat en a besoin
+    (voir [Avant toute analyse](index.md)).
+
 ## L'idée en mots simples { #the-idea-in-plain-words }
 
 Une analyse d'images, c'est un dîner en plusieurs plats : chaque étape
@@ -40,14 +47,22 @@ Les boîtes bleues tournent dans votre propre script (étapes *natives*) ;
 les boîtes vertes sont des étapes Wavu, chacune dans son propre
 environnement.
 
-## Les données { #the-data }
+## Avant de commencer { #before-you-start }
 
-Le dépôt Wavu contient un petit film synthétique,
-`examples/data/demo_timelapse.tif` : 30 images de 256 × 256 pixels,
-0,65 µm par pixel, 5 minutes entre deux images. Environ 25 noyaux se
-déplacent ; quatre se divisent, un quitte le champ de vision et un y entre,
-donc le vrai compte passe de 25 à 29. Comme nous avons fabriqué ce film,
-nous connaissons la bonne réponse et pouvons vérifier le pipeline avec.
+1. **Récupérez le dépôt Wavu** : ouvrez-le dans VS Code, qui le clone pour
+   vous, ou clonez-le avec `git clone`. Tout ce qui est sur cette page se
+   lance depuis ce dossier, avec [pixi](../napari/install.md).
+
+   [Ouvrir le dépôt Wavu dans VS Code](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button .md-button--primary }
+
+2. **Les données** : `examples/data/demo_timelapse.tif`, un petit film
+   synthétique : 30 images de 256 × 256 pixels, 0,65 µm par pixel,
+   5 minutes entre deux images. Environ 25 noyaux se déplacent ; quatre se
+   divisent, un quitte le champ de vision et un y entre, donc le vrai
+   compte passe de 25 à 29. Comme nous avons fabriqué ce film, nous
+   connaissons la bonne réponse et pouvons vérifier le pipeline avec.
+
+   ![Le time-lapse de démonstration : des noyaux qui dérivent et se divisent sur 30 images](../assets/img/demo-timelapse.gif){ width="256" }
 
 ## Le code { #the-code }
 
@@ -203,8 +218,9 @@ monte d'une marche.
 
 ## Comment le lancer { #how-to-run-it }
 
-Depuis un clone du dépôt Wavu (son environnement `napari` contient `wavu`,
-napari et matplotlib) :
+Dans VS Code, ouvrez un terminal (**Terminal › New Terminal**) dans le
+dossier Wavu et lancez (son environnement `napari` contient `wavu`, napari
+et matplotlib) :
 
 ```sh
 pixi run -e napari python examples/pipelines/dag_counting.py
@@ -222,11 +238,28 @@ Cela écrit `counts.csv` (image, cellules, minutes) et `plot.png` dans
 installe les environnements des deux dossiers de script, ce qui prend
 quelques minutes, une seule fois.
 
+## Le résultat { #the-result }
+
 Sur le film de démo, le compte est juste dans 27 des 30 images et trop
-élevé d'une unité dans les trois autres (très probablement les noyaux qui
-sortent et entrent par le bord : la vérité ne compte un noyau que lorsque
-son centre est dans l'image, la segmentation dès qu'une partie apparaît) ;
-trackpy trouve 32 trajectoires, dont 7 commencent après l'image 0.
+élevé d'une unité dans les trois autres (les noyaux qui sortent et entrent
+par le bord : la vérité ne compte un noyau que lorsque son centre est dans
+l'image, la segmentation dès qu'une partie apparaît). trackpy trouve
+32 trajectoires, dont 7 commencent après l'image 0 : les quatre filles et
+les nouveaux venus, plus quelques coupures.
+
+![Résultat animé : le film avec les queues des trajectoires, et les cellules en fonction du temps qui grandissent image par image](../assets/img/results/counts.gif){ width="720" }
+
+À gauche, le film avec la queue de chaque trajectoire (trackpy). À droite,
+la mesure, **les cellules en fonction du temps**. Tirets gris : le vrai
+compte. Points bleus : les cellules mesurées, les mêmes pour toutes les
+méthodes, car toutes comptent la même segmentation. Ligne orange, pour
+comparaison : les **lignées TrackMate** de la
+[version Fiji](pipeline-fiji.md) présentes dans chaque image ; trackpy a
+des trajectoires mais pas de lignées.
+L'écart entre les points et la ligne orange, ce sont les cellules nées
+d'une division : il augmente d'une unité à chacune des quatre divisions.
+La ligne des lignées baisse à 50 min, quand un noyau sort, et remonte à
+85 min, quand un noyau entre.
 
 ## En une phrase { #in-one-sentence }
 

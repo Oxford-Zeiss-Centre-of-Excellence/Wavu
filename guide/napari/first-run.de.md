@@ -27,9 +27,11 @@ sequenceDiagram
 ## Schritt 1: den Vorlagen-Ordner holen
 
 Laden Sie die Vorlage als ZIP-Datei herunter und entpacken Sie sie an einem
-Ort, an dem Sie sie wiederfinden, zum Beispiel in *Dokumente*:
+Ort, an dem Sie sie wiederfinden, zum Beispiel in *Dokumente*, oder
+lassen Sie, wenn Sie VS Code benutzen, VS Code die Vorlage für Sie klonen:
 
 [ZIP herunterladen](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
+[Vorlage in VS Code öffnen](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu-Script-Template.git){ .md-button }
 
 Sie erhalten einen Ordner namens `Wavu-Script-Template-main` mit `script.py`
 (dem Rezept) und `pixi.toml` (der Liste seiner Küchengeräte).

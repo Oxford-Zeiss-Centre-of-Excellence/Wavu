@@ -26,9 +26,11 @@ sequenceDiagram
 ## Paso 1: consigue la carpeta de la plantilla
 
 Descarga la plantilla como zip y descomprímela en un sitio donde la vuelvas a
-encontrar, por ejemplo en *Documentos*:
+encontrar, por ejemplo en *Documentos*, o, si usas VS Code, deja que clone
+la plantilla por ti:
 
 [Descargar ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
+[Abrir la plantilla en VS Code](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu-Script-Template.git){ .md-button }
 
 Obtienes una carpeta llamada `Wavu-Script-Template-main` con `script.py` (la
 receta) y `pixi.toml` (la lista de sus utensilios de cocina). La carpeta

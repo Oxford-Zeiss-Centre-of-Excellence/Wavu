@@ -1,5 +1,11 @@
 # Pipeline en Fiji
 
+!!! question "Qué mide este pipeline"
+    **Células (y) frente al tiempo (x)** en una serie temporal de núcleos
+    que se dividen y, como segunda mirada, el número de **linajes**: una
+    célula inicial más todas sus hijas. Cada paso de abajo existe porque
+    este resultado lo necesita (mira [Antes de cualquier análisis](index.md)).
+
 ## La idea en palabras sencillas
 
 Un análisis de imágenes es una cena de varios platos: cada paso (abrir,
@@ -41,9 +47,13 @@ Wavu. En la versión en macro, el paso 3 también es verde
    La macro necesita el campo `tables` de
    **Plugins › Wavu › Run Script (Macro)** (ejecutar script desde macro): si
    su diálogo no tiene campo **Tables**, actualiza wavu-fiji.
-2. **Consigue las carpetas de ejemplo.** Descarga el
-   [repositorio de Wavu como zip](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/archive/refs/heads/main.zip)
-   y descomprímelo. Usa `examples/segment_frames` (y, para la macro,
+2. **Consigue las carpetas de ejemplo**: abre el repositorio de Wavu en
+   VS Code, que lo clona por ti, o descárgalo como zip y descomprímelo.
+
+   [Abrir el repositorio de Wavu en VS Code](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button .md-button--primary }
+   [Descargar ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/archive/refs/heads/main.zip){ .md-button }
+
+   Usa `examples/segment_frames` (y, para la macro,
    `examples/track_trackpy`) **donde están**: su `pixi.toml` encuentra
    Wavu dos carpetas más arriba.
 3. **Los datos**: `examples/data/demo_timelapse.tif`, una película sintética
@@ -359,6 +369,26 @@ forma diferente: TrackMate (con la división activada) deja que una
 trayectoria se ramifique, así que 25 núcleos más 1 recién llegado dan 26
 trayectorias; trackpy empieza una trayectoria nueva para una de las dos
 células hijas, así que las 4 divisiones añaden 4 trayectorias.
+
+![Resultado animado: la película con las colas de las trayectorias, y las células frente al tiempo creciendo fotograma a fotograma](../assets/img/results/counts.gif){ width="720" }
+
+A la izquierda, la película con la cola de cada trayectoria (trackpy). A la
+derecha, la medida, **células frente al tiempo**. Gris discontinuo: el
+recuento real. Puntos azules: las células medidas, iguales en todos los
+métodos, porque todos cuentan la misma segmentación. Línea naranja: los
+**linajes de TrackMate** vivos en cada fotograma. La distancia entre los
+puntos y la línea naranja son las células nacidas por división: crece en
+uno en cada una de las cuatro divisiones. La línea de linajes baja a los
+50 min, cuando un núcleo se va, y vuelve a subir a los 85 min, cuando
+entra otro.
+
+![El último fotograma con todas las trayectorias: TrackMate a la izquierda, trackpy a la derecha](../assets/img/results/tracks-compare.png){ width="720" }
+
+El último fotograma con todas las trayectorias. A la izquierda, TrackMate:
+tras una división, las dos hijas conservan el color de su madre, porque
+pertenecen a su trayectoria (un linaje que se ramifica). A la derecha,
+trackpy: cada hija recibe una trayectoria propia, así que hay trayectorias
+pero no linajes.
 
 ## Consejos
 

@@ -1,5 +1,10 @@
 # Python 与 napari 中的分析流程
 
+!!! question "这个分析流程测量什么"
+    在一段细胞核会分裂的延时视频里，测量**细胞数（y）随时间（x）的变化**；
+    再换个角度看，测量**谱系**的数目：一个起始细胞加上它所有的子细胞。下面
+    的每个步骤之所以存在，都是因为这个输出需要它（请看[分析之前](index.md)）。
+
 ## 用白话说
 
 一次图像分析就像一顿有好几道菜的晚餐：每个步骤（打开、分割、追踪、
@@ -35,13 +40,21 @@ flowchart LR
 蓝色方框在你自己的脚本里运行（*原生*步骤）；绿色方框是 Wavu 步骤，各自在
 自己的环境里运行。
 
-## 数据
+## 开始之前
 
-Wavu 仓库里有一段小小的合成视频
-`examples/data/demo_timelapse.tif`：30 帧，每帧 256 × 256 像素，
-每像素 0.65 µm，帧与帧之间相隔 5 分钟。大约 25 个细胞核四处漂移；四个会
-分裂，一个离开视野，一个进入，所以真实数量从 25 变成 29。因为视频是我们
-自己做的，我们知道正确答案，可以拿来检查这个流程。
+1. **获取 Wavu 仓库**：在 VS Code 中打开它，VS Code 会帮你克隆（clone）
+   下来；或者用 `git clone` 克隆。本页的一切都在那个文件夹里、通过
+   [pixi](../napari/install.md) 运行。
+
+   [在 VS Code 中打开 Wavu 仓库](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button .md-button--primary }
+
+2. **数据**：`examples/data/demo_timelapse.tif`，一段小小的合成视频：
+   30 帧，每帧 256 × 256 像素，每像素 0.65 µm，帧与帧之间相隔 5 分钟。
+   大约 25 个细胞核四处漂移；四个会分裂，一个离开视野，一个进入，所以真实
+   数量从 25 变成 29。因为视频是我们自己做的，我们知道正确答案，可以拿来
+   检查这个流程。
+
+   ![示例延时视频：细胞核在 30 帧中漂移、分裂](../assets/img/demo-timelapse.gif){ width="256" }
 
 ## 代码
 
@@ -183,8 +196,8 @@ napari.run()
 
 ## 如何运行
 
-在 Wavu 仓库的克隆（clone）里运行（它的 `napari` 环境里有 `wavu`、
-napari 和 matplotlib）：
+在 VS Code 中，在 Wavu 文件夹里打开终端（**Terminal › New Terminal**），
+然后运行（它的 `napari` 环境里有 `wavu`、napari 和 matplotlib）：
 
 ```sh
 pixi run -e napari python examples/pipelines/dag_counting.py
@@ -200,9 +213,22 @@ pixi run -e napari python examples/pipelines/dag_counting.py --no-viewer
 `dag_counting_out/`，并打印一行摘要。第一次运行会安装两个脚本文件夹的
 环境，要花几分钟，只有一次。
 
-在示例视频上，30 帧中有 27 帧的数量正确，另外三帧多算了一个（最可能是在
-边缘离开和进入的细胞核：真实值要等细胞核的中心在图像内才算，分割则是只要
-露出一部分就算）；trackpy 找到 32 条轨迹，其中 7 条在第 0 帧之后才开始。
+## 结果
+
+在示例视频上，30 帧中有 27 帧的数量正确，另外三帧多算了一个（就是在边缘
+离开和进入的细胞核：真实值要等细胞核的中心在图像内才算，分割则是只要露出
+一部分就算）。trackpy 找到 32 条轨迹，其中 7 条在第 0 帧之后才开始：四个
+子细胞和新来的细胞核，再加上几次断开。
+
+![动态结果：带有轨迹尾巴的视频，以及逐帧增长的细胞数随时间变化图](../assets/img/results/counts.gif){ width="720" }
+
+左边是视频，每条轨迹都拖着尾巴（trackpy）。右边是测量结果，**细胞数随
+时间的变化**。灰色虚线：真实数量。蓝点：测得的细胞数，每种方法都一样，
+因为它们数的都是同一份分割结果。橙线用来对照：[Fiji 版本](pipeline-fiji.md)
+中每一帧存在的 **TrackMate 谱系**；trackpy 有轨迹，却没有谱系。蓝点和橙线
+之间的差距，就是分裂产生的细胞：四次分裂，每次差距加一。谱系线在 50 分钟
+时下降，因为有一个细胞核离开；到 85 分钟又回升，因为有一个进来。
+
 
 ## 一句话总结
 

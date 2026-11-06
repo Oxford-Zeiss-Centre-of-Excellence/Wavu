@@ -23,9 +23,11 @@ sequenceDiagram
 
 ## 第 1 步：获取模板文件夹
 
-把模板下载为 zip 文件，解压到一个你之后找得到的地方，例如*文档*文件夹：
+把模板下载为 zip 文件，解压到一个你之后找得到的地方，例如*文档*文件夹；如果你用 VS Code，也可以让它帮你把模板克隆（clone）
+下来：
 
 [下载 ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
+[在 VS Code 中打开模板](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu-Script-Template.git){ .md-button }
 
 你会得到一个名为 `Wavu-Script-Template-main` 的文件夹。里面有
 `script.py`（食谱）和 `pixi.toml`（它的厨具清单）。所谓

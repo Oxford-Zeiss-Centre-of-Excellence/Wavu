@@ -41,7 +41,8 @@ flowchart LR
   [Pipeline in Fiji](pipeline-fiji.md) oder
   [Pipeline in Python](pipeline-python.md). Diese Seite benutzt dieselben
   Beispielordner (`examples/segment_frames`, `examples/track_trackpy`) und
-  dieselben Einstellungen.
+  dieselben Einstellungen; sie sind im Wavu-Repository enthalten
+  ([öffnen Sie es in VS Code](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git)).
 - **Ein Ordner mit Zeitraffern** (`.tif`). Zum Ausprobieren legen Sie einen
   Ordner an und kopieren `examples/data/demo_timelapse.tif` zwei- oder
   dreimal unter verschiedenen Namen hinein. Jede Kopie liefert dieselben

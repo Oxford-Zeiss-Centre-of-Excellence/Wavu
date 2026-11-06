@@ -1,5 +1,10 @@
 # Python 與 napari 中的分析流程
 
+!!! question "這個分析流程量什麼"
+    在一段細胞核會分裂的縮時影片裡，量**細胞數（y）對時間（x）**；再換個
+    角度看，量**譜系**的數目：一個起始細胞加上它所有的子細胞。下面的每個
+    步驟之所以存在，都是因為這個輸出需要它（請看[分析之前](index.md)）。
+
 ## 用白話說
 
 一次影像分析就像一頓有好幾道菜的晚餐：每個步驟（開啟、分割、追蹤、
@@ -35,13 +40,21 @@ flowchart LR
 藍色方框在你自己的腳本裡執行（*原生*步驟）；綠色方框是 Wavu 步驟，各自在
 自己的環境裡執行。
 
-## 資料
+## 開始之前
 
-Wavu 儲存庫裡有一段小小的合成影片
-`examples/data/demo_timelapse.tif`：30 個影格，每格 256 × 256 像素，
-每像素 0.65 µm，影格之間相隔 5 分鐘。大約 25 個細胞核四處漂移；四個會
-分裂，一個離開視野，一個進入，所以真實數量從 25 變成 29。因為影片是我們
-自己做的，我們知道正確答案，可以拿來檢查這個流程。
+1. **取得 Wavu 儲存庫**：在 VS Code 中開啟它，VS Code 會幫你複製（clone）
+   下來；或者用 `git clone` 複製。本頁的一切都在那個資料夾裡、透過
+   [pixi](../napari/install.md) 執行。
+
+   [在 VS Code 中開啟 Wavu 儲存庫](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button .md-button--primary }
+
+2. **資料**：`examples/data/demo_timelapse.tif`，一段小小的合成影片：
+   30 個影格，每格 256 × 256 像素，每像素 0.65 µm，影格之間相隔 5 分鐘。
+   大約 25 個細胞核四處漂移；四個會分裂，一個離開視野，一個進入，所以真實
+   數量從 25 變成 29。因為影片是我們自己做的，我們知道正確答案，可以拿來
+   檢查這個流程。
+
+   ![示範縮時影片：細胞核在 30 個影格中漂移、分裂](../assets/img/demo-timelapse.gif){ width="256" }
 
 ## 程式碼
 
@@ -183,8 +196,8 @@ napari.run()
 
 ## 如何執行
 
-在 Wavu 儲存庫的複本（clone）裡執行（它的 `napari` 環境裡有 `wavu`、
-napari 和 matplotlib）：
+在 VS Code 中，於 Wavu 資料夾開啟終端機（**Terminal › New Terminal**），
+然後執行（它的 `napari` 環境裡有 `wavu`、napari 和 matplotlib）：
 
 ```sh
 pixi run -e napari python examples/pipelines/dag_counting.py
@@ -200,10 +213,22 @@ pixi run -e napari python examples/pipelines/dag_counting.py --no-viewer
 `dag_counting_out/`，並印出一行摘要。第一次執行會安裝兩個腳本資料夾的
 環境，要花幾分鐘，只有一次。
 
-在示範影片上，30 個影格中有 27 個的數量正確，另外三個多算了一個（最可能是
-在邊緣離開和進入的細胞核：真實值要等細胞核的中心在影像內才算，分割則是
-只要露出一部分就算）；trackpy 找到 32 條軌跡，其中 7 條在影格 0 之後才
-開始。
+## 結果
+
+在示範影片上，30 個影格中有 27 個的數量正確，另外三個多算了一個（就是在
+邊緣離開和進入的細胞核：真實值要等細胞核的中心在影像內才算，分割則是只要
+露出一部分就算）。trackpy 找到 32 條軌跡，其中 7 條在影格 0 之後才開始：
+四個子細胞和新來的細胞核，再加上幾次斷開。
+
+![動態結果：帶有軌跡尾巴的影片，以及逐格增長的細胞數對時間圖](../assets/img/results/counts.gif){ width="720" }
+
+左邊是影片，每條軌跡都拖著尾巴（trackpy）。右邊是量測結果，**細胞數對
+時間**。灰色虛線：真實數量。藍點：量到的細胞數，每種方法都一樣，因為它們
+數的都是同一份分割結果。橘線用來對照：[Fiji 版本](pipeline-fiji.md)中每個
+影格存在的 **TrackMate 譜系**；trackpy 有軌跡，卻沒有譜系。藍點和橘線之間
+的差距，就是分裂產生的細胞：四次分裂，每次差距加一。譜系線在 50 分鐘時
+下降，因為有一個細胞核離開；到 85 分鐘又回升，因為有一個進來。
+
 
 ## 一句話總結
 

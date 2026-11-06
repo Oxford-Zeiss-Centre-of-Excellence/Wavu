@@ -26,9 +26,11 @@ sequenceDiagram
 ## Step 1: get the template folder
 
 Download the template as a zip and unzip it somewhere you can find it again,
-for example in *Documents*:
+for example in *Documents*, or, if you use VS Code, let it clone the template
+for you:
 
 [Download ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu-Script-Template/archive/refs/heads/main.zip){ .md-button }
+[Open the template in VS Code](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu-Script-Template.git){ .md-button }
 
 You get a folder called `Wavu-Script-Template-main` with `script.py` (the
 recipe) and `pixi.toml` (the list of its kitchenware). The right folder

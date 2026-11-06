@@ -1,5 +1,11 @@
 # Pipeline in Fiji
 
+!!! question "What this pipeline measures"
+    **Cells (y) against time (x)** in a time-lapse of dividing nuclei, and,
+    as a second look, the number of **lineages**: one starting cell plus all
+    its daughters. Every step below exists because this output needs it
+    (see [Before any analysis](index.md)).
+
 ## The idea in plain words
 
 An image analysis is a dinner of several courses: each step (open, segment,
@@ -39,9 +45,13 @@ macro version, step 3 is green as well (`examples/track_trackpy`).
    The macro needs the `tables` field of
    **Plugins › Wavu › Run Script (Macro)**: if its dialog has no **Tables**
    field, update wavu-fiji.
-2. **Get the example folders.** Download the
-   [Wavu repository as a zip](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/archive/refs/heads/main.zip)
-   and unzip it. Use `examples/segment_frames` (and, for the macro,
+2. **Get the example folders**: open the Wavu repository in VS Code, which
+   clones it for you, or download it as a zip and unzip it.
+
+   [Open the Wavu repository in VS Code](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button .md-button--primary }
+   [Download ZIP](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/archive/refs/heads/main.zip){ .md-button }
+
+   Use `examples/segment_frames` (and, for the macro,
    `examples/track_trackpy`) **where they are**: their `pixi.toml` finds
    Wavu two folders up.
 3. **The data**: `examples/data/demo_timelapse.tif`, a synthetic movie made
@@ -351,6 +361,23 @@ whatever part it sees. The track numbers differ because the two trackers
 treat a division differently: TrackMate (with splitting on) lets one track
 branch, so 25 nuclei plus 1 newcomer give 26 tracks; trackpy starts a new
 track for one of the two daughters, so the 4 divisions add 4 tracks.
+
+![Animated result: the movie with track tails, and cells against time growing frame by frame](../assets/img/results/counts.gif){ width="720" }
+
+Left, the movie with each track's tail (trackpy). Right, the measurement,
+**cells against time**. Dashed grey: the true count. Blue dots: the measured
+cells, the same for every method, because all of them count the same
+segmentation. Orange line: the **TrackMate lineages** alive in each frame.
+The gap between the dots and the orange line is the cells born by division:
+it widens by one at each of the four divisions. The lineage line dips at
+50 min, when a nucleus leaves, and comes back at 85 min, when one enters.
+
+![The last frame with all tracks: TrackMate on the left, trackpy on the right](../assets/img/results/tracks-compare.png){ width="720" }
+
+The last frame with every track. Left, TrackMate: after a division both
+daughters keep their mother's colour, because they belong to her track (a
+branching lineage). Right, trackpy: each daughter gets a track of its own,
+so there are tracks but no lineages.
 
 ## Tips
 

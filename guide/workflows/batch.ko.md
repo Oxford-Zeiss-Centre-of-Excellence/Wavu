@@ -39,7 +39,8 @@ flowchart LR
   [Fiji에서 파이프라인](pipeline-fiji.md) 또는
   [Python에서 파이프라인](pipeline-python.md). 이 페이지도 같은 예제
   폴더(`examples/segment_frames`, `examples/track_trackpy`)와 같은 설정을
-  써요.
+  써요. 이것들은 Wavu 저장소에 들어 있어요
+  ([VS Code에서 열기](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git)).
 - **타임랩스 폴더**(`.tif`). 시험해 보려면 폴더를 하나 만들고
   `examples/data/demo_timelapse.tif`를 서로 다른 이름으로 두세 번 복사해
   넣으세요. 복사본마다 같은 숫자가 나오니 확인하기 쉬워요.

@@ -40,7 +40,8 @@ flowchart LR
   [Конвейер в Fiji](pipeline-fiji.md) или
   [Конвейер на Python](pipeline-python.md). Эта страница использует те же
   папки с примерами (`examples/segment_frames`, `examples/track_trackpy`) и
-  те же настройки.
+  те же настройки; они входят в репозиторий Wavu
+  ([откройте его в VS Code](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git)).
 - **Папка с временными рядами** (`.tif`). Чтобы попробовать, создайте
   папку и скопируйте в неё `examples/data/demo_timelapse.tif` два-три раза
   под разными именами. Каждая копия даёт те же числа — простая проверка.

@@ -1,5 +1,12 @@
 # Pipeline in Fiji
 
+!!! question "Was diese Pipeline misst"
+    **Zellen (y) gegen die Zeit (x)** in einem Zeitraffer sich teilender
+    Zellkerne und, als zweiter Blick, die Zahl der **Zelllinien**: eine
+    Startzelle plus alle ihre Tochterzellen. Jeder Schritt unten existiert,
+    weil dieses Ergebnis ihn braucht
+    (siehe [Vor jeder Analyse](index.md)).
+
 ## Die Idee in einfachen Worten { #the-idea-in-plain-words }
 
 Eine Bildanalyse ist ein Abendessen mit mehreren Gängen: Jeder Schritt
@@ -42,9 +49,14 @@ Wavu-Skript. In der Makro-Version ist Schritt 3 ebenfalls grün
    Das Makro braucht das Feld `tables` von
    **Plugins › Wavu › Run Script (Macro)**: Wenn dessen Dialog kein Feld
    **Tables** hat, aktualisieren Sie wavu-fiji.
-2. **Holen Sie sich die Beispielordner.** Laden Sie das
-   [Wavu-Repository als Zip](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/archive/refs/heads/main.zip)
-   herunter und entpacken Sie es. Benutzen Sie `examples/segment_frames`
+2. **Holen Sie sich die Beispielordner**: Öffnen Sie das Wavu-Repository
+   in VS Code, das es für Sie klont, oder laden Sie es als Zip herunter und
+   entpacken Sie es.
+
+   [Wavu-Repository in VS Code öffnen](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git){ .md-button .md-button--primary }
+   [ZIP herunterladen](https://github.com/Oxford-Zeiss-Centre-of-Excellence/Wavu/archive/refs/heads/main.zip){ .md-button }
+
+   Benutzen Sie `examples/segment_frames`
    (und für das Makro `examples/track_trackpy`) **dort, wo sie liegen**: Ihre
    `pixi.toml` findet Wavu zwei Ordner weiter oben.
 3. **Die Daten**: `examples/data/demo_timelapse.tif`, ein synthetischer Film,
@@ -362,6 +374,26 @@ behandeln: TrackMate (mit eingeschaltetem Splitting) lässt einen Track sich
 verzweigen, also ergeben 25 Zellkerne plus 1 Neuankömmling 26 Tracks;
 trackpy beginnt für eine der beiden Tochterzellen einen neuen Track, also
 fügen die 4 Teilungen 4 Tracks hinzu.
+
+![Animiertes Ergebnis: der Film mit Track-Schweifen und die Zellen gegen die Zeit, Bild für Bild wachsend](../assets/img/results/counts.gif){ width="720" }
+
+Links der Film mit dem Schweif jedes Tracks (trackpy). Rechts die Messung,
+**Zellen gegen die Zeit**. Grau gestrichelt: die wahre Zahl. Blaue Punkte:
+die gemessenen Zellen, bei jeder Methode dieselben, weil alle dieselbe
+Segmentierung zählen. Orange Linie: die **TrackMate-Zelllinien**, die in
+jedem Bild vorhanden sind. Der Abstand zwischen den Punkten und der orangen
+Linie sind die durch Teilung entstandenen Zellen: Er wächst bei jeder der
+vier Teilungen um eins. Die Zelllinien-Kurve sinkt bei 50 min, wenn ein
+Zellkern das Bild verlässt, und steigt bei 85 min wieder, wenn einer
+hereinkommt.
+
+![Das letzte Bild mit allen Tracks: TrackMate links, trackpy rechts](../assets/img/results/tracks-compare.png){ width="720" }
+
+Das letzte Bild mit jedem Track. Links TrackMate: Nach einer Teilung
+behalten beide Tochterzellen die Farbe ihrer Mutter, weil sie zu deren Track
+gehören (eine sich verzweigende Zelllinie). Rechts trackpy: Jede
+Tochterzelle bekommt einen eigenen Track, es gibt also Tracks, aber keine
+Zelllinien.
 
 ## Tipps { #tips }
 

@@ -36,7 +36,9 @@ flowchart LR
 - 先讓分析流程在**一個**檔案上跑通：
   [Fiji 中的分析流程](pipeline-fiji.md)或
   [Python 中的分析流程](pipeline-python.md)。本頁使用同樣的範例資料夾
-  （`examples/segment_frames`、`examples/track_trackpy`）和同樣的設定。
+  （`examples/segment_frames`、`examples/track_trackpy`）和同樣的設定；
+  它們都在 Wavu 儲存庫裡
+  （[在 VS Code 中開啟](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FOxford-Zeiss-Centre-of-Excellence%2FWavu.git)）。
 - **一個裝著縮時影片的資料夾**（`.tif`）。想試試看的話，建立一個資料夾，
   把 `examples/data/demo_timelapse.tif` 用不同的檔名複製進去兩三次。每份
   副本得到的數字都一樣，這是一個很容易的檢查。
